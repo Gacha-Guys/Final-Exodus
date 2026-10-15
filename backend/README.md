@@ -1,6 +1,6 @@
 # Backend setup — Final Exodus
 
-Godot → Python/FastAPI → Aiven MySQL. This PR builds on Jasoo's `src/` backend and pytest setup. **Run one API: `src.main:app`.** Registration works; login is not implemented. The old dummy `/token` and `/auth-test` routes now return 501 and issue no tokens.
+Godot → Python/FastAPI → Aiven MySQL. The API uses the shared `src/` backend and pytest setup. **Run one API: `src.main:app`.** Registration works; login is not implemented. The old dummy `/token` and `/auth-test` routes now return 501 and issue no tokens.
 
 ## 1. Get access to the team's existing Aiven database
 
@@ -73,6 +73,33 @@ The first command should say **Connected: accounts and wallets are readable.** I
 ## 5. Try registration through the API
 
 With the API running, open http://127.0.0.1:8001/docs. Expand **POST /accounts**, choose **Try it out**, and supply a disposable test email, display name, and a 12–128 character password. Execute to create a real test account in the shared database. A repeated email should return409. No login or phone registration screen is included in this backend PR; the Godot screen follows separately.
+
+## 6. View saved player accounts in MySQL Workbench
+
+Aiven Console manages the database service. Its **Users** section lists database connection users, not players registered in our game. Use the separate **MySQL Workbench** desktop app to browse player records. Workbench is optional; you do not need to install a local MySQL server.
+
+1. Install the build for your computer from [the official MySQL Workbench downloads](https://dev.mysql.com/downloads/workbench/). On Apple Silicon Mac, choose ARM64. On Windows, use the Windows installer.
+2. Open Workbench. Next to **MySQL Connections**, click **+** and name the connection `Final Exodus - Aiven`.
+3. Use **Standard (TCP/IP)**. Copy the hostname and port from your Aiven service and use the privately supplied API database username. Set **Default Schema** to the database name from your `.env` (normally `defaultdb`).
+4. In **SSL**, choose **Require and Verify Identity** and set **SSL CA File** to the downloaded project certificate. Leave client certificate/key empty unless the project owner explicitly provides them.
+5. Select **Test Connection** and enter the API database password. Saving it to Keychain/Vault is optional. The app password is not your Aiven website password or game password.
+6. Save and open the connection. If Workbench warns about MySQL 8.4 compatibility, basic SQL queries may still work; this is different from a failed TLS/certificate check. Do not bypass certificate failures.
+7. Inside the SQL editor, choose the **Schemas** tab in the left sidebar. Expand **defaultdb → Tables → accounts**. Right-click **accounts → Select Rows** to browse records, or run the read-only query below to avoid displaying password hashes.
+
+```sql
+SELECT a.id, a.display_name, a.created_at, w.currency
+FROM defaultdb.accounts AS a
+LEFT JOIN defaultdb.wallets AS w ON w.account_id = a.id
+WHERE a.display_name = 'YourTestName';
+```
+
+Replace `YourTestName` with the name you entered in the registration form. Use your configured database name instead of `defaultdb` if different. One returned row confirms that account was persisted; `currency = 0` is the initial in-game balance. This is a read-only query. Do not edit other teammates' test accounts.
+
+## Testing and checking the right server
+
+From `backend/`, run `.venv\Scripts\python.exe -m pytest -q` on Windows or `.venv/bin/python -m pytest -q` on Mac/Linux. Ordinary tests need no Aiven account or credentials. [The testing guide](../docs/TESTING.md) explains the optional real-database test and its cleanup requirements.
+
+When using the Godot screen from the separate UI PR, its API origin must match the port you started. The standard command above uses 8001. If another API already occupies it, use a different port in both places, such as 8004. A successful health check proves only that an API process is reachable; it does not prove that process uses Aiven. Start it with the intended `.env`, run the read-only database checker, and verify the saved record through your Aiven Workbench connection. The MySQL port from Aiven and your local API port are different settings.
 
 ## Troubleshooting
 
