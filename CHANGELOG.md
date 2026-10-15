@@ -8,3 +8,4 @@
 ## 0.0.0.2 — 2026-10-15
 - Add account creation backend, Aiven connection checker, and registration API contract.
 - Add basic GDScript registration test form as boilerplate for team screen work.
+- Make registration a portrait, editor-authored scene with touch-sized controls and a collapsible developer section.

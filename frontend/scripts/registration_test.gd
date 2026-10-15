@@ -1,64 +1,27 @@
 extends Control
 
-# Functional boilerplate for Riley: replace layout without changing the API contract.
-var api_url: LineEdit
-var email: LineEdit
-var display_name: LineEdit
-var password: LineEdit
-var status: Label
-var submit: Button
-var health: Button
-var http: HTTPRequest
+# Scene nodes are editable in Godot's 2D editor; this script handles API behavior.
+@onready var api_url: LineEdit = %ApiUrl
+@onready var email: LineEdit = %Email
+@onready var display_name: LineEdit = %DisplayName
+@onready var password: LineEdit = %Password
+@onready var status: Label = %Status
+@onready var submit: Button = %Submit
+@onready var health: Button = %Health
+@onready var http: HTTPRequest = $HTTPRequest
+@onready var back: Button = %Back
 var operation := ""
 
 func _ready() -> void:
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	for side in ["left", "top", "right", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 32)
-	add_child(margin)
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 12)
-	margin.add_child(column)
-	var title := Label.new()
-	title.text = "ACCOUNT CREATION — CONNECTION TEST"
-	column.add_child(title)
-	api_url = field(column, "API address", false)
-	api_url.text = "http://127.0.0.1:8001"
-	email = field(column, "Email", false)
-	display_name = field(column, "Display name", false)
-	password = field(column, "Password (12–128 characters)", true)
-	health = Button.new()
-	health.text = "Check API"
 	health.pressed.connect(func() -> void: send("health"))
-	column.add_child(health)
-	submit = Button.new()
-	submit.text = "Create test account"
 	submit.pressed.connect(func() -> void: send("register"))
-	column.add_child(submit)
-	status = Label.new()
-	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	status.text = "Start the Python backend first. Registration writes a real account to the configured database."
-	column.add_child(status)
-	var back := Button.new()
-	back.text = "Back to team sync test"
 	back.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/sync_test.tscn"))
-	column.add_child(back)
-	http = HTTPRequest.new()
-	http.timeout = 10.0
-	http.max_redirects = 0
+	%DeveloperToggle.toggled.connect(func(open: bool) -> void: %DeveloperPanel.visible = open)
 	http.request_completed.connect(completed)
-	add_child(http)
-
-func field(column: VBoxContainer, placeholder: String, secret: bool) -> LineEdit:
-	var input := LineEdit.new()
-	input.placeholder_text = placeholder
-	input.secret = secret
-	column.add_child(input)
-	return input
 
 func busy(value: bool) -> void:
 	submit.disabled = value
+	back.disabled = value
 	health.disabled = value
 	api_url.editable = not value
 	email.editable = not value

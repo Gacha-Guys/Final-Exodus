@@ -12,4 +12,4 @@ Follow [the team setup and sync checklist](docs/SETUP.md). Each teammate changes
 - **backend/** — Python account creation API and database setup.
 - **docs/** — setup guide and future shared API contracts.
 
-The first screen verifies project setup and GitHub file syncing. Its account creation test button opens a basic API-connected form. Gameplay is not implemented. The account creation backend is available in [backend/README.md](backend/README.md); Riley can build on the basic registration form; login follows separately.
+The project opens a portrait account-creation screen. The original team sync test is accessible under Developer connection settings. Gameplay is not implemented. The account creation backend is available in [backend/README.md](backend/README.md); Riley can build on the basic registration form; login follows separately.
