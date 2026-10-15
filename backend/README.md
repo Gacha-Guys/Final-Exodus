@@ -90,10 +90,10 @@ Aiven Console manages the database service. Its **Users** section lists database
 SELECT a.id, a.display_name, a.created_at, w.currency
 FROM defaultdb.accounts AS a
 LEFT JOIN defaultdb.wallets AS w ON w.account_id = a.id
-WHERE a.display_name = 'YourTestName';
+WHERE a.email = 'your-test@example.com';
 ```
 
-Replace `YourTestName` with the name you entered in the registration form. Use your configured database name instead of `defaultdb` if different. One returned row confirms that account was persisted; `currency = 0` is the initial in-game balance. This is a read-only query. Do not edit other teammates' test accounts.
+Replace `your-test@example.com` with the exact test email you registered. Email is unique; display names are not. Use your configured database name instead of `defaultdb` if different. One returned row confirms that account was persisted; `currency = 0` is the initial in-game balance. This is a read-only query. Do not edit other teammates' test accounts.
 
 ## Testing and checking the right server
 
