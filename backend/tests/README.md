@@ -1,0 +1,1 @@
+Any plans to change/update the API should prolly have unit tests beforehand. Ideally, every library should have unit tests associated with them.
