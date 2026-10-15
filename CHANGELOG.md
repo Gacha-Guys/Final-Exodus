@@ -6,7 +6,5 @@
 - Follow the setup guide to share changes through GitHub and verify the merged project on each machine.
 
 ## 0.0.0.2 — 2026-10-15
-- Add account creation backend, Aiven connection checker, and registration API contract.
-- Add basic GDScript registration test form as boilerplate for team screen work.
-- Make registration a portrait, editor-authored scene with touch-sized controls and a collapsible developer section.
-- Integrate Jasoo’s src/main.py and pytest scaffold; document Aiven access and disable dummy login tokens pending SCRUM-7.
+- Add account creation API, unit/integration tests, Aiven checker and team setup instructions.
+- Build on Jasoo’s backend scaffold with one API entrypoint; disable dummy authentication until login is implemented.

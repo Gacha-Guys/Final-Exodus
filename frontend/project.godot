@@ -11,16 +11,14 @@ config_version=5
 [application]
 
 config/name="Final Exodus"
-run/main_scene="res://scenes/registration_test.tscn"
+run/main_scene="res://scenes/sync_test.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]
 
-window/size/viewport_width=480
-window/size/viewport_height=854
+window/size/viewport_width=960
+window/size/viewport_height=640
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
-window/handheld/orientation=1
 
 [rendering]
 
