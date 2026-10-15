@@ -13,3 +13,5 @@ Follow [the team setup and sync checklist](docs/SETUP.md). Each teammate changes
 - **docs/** — setup guide and future shared API contracts.
 
 The project opens a portrait account-creation screen. The original team sync test is accessible under Developer connection settings. Gameplay is not implemented. The account creation backend is available in [backend/README.md](backend/README.md); Riley can build on the basic registration form; login follows separately.
+
+For Aiven invitations, private database settings, and Windows/Mac backend commands, follow [the backend setup guide](backend/README.md).

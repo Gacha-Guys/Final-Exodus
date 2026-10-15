@@ -9,3 +9,4 @@
 - Add account creation backend, Aiven connection checker, and registration API contract.
 - Add basic GDScript registration test form as boilerplate for team screen work.
 - Make registration a portrait, editor-authored scene with touch-sized controls and a collapsible developer section.
+- Integrate Jasoo’s src/main.py and pytest scaffold; document Aiven access and disable dummy login tokens pending SCRUM-7.

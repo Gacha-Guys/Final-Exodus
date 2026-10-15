@@ -21,5 +21,15 @@ func run() -> void:
 		push_error("Registration must not follow redirects")
 		quit(1)
 		return
+	root.size = Vector2i(480, 854)
+	var sync = load("res://scenes/sync_test.tscn").instantiate()
+	root.add_child(sync)
+	await process_frame
+	await process_frame
+	var margin = sync.get_child(0)
+	if margin.get_combined_minimum_size().x > 480 or margin.get_combined_minimum_size().y > 854:
+		push_error("Sync screen overflows portrait viewport")
+		quit(1)
+		return
 	print("PASS: API origin validation and redirect policy")
 	quit()

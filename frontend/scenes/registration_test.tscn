@@ -158,7 +158,6 @@ unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(0, 52)
 placeholder_text = "Choose a name"
-max_length = 64
 
 [node name="EmailLabel" type="Label" parent="Scroll/Margin/Content/Card/Form"]
 layout_mode = 2
@@ -172,7 +171,6 @@ unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(0, 52)
 placeholder_text = "you@example.com"
-max_length = 254
 virtual_keyboard_type = 1
 
 [node name="PasswordLabel" type="Label" parent="Scroll/Margin/Content/Card/Form"]
@@ -188,7 +186,6 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 52)
 placeholder_text = "At least 12 characters"
 secret = true
-max_length = 128
 virtual_keyboard_type = 6
 
 [node name="Submit" type="Button" parent="Scroll/Margin/Content/Card/Form"]

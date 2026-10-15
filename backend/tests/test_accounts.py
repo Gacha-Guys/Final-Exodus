@@ -2,10 +2,16 @@ import unittest
 from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
-from app import Registration, create_account, password_hash, app
+from src.rate_limit import RegistrationLimiter
+from src.accounts import Registration, create_account, password_hash, app
 
 
 class AccountTests(unittest.TestCase):
+    def setUp(self):
+        limiter = patch('src.accounts.registration_limiter', RegistrationLimiter())
+        limiter.start()
+        self.addCleanup(limiter.stop)
+
     def request(self, **changes):
         data = dict(email='Student@Example.com', display_name=' Tyler ', password='a sufficiently long password')
         return Registration(**(data | changes))
@@ -47,13 +53,13 @@ class AccountTests(unittest.TestCase):
 
     def test_api_never_returns_password(self):
         client = TestClient(app)
-        with patch('app.create_account', return_value=dict(id=42, email='student@example.com', display_name='Tyler')):
+        with patch('src.accounts.create_account', return_value=dict(id=42, email='student@example.com', display_name='Tyler')):
             response = client.post('/accounts', json=dict(email='student@example.com', display_name='Tyler', password='a sufficiently long password'))
         self.assertEqual(response.status_code, 201)
         self.assertEqual(set(response.json()), {'id', 'email', 'display_name'})
 
     def test_invalid_api_request_rejected_before_database(self):
-        with patch('app.create_account') as create:
+        with patch('src.accounts.create_account') as create:
             response = TestClient(app).post('/accounts', json=dict(email='bad', display_name='Tyler', password='short'))
         self.assertEqual(response.status_code, 422)
         create.assert_not_called()

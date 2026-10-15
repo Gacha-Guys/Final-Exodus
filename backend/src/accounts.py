@@ -5,7 +5,7 @@ import pymysql
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from rate_limit import RegistrationLimiter
+from .rate_limit import RegistrationLimiter
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr, field_validator
 from pwdlib import PasswordHash
 

@@ -1,7 +1,7 @@
 """Read-only connection check; reads configuration from an explicitly supplied env file."""
 import argparse
 from dotenv import load_dotenv
-from app import connect
+from src.accounts import connect
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
