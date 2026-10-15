@@ -23,4 +23,3 @@ def connect():
     if settings["host"] not in ("127.0.0.1", "localhost", "::1") and not settings.get("ssl_ca"):
         raise ValueError("Remote databases require a CA certificate")
     return pymysql.connect(**settings)
-
