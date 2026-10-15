@@ -5,6 +5,7 @@ import pymysql
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from . import database
 from .rate_limit import RegistrationLimiter
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr, field_validator
 from pwdlib import PasswordHash
@@ -62,29 +63,10 @@ class Account(BaseModel):
     display_name: str
 
 
-def connect():
-    settings = dict(
-        host=os.getenv("FINAL_EXODUS_DB_HOST", "127.0.0.1"),
-        port=int(os.getenv("FINAL_EXODUS_DB_PORT", "3307")),
-        user=os.environ["FINAL_EXODUS_DB_USER"],
-        password=os.environ["FINAL_EXODUS_DB_PASSWORD"],
-        database=os.getenv("FINAL_EXODUS_DB", "final_exodus_dev"),
-        charset="utf8mb4", autocommit=False, connect_timeout=5,
-    )
-    if os.getenv("FINAL_EXODUS_DB_SOCKET"):
-        settings["unix_socket"] = os.environ["FINAL_EXODUS_DB_SOCKET"]
-    if os.getenv("FINAL_EXODUS_DB_SSL_CA"):
-        settings.update(ssl_ca=os.environ["FINAL_EXODUS_DB_SSL_CA"],
-                        ssl_verify_cert=True, ssl_verify_identity=True)
-    if settings["host"] not in ("127.0.0.1", "localhost", "::1") and not settings.get("ssl_ca"):
-        raise ValueError("Remote databases require a CA certificate")
-    return pymysql.connect(**settings)
-
-
-def create_account(request, connection_factory=connect):
+def create_account(request, connection_factory=None):
     email = str(request.email).lower()
     hashed = password_hash.hash(request.password.get_secret_value())
-    connection = connection_factory()
+    connection = (connection_factory or database.connect)()
     try:
         with connection.cursor() as cursor:
             cursor.execute(
