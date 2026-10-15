@@ -1,4 +1,4 @@
--- Narrow registration draft. Broader database/001_schema.sql remains a review sketch.
+-- Account creation foundation; login/session storage is a separate migration.
 CREATE TABLE IF NOT EXISTS accounts (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   email VARCHAR(254) NOT NULL UNIQUE,

@@ -14,7 +14,7 @@ POST `/accounts` with JSON:
 
 Provisional rules: email lowercased and unique; trimmed display name 1–64 characters; password 12–128 characters without trimming. Server hashes passwords with Argon2id and creates account and zero-balance wallet in one transaction. A duplicate retry does not create another account.
 
-Riley's screen needs email/name/password inputs, masked password, disabled submit while waiting, success/error states and retry handling. Clear the password after submission. No screen implementation is included here. Registration does not log the player in; login is SCRUM-7.
+Riley's screen needs email/name/password inputs, masked password, disabled submit while waiting, success/error states and retry handling. Clear the password after submission. The basic test screen provides this starting point. Registration does not log the player in; login is SCRUM-7.
 
 GET `/health` returns process liveness only. It does not prove database readiness. Use the backend connection checker for that. Local API URL: http://127.0.0.1:8001; teammates' localhost points to their own machines. Shared HTTPS hosting remains a separate step.
 

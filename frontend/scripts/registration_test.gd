@@ -46,6 +46,7 @@ func _ready() -> void:
 	column.add_child(back)
 	http = HTTPRequest.new()
 	http.timeout = 10.0
+	http.max_redirects = 0
 	http.request_completed.connect(completed)
 	add_child(http)
 
@@ -64,12 +65,22 @@ func busy(value: bool) -> void:
 	display_name.editable = not value
 	password.editable = not value
 
+func valid_api_origin(base: String) -> bool:
+	# Accept origins only. Userinfo, paths and fragments must not bypass loopback rules.
+	var pattern := RegEx.new()
+	pattern.compile("^(https://[A-Za-z0-9.-]+|http://(localhost|127\\.0\\.0\\.1))(:[0-9]{1,5})?$")
+	if pattern.search(base) == null:
+		return false
+	var authority := base.split("://")[1]
+	if authority.contains(":"):
+		var port := int(authority.split(":")[1])
+		return port >= 1 and port <= 65535
+	return true
+
 func send(action: String) -> void:
 	var base := api_url.text.strip_edges().trim_suffix("/")
-	# HTTP is only for this machine; shared API testing requires HTTPS.
-	var host := base.trim_prefix("http://").split("/")[0].split(":")[0]
-	if not base.begins_with("https://") and not (base.begins_with("http://") and host in ["localhost", "127.0.0.1"]):
-		status.text = "Use HTTPS, or HTTP on localhost/127.0.0.1 for local development."
+	if not valid_api_origin(base):
+		status.text = "Use an HTTPS origin, or http://localhost:port / http://127.0.0.1:port. No paths or credentials."
 		return
 	operation = action
 	busy(true)
