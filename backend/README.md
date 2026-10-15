@@ -1,6 +1,6 @@
 # Account creation backend
 
-Small foundation for SCRUM-6. No login or Godot screens are included. Riley can build the registration screen against [the account contract](../docs/ACCOUNTS.md).
+Small foundation for SCRUM-6. A basic GDScript registration test screen is included; login is separate. Riley can build on this boilerplate against [the account contract](../docs/ACCOUNTS.md).
 
 Use Python 3.11+ and MySQL 8.4. From this folder, create a virtual environment, activate it, then run `python -m pip install -r requirements-lock.txt`. Copy `.env.example` to a private `.env` and fill it using the team's privately shared connection settings and Aiven CA certificate. Never commit credentials or certificates. The Aiven service must be powered on.
 

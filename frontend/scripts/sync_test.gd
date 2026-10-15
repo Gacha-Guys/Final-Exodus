@@ -36,3 +36,8 @@ func _ready() -> void:
 	note.text = "Local button clicks reset when you restart. GitHub syncs files, not live game state.\nThis screen does not connect to the backend yet."
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(note)
+
+	var accounts := Button.new()
+	accounts.text = "Open account creation test"
+	accounts.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/registration_test.tscn"))
+	column.add_child(accounts)
