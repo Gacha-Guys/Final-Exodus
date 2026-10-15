@@ -4,3 +4,6 @@
 
 - Run the shared GDScript starter in Godot 4.7.2 and view individual teammate check-ins.
 - Follow the setup guide to share changes through GitHub and verify the merged project on each machine.
+
+## 0.0.0.2 — 2026-10-15
+- Add account creation backend, Aiven connection checker, and registration API contract.

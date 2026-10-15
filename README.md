@@ -9,7 +9,7 @@ Install **Godot 4.7.2 standard** (GDScript). Clone this repository and import **
 Follow [the team setup and sync checklist](docs/SETUP.md). Each teammate changes their own file in frontend/team_checkins/, shares it through a pull request, and verifies everyone can see the merged change.
 
 - **frontend/** — Godot project, scenes, GDScript and assets.
-- **backend/** — destination for Python API and database setup; currently a placeholder.
+- **backend/** — Python account creation API and database setup.
 - **docs/** — setup guide and future shared API contracts.
 
-The first screen verifies project setup and GitHub file syncing. It does not yet connect to an API or implement gameplay. Registration and login will follow in a separate change.
+The first screen verifies project setup and GitHub file syncing. It does not yet connect to an API or implement gameplay. The account creation backend is available in [backend/README.md](backend/README.md); Godot registration screens and login follow separately.
