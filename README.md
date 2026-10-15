@@ -13,3 +13,5 @@ Follow [the team setup and sync checklist](docs/SETUP.md). Each teammate changes
 - **docs/** — setup guide and future shared API contracts.
 
 The first screen verifies project setup and GitHub file syncing. It does not yet connect to an API or implement gameplay. Registration and login will follow in a separate change.
+
+Account creation API and Aiven access/setup: [backend/README.md](backend/README.md). The phone registration UI follows in a separate PR.
