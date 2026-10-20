@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Final Exodus"
-run/main_scene="res://scenes/sync_test.tscn"
+run/main_scene="uid://5qj20j5am4lt"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]

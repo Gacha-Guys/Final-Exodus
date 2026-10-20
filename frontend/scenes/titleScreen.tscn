@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://5qj20j5am4lt"]
+
+[ext_resource type="Texture2D" uid="uid://be7eywxukmswi" path="res://assets/febg.png" id="1_sf2e2"]
+[ext_resource type="Script" uid="uid://b2vwsc0j3hquf" path="res://scripts/title_screen.gd" id="2_tic01"]
+
+[sub_resource type="Theme" id="Theme_pkhjh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fnlyl"]
+
+[node name="TitleScreen" type="Control" unique_id=1374417495]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="TextureRect" parent="." unique_id=645895733]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pkhjh")
+texture = ExtResource("1_sf2e2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CenterContainer" type="CenterContainer" parent="Background" unique_id=1889500866]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Background/CenterContainer" unique_id=1734074191]
+custom_minimum_size = Vector2(306, 0)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Background/CenterContainer/PanelContainer" unique_id=92439831]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Background/CenterContainer/PanelContainer/MarginContainer" unique_id=44380646]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Button" parent="Background/CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=658954680]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.29000002, 0.8106667, 1, 1)
+theme_override_font_sizes/font_size = 109
+theme_override_styles/normal = SubResource("StyleBoxEmpty_fnlyl")
+text = "Final Exodus"
+script = ExtResource("2_tic01")
