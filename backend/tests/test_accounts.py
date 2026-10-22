@@ -42,6 +42,15 @@ class AccountTests(unittest.TestCase):
         connection.rollback.assert_not_called()
         connection.close.assert_called_once()
 
+    def test_registration_uses_shared_connection_by_default(self):
+        connection, _ = self.connection()
+        with patch('src.database.connect', return_value=connection) as connect:
+            account = create_account(self.request())
+        connect.assert_called_once_with()
+        self.assertEqual(account.id, 42)
+        connection.commit.assert_called_once()
+        connection.close.assert_called_once()
+
     def test_wallet_failure_rolls_back_account(self):
         connection, cursor = self.connection()
         cursor.execute.side_effect = [1, RuntimeError('wallet failure')]

@@ -19,6 +19,8 @@ class Unit:
     defense: int
     speed: int
     moves: list
+    level: int
+    experience: int
 
 @dataclass
 class Move:

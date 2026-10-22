@@ -57,7 +57,7 @@ class RegistrationContractTests(unittest.TestCase):
         self.assertEqual(result.json(), {'detail': 'Account creation unavailable'})
 
     def test_health_is_available_without_database(self):
-        with patch('src.accounts.connect', side_effect=AssertionError('health must not contact database')):
+        with patch('src.database.connect', side_effect=AssertionError('health must not contact database')):
             result = self.client.get('/health')
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result.json()['status'], 'running')
