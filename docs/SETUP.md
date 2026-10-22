@@ -9,7 +9,7 @@ Use **Godot 4.7.2 standard**, GDScript. No .NET SDK or Godot Git plugin is requi
 3. Fetch and pull the branch containing this starter. If it is in an open pull request, switch to its branch; after merge, use main.
 4. In Godot, choose Import and select `frontend/project.godot` inside your clone. Do not create a separate new project.
 5. Open the imported project and press F6 to run the open test scene, or F5 to run the project. On some laptops hold Fn too; the Play button also works.
-6. Confirm all four names appear and the test button counts clicks without errors.
+6. The project opens the portrait account form. For the original sync test, expand Developer connection settings and select Team sync test; confirm all four names appear.
 
 ## Prove everyone's changes sync
 
