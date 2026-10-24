@@ -1,9 +1,16 @@
 [gd_scene format=3 uid="uid://dt3ckpg0ijv5j"]
 
-[ext_resource type="Texture2D" uid="uid://1fl6lj0l041w" path="res://assets/banishment.png" id="1_3os1u"]
+[ext_resource type="Script" uid="uid://cfx28hd83kl2q" path="res://scripts/title_screen_new.gd" id="1_cupy0"]
+[ext_resource type="AudioStream" uid="uid://ccwfftujpv1wi" path="res://assets/title.mp3" id="1_cwgxd"]
 [ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_cduda"]
+[ext_resource type="Texture2D" uid="uid://blfpp6xew56ib" path="res://assets/logo2.png" id="3_6etng"]
+[ext_resource type="PackedScene" uid="uid://c0w8741a4hxll" path="res://ui/button.tscn" id="6_8r2gn"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_cupy0"]
+load_path = "res://.godot/imported/banishment.png-7484c7691332c8cb673b88870252808c.ctex"
 
 [node name="Control" type="Control" unique_id=1118355167]
+clip_contents = true
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,31 +18,70 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=682377666]
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1784815054]
+stream = ExtResource("1_cwgxd")
+autoplay = true
+
+[node name="Background" type="TextureRect" parent="." unique_id=682377666]
+modulate = Color(0.72464263, 0.7246426, 0.7246426, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_3os1u")
+texture = SubResource("CompressedTexture2D_cupy0")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1711044071]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=57956031]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -57.0
-offset_right = 57.0
-offset_bottom = 40.0
+offset_left = -273.375
+offset_top = 40.0
+offset_right = 273.375
+offset_bottom = 406.2798
 grow_horizontal = 2
-theme_override_constants/margin_top = 256
+size_flags_vertical = 0
+texture = ExtResource("3_6etng")
+expand_mode = 5
+stretch_mode = 4
 
-[node name="Label" type="Label" parent="MarginContainer" unique_id=102231896]
+[node name="Start" type="MarginContainer" parent="." unique_id=1634287336]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -221.5
+offset_top = -343.0
+offset_right = 221.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 96
+script = ExtResource("1_cupy0")
+
+[node name="Label" type="Label" parent="Start" unique_id=1685857220]
 layout_mode = 2
+size_flags_vertical = 8
 theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("2_cduda")
-theme_override_font_sizes/font_size = 64
-text = "Final Exodus"
+theme_override_font_sizes/font_size = 36
+text = "Start"
+horizontal_alignment = 1
+
+[node name="Button" parent="." unique_id=1032644258 instance=ExtResource("6_8r2gn")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_right = 0.0
+offset_left = 24.0
+offset_top = -64.0
+offset_right = 124.0
+offset_bottom = -24.0
+grow_horizontal = 1
+grow_vertical = 0
+text = "Account"

@@ -1,0 +1,172 @@
+[gd_scene format=3 uid="uid://klxyuv0db4c3"]
+
+[ext_resource type="Texture2D" uid="uid://cpp22w8in7e4n" path="res://assets/hubtop.svg" id="1_qssp3"]
+[ext_resource type="Texture2D" uid="uid://gks5jb1ktdc" path="res://assets/b.jpg" id="1_s6eg2"]
+[ext_resource type="Texture2D" uid="uid://ct18f51yem7sl" path="res://assets/683px-Vanguard.png" id="2_4oyfp"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_441x5"]
+[ext_resource type="PackedScene" uid="uid://c0w8741a4hxll" path="res://ui/button.tscn" id="7_3wyi3"]
+[ext_resource type="Texture2D" uid="uid://b0e1jg5f75cfh" path="res://assets/underxp.png" id="8_4oyfp"]
+[ext_resource type="PackedScene" uid="uid://cqyhc8uo5aufb" path="res://ui/menubutton.tscn" id="9_4oyfp"]
+[ext_resource type="Texture2D" uid="uid://cyee6418btc25" path="res://assets/outerxp.svg" id="9_lcd1r"]
+[ext_resource type="Texture2D" uid="uid://oyhqoa4315ru" path="res://assets/house.png" id="10_lcd1r"]
+[ext_resource type="Texture2D" uid="uid://p0xy251te8ig" path="res://assets/innerxp.png" id="10_s6eg2"]
+
+[sub_resource type="FontVariation" id="FontVariation_3wyi3"]
+base_font = ExtResource("2_441x5")
+variation_opentype = {
+2003265652: 600
+}
+
+[sub_resource type="FontVariation" id="FontVariation_441x5"]
+base_font = ExtResource("2_441x5")
+variation_opentype = {
+2003265652: 800
+}
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aqapl"]
+bg_color = Color(0.39688924, 0.39688927, 0.3968891, 1)
+
+[node name="Control" type="Control" unique_id=516966562]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect3" type="TextureRect" parent="." unique_id=250824565]
+modulate = Color(0.31801993, 0.31801975, 0.31801987, 1)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_s6eg2")
+
+[node name="TextureRect2" type="TextureRect" parent="." unique_id=1448620322]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_4oyfp")
+expand_mode = 3
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=973351126]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 90.197105
+grow_horizontal = 2
+texture = ExtResource("1_qssp3")
+expand_mode = 5
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="TextureRect" unique_id=1777553465]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 28.0
+offset_top = -35.76741
+offset_right = 132.0
+offset_bottom = -2.7674103
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_3wyi3")
+theme_override_font_sizes/font_size = 24
+text = "Gooner"
+
+[node name="Label2" type="Label" parent="TextureRect" unique_id=482711508]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 46.0
+offset_top = -3.7674103
+offset_right = 131.0
+offset_bottom = 29.23259
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_441x5")
+theme_override_font_sizes/font_size = 24
+text = "Lv. 67"
+
+[node name="Button" type="Button" parent="." unique_id=578724967]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 937.0
+offset_right = 646.5
+offset_bottom = 1100.0
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_aqapl")
+text = "Story"
+
+[node name="Button5" type="Button" parent="." unique_id=1502036576]
+layout_mode = 0
+offset_left = 568.0
+offset_top = 153.0
+offset_right = 710.0
+offset_bottom = 241.0
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_aqapl")
+text = "Dailys"
+
+[node name="Button6" parent="." unique_id=1032644258 instance=ExtResource("7_3wyi3")]
+layout_mode = 1
+offset_left = 22.0
+offset_top = 140.0
+offset_right = -598.0
+offset_bottom = -1100.0
+text = "Settings"
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=726593588]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = 24.0
+offset_right = 75.0
+offset_bottom = 174.0
+grow_horizontal = 2
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_under = ExtResource("8_4oyfp")
+texture_over = ExtResource("9_lcd1r")
+texture_progress = ExtResource("10_s6eg2")
+
+[node name="Label2" type="Label" parent="TextureProgressBar" unique_id=506858602]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -42.5
+offset_top = -16.5
+offset_right = 42.5
+offset_bottom = 16.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_441x5")
+theme_override_font_sizes/font_size = 16
+text = "55400
+/
+140323"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control" parent="." unique_id=1300157542 instance=ExtResource("9_4oyfp")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -60.0
+offset_top = -120.0
+offset_right = 60.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("10_lcd1r")
+text = "Home"

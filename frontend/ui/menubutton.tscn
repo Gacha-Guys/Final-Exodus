@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://cqyhc8uo5aufb"]
+
+[ext_resource type="Script" uid="uid://w0y2qplc656j" path="res://ui/menubutton.gd" id="1_h7o18"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="1_y5k6y"]
+
+[sub_resource type="FontVariation" id="FontVariation_y5k6y"]
+base_font = ExtResource("1_y5k6y")
+variation_opentype = {
+2003265652: 800
+}
+spacing_top = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7o18"]
+bg_color = Color(0.101960786, 0.078431375, 0.13725491, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_color = Color(0.91764706, 0.8039216, 0.7607843, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_detail = 1
+
+[node name="Control" type="Control" unique_id=1300157542]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 40.0
+offset_right = -516.0
+offset_bottom = -1100.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_h7o18")
+
+[node name="Button" type="Button" parent="." unique_id=584341676]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_y5k6y")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_h7o18")
+text = "Button"
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
