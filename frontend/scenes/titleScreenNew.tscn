@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dt3ckpg0ijv5j"]
+
+[ext_resource type="Texture2D" uid="uid://1fl6lj0l041w" path="res://assets/banishment.png" id="1_3os1u"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_cduda"]
+
+[node name="Control" type="Control" unique_id=1118355167]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=682377666]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_3os1u")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1711044071]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -57.0
+offset_right = 57.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 256
+
+[node name="Label" type="Label" parent="MarginContainer" unique_id=102231896]
+layout_mode = 2
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("2_cduda")
+theme_override_font_sizes/font_size = 64
+text = "Final Exodus"
