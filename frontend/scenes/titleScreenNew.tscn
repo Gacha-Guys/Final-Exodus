@@ -88,7 +88,8 @@ text = "Start"
 label_settings = SubResource("LabelSettings_85hqo")
 horizontal_alignment = 1
 
-[node name="Button" parent="." unique_id=1032644258 instance=ExtResource("6_8r2gn")]
+[node name="Account" parent="." unique_id=1032644258 instance=ExtResource("6_8r2gn")]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0

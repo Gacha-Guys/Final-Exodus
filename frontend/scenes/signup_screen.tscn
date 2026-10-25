@@ -1,0 +1,123 @@
+[gd_scene format=3 uid="uid://dtvoynen3f4l1"]
+
+[ext_resource type="Script" uid="uid://bb82tqvvha8ci" path="res://scripts/modular_signup_screen.gd" id="1_46fmx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yqghj"]
+bg_color = Color(0, 0.42745098, 0.46666667, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1ra2f"]
+bg_color = Color(0.5568628, 0.92941177, 0.972549, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q6q86"]
+bg_color = Color(0.35128176, 0.6098274, 0.9248688, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ncxbt"]
+bg_color = Color(0.1625596, 0.6739536, 0.7269975, 1)
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=796410285]
+script = ExtResource("1_46fmx")
+
+[node name="SignupScreen" type="Control" parent="." unique_id=775133317]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Container" type="CenterContainer" parent="SignupScreen" unique_id=1511274559]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="SignupScreen/Container" unique_id=151078162]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SignupScreen/Container/Panel" unique_id=2146574061]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="SignupScreen/Container/Panel/Margin" unique_id=829905797]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1210352549]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "Sign Up"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EmailInput" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1668868340]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 33)
+layout_mode = 2
+placeholder_text = "Email"
+
+[node name="DoBInput" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=326228128]
+visible = false
+layout_mode = 2
+placeholder_text = "Month/Day/Year"
+
+[node name="UsernameInput" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=261000023]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 33)
+layout_mode = 2
+placeholder_text = "Username"
+
+[node name="PasswordInput" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=485446238]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 33)
+layout_mode = 2
+placeholder_text = "Password"
+secret = true
+
+[node name="PasswordConfirmation" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1522618636]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Confirm Password"
+secret = true
+
+[node name="SignUpButton" type="Button" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1650316743]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5568628, 0.92941177, 0.972549, 1)
+theme_override_colors/font_hover_color = Color(0, 0.42745098, 0.46666667, 1)
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_yqghj")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1ra2f")
+text = "Create Account"
+icon_alignment = 1
+
+[node name="LoginButton" type="Button" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1597034203]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9999996, 0.86694896, 0.3908733, 1)
+theme_override_colors/font_hover_color = Color(0.9844567, 0.98021656, 0.48882973, 1)
+theme_override_colors/icon_normal_color = Color(0.9329586, 0.482018, 0.8072526, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 0.30588236, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_q6q86")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ncxbt")
+text = "Already have an Account? - Login"
+
+[node name="ErrorMessage" type="Label" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1963877266]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+
+[node name="CloseButton" type="Button" parent="SignupScreen/Container/Panel" unique_id=911268867]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "X"
