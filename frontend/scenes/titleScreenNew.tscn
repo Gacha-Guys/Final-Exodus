@@ -3,11 +3,26 @@
 [ext_resource type="Script" uid="uid://cfx28hd83kl2q" path="res://scripts/title_screen_new.gd" id="1_cupy0"]
 [ext_resource type="AudioStream" uid="uid://ccwfftujpv1wi" path="res://assets/title.mp3" id="1_cwgxd"]
 [ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_cduda"]
-[ext_resource type="Texture2D" uid="uid://blfpp6xew56ib" path="res://assets/logo2.png" id="3_6etng"]
+[ext_resource type="Texture2D" uid="uid://brjtgoky1uym7" path="res://assets/logo3.png" id="2_cupy0"]
 [ext_resource type="PackedScene" uid="uid://c0w8741a4hxll" path="res://ui/button.tscn" id="6_8r2gn"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_cupy0"]
 load_path = "res://.godot/imported/banishment.png-7484c7691332c8cb673b88870252808c.ctex"
+
+[sub_resource type="FontVariation" id="FontVariation_i35ur"]
+base_font = ExtResource("2_cduda")
+variation_opentype = {
+2003265652: 500
+}
+spacing_glyph = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_85hqo"]
+font = SubResource("FontVariation_i35ur")
+font_size = 32
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.21176471)
 
 [node name="Control" type="Control" unique_id=1118355167]
 clip_contents = true
@@ -45,7 +60,7 @@ offset_right = 273.375
 offset_bottom = 406.2798
 grow_horizontal = 2
 size_flags_vertical = 0
-texture = ExtResource("3_6etng")
+texture = ExtResource("2_cupy0")
 expand_mode = 5
 stretch_mode = 4
 
@@ -68,9 +83,9 @@ script = ExtResource("1_cupy0")
 layout_mode = 2
 size_flags_vertical = 8
 theme_override_constants/outline_size = 4
-theme_override_fonts/font = ExtResource("2_cduda")
 theme_override_font_sizes/font_size = 36
 text = "Start"
+label_settings = SubResource("LabelSettings_85hqo")
 horizontal_alignment = 1
 
 [node name="Button" parent="." unique_id=1032644258 instance=ExtResource("6_8r2gn")]

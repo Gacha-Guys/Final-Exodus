@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://byoilcis3e4if"]
+
+[ext_resource type="Script" uid="uid://cjo5d0aqnqem3" path="res://ui/currency_label.gd" id="1_kcvk7"]
+[ext_resource type="Texture2D" uid="uid://cq0urxiugsuc5" path="res://assets/dark_background.svg" id="1_pxahw"]
+[ext_resource type="FontFile" uid="uid://eugmrge5xpgf" path="res://assets/VarelaRound-Regular.ttf" id="3_ukbxc"]
+
+[sub_resource type="FontVariation" id="FontVariation_hq8nb"]
+base_font = ExtResource("3_ukbxc")
+
+[sub_resource type="LabelSettings" id="LabelSettings_aqapl"]
+font = SubResource("FontVariation_hq8nb")
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 0.37254903)
+
+[node name="Control" type="Control" unique_id=1459214309]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -596.0
+offset_bottom = -1249.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kcvk7")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="." unique_id=700665432]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_pxahw")
+patch_margin_left = 8
+patch_margin_top = 8
+patch_margin_right = 8
+patch_margin_bottom = 8
+
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect" unique_id=1165773354]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 20.0
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="TextureRect" type="TextureRect" parent="NinePatchRect/MarginContainer" unique_id=1858764714]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer2" type="MarginContainer" parent="NinePatchRect" unique_id=161943178]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -9.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/margin_right = 8
+
+[node name="Value" type="Label" parent="NinePatchRect/MarginContainer2" unique_id=345574808]
+layout_mode = 2
+text = "0"
+label_settings = SubResource("LabelSettings_aqapl")
