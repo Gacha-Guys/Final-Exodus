@@ -13,6 +13,7 @@ func _ready() -> void:
 	column.add_theme_constant_override("separation", 16)
 	margin.add_child(column)
 	var title := Label.new()
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	title.text = "FINAL EXODUS — TEAM SYNC TEST"
 	title.add_theme_font_size_override("font_size", 28)
 	column.add_child(title)
@@ -23,6 +24,7 @@ func _ready() -> void:
 	for member in TEAM:
 		var row := Label.new()
 		var path := "res://team_checkins/%s.txt" % member
+		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		row.text = "%s: %s" % [member.capitalize(), FileAccess.get_file_as_string(path).strip_edges()]
 		column.add_child(row)
 	var button := Button.new()
@@ -36,3 +38,8 @@ func _ready() -> void:
 	note.text = "Local button clicks reset when you restart. GitHub syncs files, not live game state.\nThis screen does not connect to the backend yet."
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(note)
+
+	var accounts := Button.new()
+	accounts.text = "Open account creation test"
+	accounts.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/registration_test.tscn"))
+	column.add_child(accounts)

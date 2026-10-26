@@ -70,9 +70,11 @@ On Mac, change the CA path to your actual `/Users/.../ca.pem` path. Use the prov
 
 The first command should say **Connected: accounts and wallets are readable.** It does not create records. Leave the second command running. Open http://127.0.0.1:8001/docs for the API reference.
 
-## 5. Try registration through the API
+## 5. Test from Godot
 
-With the API running, open http://127.0.0.1:8001/docs. Expand **POST /accounts**, choose **Try it out**, and supply a disposable test email, display name, and a 12–128 character password. Execute to create a real test account in the shared database. A repeated email should return409. No login or phone registration screen is included in this backend PR; the Godot screen follows separately.
+Run `frontend/project.godot`. Expand **Developer connection settings**, leave the API origin at `http://127.0.0.1:8001`, and select **Check API connection**. Create an account using a disposable test email/password. This writes a real test account to the shared database. Use a different test email per person. The UI clears the password after submission.
+
+Each teammate can run their own local API against the same Aiven database. The phone layout in a laptop window is a preview. A physical phone needs a reachable HTTPS backend; its localhost is the phone, not your laptop. Shared hosting and real-device testing remain separate work.
 
 ## 6. View saved player accounts in MySQL Workbench
 
@@ -110,7 +112,7 @@ When using the Godot screen from the separate UI PR, its API origin must match t
 | Access denied | Use the API database credentials, not your Aiven website password; ask Tyler to check grants. |
 | Certificate error | Check the CA path and certificate match this project. Keep verification enabled. |
 | Address already in use | Stop your older API, or choose another port and use that port in Godot too. |
-| Health works but registration fails | Health checks only the API process; run the database checker and confirm tables/grants. |
+| Godot says API is running but registration fails | Health checks only the API process; run the database checker and confirm tables/grants. |
 | Too many attempts | Wait at least 60 seconds. The default limit is 5 registration attempts per IP/minute, including invalid requests. |
 
 Run [the automated tests](../docs/TESTING.md) before requesting review. The limiter is for a single local worker; shared deployment requires a reviewed proxy/throttle setup. Account/password/age policies are still provisional. Registration does not implement login or purchase eligibility.
