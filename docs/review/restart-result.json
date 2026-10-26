@@ -1,0 +1,7 @@
+{
+  "api_restarted": true,
+  "session_survived_restart": true,
+  "battle_survived_restart": true,
+  "retry_did_not_repeat_damage": true,
+  "logout_revoked_session": true
+}

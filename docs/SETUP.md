@@ -8,7 +8,7 @@ Use **Godot 4.7.2 standard**, GDScript. No .NET SDK or Godot Git plugin is requi
 2. In GitHub Desktop, clone that repository to a normal local folder (not a OneDrive/iCloud/Dropbox synced folder).
 3. Fetch and pull the branch containing this starter. If it is in an open pull request, switch to its branch; after merge, use main.
 4. In Godot, choose Import and select `frontend/project.godot` inside your clone. Do not create a separate new project.
-5. Open the imported project and press F6 to run the open test scene, or F5 to run the project. On some laptops hold Fn too; the Play button also works.
+5. For the original sync test, open `frontend/scenes/sync_test.tscn` and press F6. F5 runs the title/account flow on this demo branch; follow [LOCAL_DEMO.md](LOCAL_DEMO.md) for that connected demo. On some laptops hold Fn too; the Play button also works.
 6. Confirm all four names appear and the test button counts clicks without errors.
 
 ## Prove everyone's changes sync
@@ -29,4 +29,4 @@ Commit project.godot, .tscn/.tres scenes/resources, .gd scripts, .uid sidecars, 
 
 ## Next connection milestone
 
-After file syncing passes: add an API health check and GDScript registration screen; test a real account write from two machines. A shared HTTPS API address is required for shared backend testing; localhost refers to the machine running Godot. Login/profile read-back comes next. This starter does not claim frontend/backend integration or completion of a Jira story.
+The local demo branch now includes account, hub and combat connections on one Mac. Shared two-machine testing and Aiven integration are still separate checks. A shared HTTPS API address is required for remote backend testing; localhost refers to the machine running Godot. The limited demo does not mark the complete Jira stories done.
