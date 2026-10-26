@@ -64,9 +64,10 @@ layout_mode = 2
 placeholder_text = "Email"
 
 [node name="DoBInput" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=326228128]
-visible = false
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 33)
 layout_mode = 2
-placeholder_text = "Month/Day/Year"
+placeholder_text = "Birth date (YYYY-MM-DD)"
 
 [node name="UsernameInput" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=261000023]
 unique_name_in_owner = true
@@ -78,7 +79,7 @@ placeholder_text = "Username"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 33)
 layout_mode = 2
-placeholder_text = "Password"
+placeholder_text = "Password (12–128 characters)"
 secret = true
 
 [node name="PasswordConfirmation" type="LineEdit" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1522618636]
@@ -112,7 +113,8 @@ text = "Already have an Account? - Login"
 [node name="ErrorMessage" type="Label" parent="SignupScreen/Container/Panel/Margin/VBox" unique_id=1963877266]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 2
 
 [node name="CloseButton" type="Button" parent="SignupScreen/Container/Panel" unique_id=911268867]
 unique_name_in_owner = true

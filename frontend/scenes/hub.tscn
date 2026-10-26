@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://klxyuv0db4c3"]
 
+[ext_resource type="Script" path="res://scripts/demo/hub_controller.gd" id="99_demo"]
 [ext_resource type="Texture2D" uid="uid://dd2v53h3io3qc" path="res://assets/background.svg" id="1_2hkft"]
 [ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_441x5"]
 [ext_resource type="Texture2D" uid="uid://q8uofkaqjl3o" path="res://assets/particle.svg" id="2_s6eg2"]
@@ -62,6 +63,7 @@ variation_opentype = {
 }
 
 [node name="Control" type="Control" unique_id=516966562]
+script = ExtResource("99_demo")
 clip_contents = true
 layout_mode = 3
 anchors_preset = 15

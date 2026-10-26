@@ -1,4 +1,4 @@
-.venv/
+.venv
 __pycache__/
 .env
 
@@ -12,3 +12,6 @@ __pycache__/
 !.env.example
 *.local.cfg
 exports/
+
+# Godot temporary scene saves
+*.tscn*.tmp

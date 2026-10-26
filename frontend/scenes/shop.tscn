@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://8r65ldhtel6f"]
 
+[ext_resource type="Script" path="res://scripts/demo/hub_controller.gd" id="99_demo"]
 [ext_resource type="Texture2D" uid="uid://dd2v53h3io3qc" path="res://assets/background.svg" id="1_j14q8"]
 [ext_resource type="PackedScene" uid="uid://cqyhc8uo5aufb" path="res://ui/menubutton.tscn" id="2_5u241"]
 [ext_resource type="Texture2D" uid="uid://oyhqoa4315ru" path="res://assets/house.png" id="3_pqync"]
@@ -47,6 +48,7 @@ texture = ExtResource("15_j14q8")
 texture = ExtResource("14_gobkm")
 
 [node name="Shop" type="Control" unique_id=657998352]
+script = ExtResource("99_demo")
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
