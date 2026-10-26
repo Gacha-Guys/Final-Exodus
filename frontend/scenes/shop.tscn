@@ -1,0 +1,576 @@
+[gd_scene format=3 uid="uid://8r65ldhtel6f"]
+
+[ext_resource type="Texture2D" uid="uid://dd2v53h3io3qc" path="res://assets/background.svg" id="1_j14q8"]
+[ext_resource type="PackedScene" uid="uid://cqyhc8uo5aufb" path="res://ui/menubutton.tscn" id="2_5u241"]
+[ext_resource type="Texture2D" uid="uid://oyhqoa4315ru" path="res://assets/house.png" id="3_pqync"]
+[ext_resource type="Texture2D" uid="uid://kmt05g6wn163" path="res://assets/topbar.svg" id="4_yuijs"]
+[ext_resource type="Texture2D" uid="uid://btov0u4o1qcmh" path="res://assets/xpdeco.png" id="5_aa4hd"]
+[ext_resource type="Texture2D" uid="uid://c103vjqew1cps" path="res://assets/outer.png" id="6_68utx"]
+[ext_resource type="Texture2D" uid="uid://biwljd3ie8gcn" path="res://assets/inner.png" id="7_ru2r1"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="8_lxs01"]
+[ext_resource type="Texture2D" uid="uid://b0e1jg5f75cfh" path="res://assets/underxp.png" id="9_6nbx6"]
+[ext_resource type="Texture2D" uid="uid://cyee6418btc25" path="res://assets/outerxp.svg" id="10_mihhf"]
+[ext_resource type="Texture2D" uid="uid://p0xy251te8ig" path="res://assets/innerxp.png" id="11_5lclc"]
+[ext_resource type="PackedScene" uid="uid://byoilcis3e4if" path="res://ui/currency_label.tscn" id="12_ouqob"]
+[ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="13_p0at6"]
+[ext_resource type="Texture2D" uid="uid://o1kfamne8eu7" path="res://assets/blue.png" id="14_gobkm"]
+[ext_resource type="Texture2D" uid="uid://l6y15ycm74ox" path="res://assets/blue_pressed.png" id="15_j14q8"]
+[ext_resource type="Texture2D" uid="uid://cp7a16wdr3in5" path="res://assets/inner_gold.png" id="16_j14q8"]
+
+[sub_resource type="FontVariation" id="FontVariation_5tx5h"]
+base_font = ExtResource("8_lxs01")
+variation_opentype = {
+2003265652: 800
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_a6g3j"]
+font = SubResource("FontVariation_5tx5h")
+font_size = 20
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.2509804)
+
+[sub_resource type="FontVariation" id="FontVariation_posyw"]
+base_font = ExtResource("8_lxs01")
+variation_opentype = {
+2003265652: 800
+}
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gobkm"]
+texture = ExtResource("14_gobkm")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3lynd"]
+texture = ExtResource("15_j14q8")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_j14q8"]
+texture = ExtResource("14_gobkm")
+
+[node name="Shop" type="Control" unique_id=657998352]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="NinePatchRect" parent="." unique_id=558837077]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_j14q8")
+region_rect = Rect2(0, 0, 310, 566)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 30
+patch_margin_bottom = 30
+
+[node name="HomeButton" parent="." unique_id=1300157542 instance=ExtResource("2_5u241")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 3.0
+offset_top = -120.0
+offset_right = 123.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("3_pqync")
+text = "Home"
+target_scene = "uid://klxyuv0db4c3"
+
+[node name="SummonButton" parent="." unique_id=938921911 instance=ExtResource("2_5u241")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 123.0
+offset_top = -120.0
+offset_right = 243.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("3_pqync")
+text = "Summon"
+target_scene = "uid://c0w8741a4hxll"
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1649666065]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="NinePatchRect" type="NinePatchRect" parent="MarginContainer" unique_id=1355859355]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+texture = ExtResource("4_yuijs")
+region_rect = Rect2(0, 0, 264, 264)
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/NinePatchRect" unique_id=1465391215]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -97.5
+offset_top = 12.0
+offset_right = 97.5
+offset_bottom = 97.0
+grow_horizontal = 2
+texture = ExtResource("5_aa4hd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/NinePatchRect" unique_id=525392358]
+layout_mode = 0
+offset_left = 278.0
+offset_right = 378.0
+offset_bottom = 100.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = -16
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/NinePatchRect/MarginContainer" unique_id=1036711732]
+layout_mode = 2
+
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer" unique_id=1624148562]
+layout_mode = 2
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_over = ExtResource("6_68utx")
+texture_progress = ExtResource("7_ru2r1")
+
+[node name="Label" type="Label" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer/TextureProgressBar2" unique_id=63734191]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Rank
+67"
+label_settings = SubResource("LabelSettings_a6g3j")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=1507035455]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = 24.0
+offset_right = 75.0
+offset_bottom = 174.0
+grow_horizontal = 2
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_under = ExtResource("9_6nbx6")
+texture_over = ExtResource("10_mihhf")
+texture_progress = ExtResource("11_5lclc")
+
+[node name="Label2" type="Label" parent="TextureProgressBar" unique_id=306810040]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -42.5
+offset_top = -16.5
+offset_right = 42.5
+offset_bottom = 16.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_posyw")
+theme_override_font_sizes/font_size = 16
+text = "55400
+/
+140323"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UnitsButton" parent="." unique_id=887624096 instance=ExtResource("2_5u241")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -117.0
+offset_top = -120.0
+offset_right = 3.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("3_pqync")
+text = "Units"
+target_scene = "uid://c0w8741a4hxll"
+
+[node name="Currency" parent="." unique_id=1459214309 instance=ExtResource("12_ouqob")]
+layout_mode = 1
+offset_left = 540.0
+offset_top = 63.0
+offset_right = -51.0
+offset_bottom = -1184.0
+texture = ExtResource("13_p0at6")
+
+[node name="ShopButton" parent="." unique_id=188500501 instance=ExtResource("2_5u241")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -237.0
+offset_top = -120.0
+offset_right = -117.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("3_pqync")
+text = "Shop"
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1675962020]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/v_separation = 17
+
+[node name="CurrencyButton1" type="Button" parent="GridContainer" unique_id=836134227]
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
+theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton1" unique_id=1190360002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 29
+
+[node name="LeftSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton1/HBoxContainer" unique_id=841349976]
+layout_mode = 2
+theme_override_constants/margin_right = 0
+
+[node name="Gem" type="TextureRect" parent="GridContainer/CurrencyButton1/HBoxContainer" unique_id=1924089551]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton1/HBoxContainer" unique_id=484466424]
+layout_mode = 2
+theme_override_constants/margin_right = 60
+
+[node name="PriceContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton1/HBoxContainer" unique_id=908913608]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton1/HBoxContainer/PriceContainer" unique_id=706391565]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "50 Gems"
+
+[node name="Price" type="Label" parent="GridContainer/CurrencyButton1/HBoxContainer/PriceContainer" unique_id=897061075]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "$1.99"
+
+[node name="CurrencyButton2" type="Button" parent="GridContainer" unique_id=2061278524]
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
+theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton2" unique_id=2079073283]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 29
+
+[node name="LeftSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton2/HBoxContainer" unique_id=1863816487]
+layout_mode = 2
+theme_override_constants/margin_right = 0
+
+[node name="GemMargin1" type="MarginContainer" parent="GridContainer/CurrencyButton2/HBoxContainer" unique_id=472511908]
+layout_mode = 2
+theme_override_constants/margin_right = -70
+
+[node name="Gem1" type="TextureRect" parent="GridContainer/CurrencyButton2/HBoxContainer/GemMargin1" unique_id=1327799328]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="Gem2" type="TextureRect" parent="GridContainer/CurrencyButton2/HBoxContainer" unique_id=1032573521]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton2/HBoxContainer" unique_id=302517918]
+layout_mode = 2
+theme_override_constants/margin_right = 20
+
+[node name="PriceContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton2/HBoxContainer" unique_id=233658803]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton2/HBoxContainer/PriceContainer" unique_id=1929280083]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "200 Gems"
+
+[node name="Price" type="Label" parent="GridContainer/CurrencyButton2/HBoxContainer/PriceContainer" unique_id=860903685]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "$2.99"
+
+[node name="CurrencyButton3" type="Button" parent="GridContainer" unique_id=1822821962]
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
+theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton3" unique_id=1339233108]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 29
+
+[node name="LeftSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton3/HBoxContainer" unique_id=707991172]
+layout_mode = 2
+theme_override_constants/margin_right = 0
+
+[node name="GemMargin1" type="MarginContainer" parent="GridContainer/CurrencyButton3/HBoxContainer" unique_id=822363170]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = -30
+
+[node name="Gem1" type="TextureRect" parent="GridContainer/CurrencyButton3/HBoxContainer/GemMargin1" unique_id=1559243408]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin2" type="MarginContainer" parent="GridContainer/CurrencyButton3/HBoxContainer" unique_id=1522640194]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem2" type="TextureRect" parent="GridContainer/CurrencyButton3/HBoxContainer/GemMargin2" unique_id=1637475301]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin3" type="MarginContainer" parent="GridContainer/CurrencyButton3/HBoxContainer" unique_id=1246619382]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = 0
+
+[node name="Gem3" type="TextureRect" parent="GridContainer/CurrencyButton3/HBoxContainer/GemMargin3" unique_id=440002232]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton3/HBoxContainer" unique_id=1541796307]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+
+[node name="PriceContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton3/HBoxContainer/MidSeparate" unique_id=419758564]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton3/HBoxContainer/MidSeparate/PriceContainer" unique_id=2105576606]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "500 Gems"
+
+[node name="Price" type="Label" parent="GridContainer/CurrencyButton3/HBoxContainer/MidSeparate/PriceContainer" unique_id=26020490]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "$5.99"
+
+[node name="CurrencyButton4" type="Button" parent="GridContainer" unique_id=1563679057]
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
+theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton4" unique_id=21714957]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 29
+
+[node name="LeftSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton4/HBoxContainer" unique_id=2062432528]
+layout_mode = 2
+theme_override_constants/margin_right = 0
+
+[node name="GemMargin1" type="MarginContainer" parent="GridContainer/CurrencyButton4/HBoxContainer" unique_id=418304149]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = -30
+
+[node name="Gem1" type="TextureRect" parent="GridContainer/CurrencyButton4/HBoxContainer/GemMargin1" unique_id=1118386189]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin2" type="MarginContainer" parent="GridContainer/CurrencyButton4/HBoxContainer" unique_id=1902342454]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem2" type="TextureRect" parent="GridContainer/CurrencyButton4/HBoxContainer/GemMargin2" unique_id=1354963100]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin3" type="MarginContainer" parent="GridContainer/CurrencyButton4/HBoxContainer" unique_id=1942133921]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem3" type="TextureRect" parent="GridContainer/CurrencyButton4/HBoxContainer/GemMargin3" unique_id=1027988439]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin4" type="MarginContainer" parent="GridContainer/CurrencyButton4/HBoxContainer" unique_id=1558021702]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem3" type="TextureRect" parent="GridContainer/CurrencyButton4/HBoxContainer/GemMargin4" unique_id=566381621]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton4/HBoxContainer" unique_id=1320811595]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+
+[node name="PriceContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton4/HBoxContainer/MidSeparate" unique_id=1872026155]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton4/HBoxContainer/MidSeparate/PriceContainer" unique_id=457601686]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "999 Gems"
+
+[node name="Price" type="Label" parent="GridContainer/CurrencyButton4/HBoxContainer/MidSeparate/PriceContainer" unique_id=107515443]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "$9.99"
+
+[node name="CurrencyButton5" type="Button" parent="GridContainer" unique_id=160343402]
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
+theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=474536334]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1024291369]
+layout_mode = 2
+theme_override_constants/margin_bottom = 20
+
+[node name="TextureRect" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer2" unique_id=1752993698]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+texture = ExtResource("5_aa4hd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1395122197]
+layout_mode = 2
+theme_override_constants/margin_left = -162
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 0
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer" unique_id=820343364]
+custom_maximum_size = Vector2(100, -1)
+layout_mode = 2
+
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer/AspectRatioContainer" unique_id=2124997287]
+custom_maximum_size = Vector2(85, 85)
+layout_mode = 2
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_over = ExtResource("6_68utx")
+texture_progress = ExtResource("16_j14q8")
+
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1483356421]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=303588534]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Gamepass
+$9.99"
+horizontal_alignment = 1
