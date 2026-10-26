@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="13_p0at6"]
 [ext_resource type="Texture2D" uid="uid://o1kfamne8eu7" path="res://assets/blue.png" id="14_gobkm"]
 [ext_resource type="Texture2D" uid="uid://l6y15ycm74ox" path="res://assets/blue_pressed.png" id="15_j14q8"]
+[ext_resource type="Texture2D" uid="uid://cp7a16wdr3in5" path="res://assets/inner_gold.png" id="16_j14q8"]
 
 [sub_resource type="FontVariation" id="FontVariation_5tx5h"]
 base_font = ExtResource("8_lxs01")
@@ -245,7 +246,6 @@ offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("3_pqync")
 text = "Shop"
-target_scene = null
 
 [node name="GridContainer" type="GridContainer" parent="." unique_id=1675962020]
 layout_mode = 1
@@ -526,93 +526,51 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=15488762]
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=474536334]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 29
 
-[node name="LeftSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=409572415]
+[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1024291369]
 layout_mode = 2
+theme_override_constants/margin_bottom = 20
+
+[node name="TextureRect" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer2" unique_id=1752993698]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+texture = ExtResource("5_aa4hd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1395122197]
+layout_mode = 2
+theme_override_constants/margin_left = -162
+theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 0
 
-[node name="GemMargin1" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1563427058]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer" unique_id=820343364]
+custom_maximum_size = Vector2(100, -1)
 layout_mode = 2
-theme_override_constants/margin_left = 0
-theme_override_constants/margin_right = -30
 
-[node name="Gem1" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin1" unique_id=1969896388]
-custom_minimum_size = Vector2(60, 0)
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer/AspectRatioContainer" unique_id=2124997287]
+custom_maximum_size = Vector2(85, 85)
 layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("13_p0at6")
-expand_mode = 5
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_over = ExtResource("6_68utx")
+texture_progress = ExtResource("16_j14q8")
 
-[node name="GemMargin2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=827932267]
-layout_mode = 2
-theme_override_constants/margin_left = -30
-theme_override_constants/margin_right = -30
-
-[node name="Gem2" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin2" unique_id=67755949]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("13_p0at6")
-expand_mode = 5
-
-[node name="GemMargin3" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=198757511]
-layout_mode = 2
-theme_override_constants/margin_left = -30
-theme_override_constants/margin_right = -30
-
-[node name="Gem3" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin3" unique_id=2079129704]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("13_p0at6")
-expand_mode = 5
-
-[node name="GemMargin4" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=839330821]
-layout_mode = 2
-theme_override_constants/margin_left = -30
-theme_override_constants/margin_right = -30
-
-[node name="Gem4" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin4" unique_id=655862393]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("13_p0at6")
-expand_mode = 5
-
-[node name="GemMargin5" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=228945015]
-layout_mode = 2
-theme_override_constants/margin_left = -30
-theme_override_constants/margin_right = -30
-
-[node name="Gem5" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin5" unique_id=1035729198]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-size_flags_vertical = 4
-texture = ExtResource("13_p0at6")
-expand_mode = 5
-
-[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1221053214]
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1483356421]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 
-[node name="PriceContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=391548091]
-layout_mode = 2
-theme_override_constants/separation = 5
-
-[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate/PriceContainer" unique_id=416014828]
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=303588534]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "2000 Gems"
-
-[node name="Price" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate/PriceContainer" unique_id=1414198800]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "$14.99"
+text = "Gamepass
+$9.99"
+horizontal_alignment = 1
