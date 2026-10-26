@@ -8,8 +8,8 @@ Local source commits: `18b7070` (team UI integration), `86685c6` (API), `366693f
 | Dependency consistency | Passed |
 | Python source compilation | Passed |
 | Godot 4.7.2 editor import and default startup | Passed, no script errors or resource warnings |
-| Connected UI driver, normal portrait window | 34 checks passed |
-| Connected UI driver, smaller portrait window | 34 checks passed |
+| Connected UI driver, normal portrait window | 37 checks passed |
+| Connected UI driver, smaller portrait window | 37 checks passed |
 | Actual API process restart | Session, battle and retry record recovered |
 | Native mouse/keyboard rehearsal | Registration, login, party attacks, settings, shop, unavailable API/retry and client restart verified |
 | Secret and whitespace review | Passed; private database values absent from committed files |
@@ -25,3 +25,5 @@ Screenshots: [hub](hub.png), [battle](battle.png), [victory](victory.png), [shop
 Second-pass review corrected a MySQL snapshot race during simultaneous battle starts, the missing shop controller binding, a duplicate battle-entry control, preview-text overlap, response validation and headless audio cleanup. Final checks show no remaining blocker for the local demo.
 
 No push, public PR, main merge, Jira transition, teammate message or shared Aiven write occurred. Live Aiven integration, another machine and real mobile input remain unverified. Rewards, payments and the full roster are outside this demo.
+
+Independent adversarial review subsequently rated local presentation readiness 8.5/10 and shared/public deployment 3/10. It reproduced no demo blocker and identified one settings-response validation gap, now fixed and covered by 3 additional UI assertions. See [ADVERSARIAL_REVIEW.md](ADVERSARIAL_REVIEW.md). The live walkthrough also created a second disposable account, now named Tyler Presentation, with one saved victory.

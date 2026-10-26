@@ -89,6 +89,12 @@ func run() -> void:
 	hub.name_input.text = "UI Saved Name"
 	await hub.save_name()
 	expect(hub.player_label.text == "UI Saved Name", "Settings updates persisted name")
+	var profile_before: Dictionary = session.account.duplicate(true)
+	var wrong_profile: Dictionary = profile_before.duplicate(true)
+	wrong_profile.id = int(profile_before.id) + 1
+	for invalid_profile in [null, {}, wrong_profile]:
+		hub.apply_name_result({"ok": true, "data": invalid_profile})
+		expect(session.account == profile_before and hub.player_label.text == "UI Saved Name" and hub.settings_message.text.contains("Unexpected"), "Invalid settings response cannot replace the current account")
 	hub.settings.hide()
 	hub.open_battle()
 	await process_frame

@@ -186,8 +186,14 @@ func save_name() -> void:
 	settings.get_ok_button().disabled = true
 	settings_message.text = "Saving…"
 	var result: Dictionary = await GameSession.request("/me", HTTPClient.METHOD_PATCH, {"display_name": name_input.text})
+	apply_name_result(result)
+
+func apply_name_result(result: Dictionary) -> void:
 	settings.get_ok_button().disabled = false
 	if result.ok:
+		if not GameSession.valid_account(result.data) or int(result.data.id) != int(GameSession.account.id):
+			settings_message.text = "Unexpected account response. Refresh and retry."
+			return
 		GameSession.account = result.data
 		player_label.text = GameSession.account.display_name
 		settings_message.text = "Name saved."
