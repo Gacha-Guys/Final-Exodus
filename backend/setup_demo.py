@@ -16,7 +16,20 @@ def main():
     args = parser.parse_args()
     target = Path(__file__).parent / ".env.demo"
     if target.exists():
-        print("Local demo configuration already exists. No database changes made.")
+        existing = dotenv_values(target)
+        if existing.get("FINAL_EXODUS_DB_HOST") != "127.0.0.1" or existing.get("FINAL_EXODUS_DB") != DATABASE:
+            raise SystemExit("Existing configuration is not the isolated local demo. No changes made.")
+        private = dotenv_values(args.admin_env)
+        with pymysql.connect(host="127.0.0.1", port=3307, user="root",
+                             password=private["FINAL_EXODUS_ROOT_PASSWORD"], database=DATABASE) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute((Path(__file__).parent / "demo/google_schema.sql").read_text())
+        if not existing.get("FINAL_EXODUS_JWT_SECRET"):
+            target.chmod(0o600)
+            with target.open("a") as stream:
+                stream.write("\nFINAL_EXODUS_JWT_SECRET=" + secrets.token_urlsafe(48) + "\n")
+        target.chmod(0o600)
+        print("Local auth setup ready. Existing accounts and battles preserved.")
         return
     private = dotenv_values(args.admin_env)
     password = secrets.token_urlsafe(32)
@@ -41,11 +54,13 @@ def main():
             for statement in after.split(";"):
                 if statement.strip():
                     cursor.execute(statement)
+            cursor.execute((Path(__file__).parent / "demo/google_schema.sql").read_text())
             cursor.execute("CREATE USER 'tyler_demo_api'@'%%' IDENTIFIED BY %s", (password,))
             cursor.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON `{DATABASE}`.* TO 'tyler_demo_api'@'%'")
         content = ("FINAL_EXODUS_DB_HOST=127.0.0.1\nFINAL_EXODUS_DB_PORT=3307\n"
                    "FINAL_EXODUS_DB_USER=tyler_demo_api\n"
-                   f"FINAL_EXODUS_DB_PASSWORD={password}\nFINAL_EXODUS_DB={DATABASE}\n")
+                   f"FINAL_EXODUS_DB_PASSWORD={password}\nFINAL_EXODUS_DB={DATABASE}\n"
+                   f"FINAL_EXODUS_JWT_SECRET={secrets.token_urlsafe(48)}\n")
         fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         with os.fdopen(fd, "w") as stream:
             stream.write(content)

@@ -63,6 +63,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 27
 text = "Login"
 
+[node name="GoogleButton" type="Button" parent="LoginScreen/Container/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Continue with Google"
+
 [node name="SignUpButton" type="LinkButton" parent="LoginScreen/Container/Panel/Margin/VBox" unique_id=235190190]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)

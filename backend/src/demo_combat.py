@@ -3,9 +3,10 @@ import json
 from uuid import UUID, uuid4
 from typing import Annotated
 
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import Field
 from .demo_accounts import Body, authenticate
+from .demo_tokens import authorization_header
 from .demo_store import transaction
 
 router = APIRouter()
@@ -49,7 +50,7 @@ def advance(state, actor):
 
 
 @router.post("/battles")
-def start(body: Start, authorization: str | None = Header(default=None)):
+def start(body: Start, authorization: str | None = Depends(authorization_header)):
     with transaction() as cursor:
         user_id = authenticate(cursor, authorization)
         cursor.execute("SELECT id FROM Users WHERE id=%s FOR UPDATE", (user_id,))
@@ -68,7 +69,7 @@ def start(body: Start, authorization: str | None = Header(default=None)):
 
 
 @router.get("/battles/current")
-def current(authorization: str | None = Header(default=None)):
+def current(authorization: str | None = Depends(authorization_header)):
     with transaction() as cursor:
         user_id = authenticate(cursor, authorization)
         cursor.execute("SELECT state FROM DemoBattles WHERE u_id=%s ORDER BY created_at DESC,id DESC LIMIT 1", (user_id,))
@@ -77,7 +78,7 @@ def current(authorization: str | None = Header(default=None)):
 
 
 @router.post("/battles/{battle_id}/actions")
-def attack(battle_id: UUID, body: Attack, authorization: str | None = Header(default=None)):
+def attack(battle_id: UUID, body: Attack, authorization: str | None = Depends(authorization_header)):
     with transaction() as cursor:
         user_id = authenticate(cursor, authorization)
         cursor.execute("SELECT state FROM DemoBattles WHERE id=%s AND u_id=%s FOR UPDATE", (str(battle_id), user_id))

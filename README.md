@@ -4,7 +4,7 @@ Shared Godot game project for Intro to Software Engineering.
 
 ## Local connected demo
 
-On `feature/tyler-connected-demo`, follow [the local demo guide](docs/LOCAL_DEMO.md) to run the API and game, review validation, and rehearse the presentation. This uses an isolated local database and does not migrate Aiven.
+On `feature/tyler-connected-demo`, follow [the local demo guide](docs/LOCAL_DEMO.md) to run the API and game, review validation, and rehearse the presentation. This uses an isolated local database and does not migrate Aiven. Authentication uses JWT and Argon2; [Google sign-in setup and validation limits](docs/AUTHENTICATION.md) are documented separately.
 
 ## Start here
 

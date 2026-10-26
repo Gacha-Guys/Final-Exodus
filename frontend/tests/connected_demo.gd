@@ -59,6 +59,19 @@ func run() -> void:
 	title._start_input(click)
 	await process_frame
 	expect(current_scene == title and session.token.is_empty(), "Unauthenticated Start stays on title")
+	var initial_login: Node = title.popup
+	expect(initial_login.fields.get_global_rect().encloses(initial_login.get_node("%GoogleButton").get_global_rect()), "Google sign-in button fits the login popup")
+	await screenshot("login")
+	initial_login.google_sign_in()
+	var google: Node = initial_login.get_node("GoogleSignIn")
+	for step in range(100):
+		await create_timer(0.02).timeout
+		if google.status.text.contains("setup"):
+			break
+	expect(google.status.text.contains("setup") and session.token.is_empty(), "Unconfigured Google sign-in explains setup without entering the hub")
+	await screenshot("google-setup")
+	await google.cancel()
+	expect(not initial_login.pending, "Cancelling Google sign-in restores email login")
 	title._pop_signup()
 	await process_frame
 	var signup: Node = title.popup
@@ -83,6 +96,7 @@ func run() -> void:
 	var hub: Node = await wait_scene("hub.tscn")
 	await settle(hub)
 	expect(hub.scene_file_path.ends_with("hub.tscn"), "Valid login enters existing hub")
+	expect(session.token.split(".").size() == 3, "Email login uses a signed JWT access token")
 	expect(hub.player_label.text == "UI Demo" and hub.get_node("Currency").val == "0", "Hub displays actual profile and trigger-created balances")
 	await screenshot("hub")
 	hub.open_settings()

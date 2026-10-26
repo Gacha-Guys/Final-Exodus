@@ -25,3 +25,9 @@ Fixed by validating the returned account and requiring its ID to match the curre
 Automated UI assertions call scene methods and inspect application state; they are not 37 real mouse clicks. Native interaction rehearsal is separate evidence. Aiven, public HTTPS hosting, shared schema/access changes, a second machine, mobile input, full player-owned characters and rewards/payments remain outside the verified local demo. The authentication limiter remains single-process.
 
 No push, published PR, main merge or shared database write was performed.
+
+## Authentication follow-up
+
+The independent reviewer reran 58 backend tests plus 12 subtests. A reproduced Google certificate-fetch callback signature bug was fixed and verified. JWT forgery/algorithm/expiry/audience/issuer/subject checks and Google state/nonce/PKCE/replay/email-isolation checks pass. Separate probes allowed one exchange for 12 parallel callbacks and prevented cancellation from resurrecting an in-progress flow. The final frontend pass found no blocking issue in cancellation or failed profile loading. A minor inactive-controller cleanup was also applied after the review.
+
+These results use simulated Google responses and signed test certificates. They do not establish a real Google browser round trip; that remains pending the OAuth client setup. No new numerical readiness rating was requested or assigned for this auth change.

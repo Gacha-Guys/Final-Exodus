@@ -1,13 +1,13 @@
 """Users/Currency account access for the isolated demo."""
-from datetime import date, datetime, timedelta, timezone
-import hashlib
+from datetime import date
 import secrets
 
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr, field_validator
 from pwdlib import PasswordHash
 from pwdlib.exceptions import UnknownHashError
 from .demo_store import transaction
+from .demo_tokens import authenticate, authorization_header, issue_session, token_hash
 
 router = APIRouter()
 password_hash = PasswordHash.recommended()
@@ -43,24 +43,6 @@ class Registration(Name):
 class Login(Body):
     email: EmailStr
     password: SecretStr = Field(min_length=1, max_length=128)
-
-
-def token_hash(token):
-    return hashlib.sha256(token.encode()).hexdigest()
-
-
-def authenticate(cursor, authorization):
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(401, "Please log in again")
-    token = authorization[7:]
-    if not 20 <= len(token) <= 128:
-        raise HTTPException(401, "Please log in again")
-    cursor.execute("SELECT u_id FROM DemoSessions WHERE token_hash=%s AND expires_at>UTC_TIMESTAMP()",
-                   (token_hash(token),))
-    session = cursor.fetchone()
-    if not session:
-        raise HTTPException(401, "Session expired. Please log in again")
-    return session["u_id"]
 
 
 def profile(cursor, user_id):
@@ -99,21 +81,17 @@ def login(body: Login):
             valid = False
         if not account or not valid:
             raise HTTPException(401, "Incorrect email or password")
-        token = secrets.token_urlsafe(32)
-        expiry = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(hours=8)
-        cursor.execute("INSERT INTO DemoSessions(token_hash,u_id,expires_at) VALUES(%s,%s,%s)",
-                       (token_hash(token), account["id"], expiry))
-        return {"access_token": token, "token_type": "bearer", "expires_in": 28800}
+        return issue_session(cursor, account["id"])
 
 
 @router.get("/me")
-def me(authorization: str | None = Header(default=None)):
+def me(authorization: str | None = Depends(authorization_header)):
     with transaction() as cursor:
         return profile(cursor, authenticate(cursor, authorization))
 
 
 @router.patch("/me")
-def update_name(body: Name, authorization: str | None = Header(default=None)):
+def update_name(body: Name, authorization: str | None = Depends(authorization_header)):
     with transaction() as cursor:
         user_id = authenticate(cursor, authorization)
         cursor.execute("UPDATE Users SET name=%s WHERE id=%s", (body.display_name, user_id))
@@ -121,7 +99,7 @@ def update_name(body: Name, authorization: str | None = Header(default=None)):
 
 
 @router.delete("/sessions/current", status_code=204)
-def logout(authorization: str | None = Header(default=None)):
+def logout(authorization: str | None = Depends(authorization_header)):
     with transaction() as cursor:
         authenticate(cursor, authorization)
         cursor.execute("DELETE FROM DemoSessions WHERE token_hash=%s", (token_hash(authorization[7:]),))

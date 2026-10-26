@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from .accounts import safe_field_errors
 from .demo_accounts import router as accounts
 from .demo_combat import router as combat
+from .demo_google import router as google
 from .demo_store import transaction
 from .rate_limit import RegistrationLimiter
 
@@ -15,12 +16,14 @@ limiter = RegistrationLimiter(limit=20)
 
 @app.middleware("http")
 async def limit_auth(request: Request, call_next):
-    if request.method == "POST" and request.url.path in ("/accounts", "/sessions"):
+    if request.method == "POST" and request.url.path in ("/accounts", "/sessions", "/auth/google/start", "/auth/google/register"):
         retry = limiter.retry_after(request.client.host if request.client else "unknown")
         if retry:
             return JSONResponse({"detail": "Too many attempts. Wait a minute and retry"}, 429,
                                 headers={"Retry-After": str(retry)})
-    return await call_next(request)
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 @app.get("/health")
@@ -32,3 +35,4 @@ def health():
 
 app.include_router(accounts)
 app.include_router(combat)
+app.include_router(google)

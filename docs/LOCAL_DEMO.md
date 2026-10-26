@@ -14,7 +14,7 @@ Start the API in one terminal:
 
 ```sh
 cd /Users/tylerdang/Documents/GitHub/Final-Exodus-demo/backend
-.venv/bin/python -m uvicorn src.demo:app --env-file .env.demo --host 127.0.0.1 --port 8007 --no-proxy-headers
+.venv/bin/python -m uvicorn src.demo:app --env-file .env.demo --host 127.0.0.1 --port 8007 --no-proxy-headers --no-access-log
 ```
 
 Open `frontend/project.godot` in Godot **4.7.2 standard** and press Play, or run:
@@ -40,6 +40,10 @@ The API uses the existing Python environment on this Mac through an ignored `bac
 
 `backend/setup_demo.py --admin-env /path/to/private/local-admin.env` creates only `final_exodus_tyler_demo` on MySQL at `127.0.0.1:3307`, its scoped application user, and the ignored configuration file. The private input needs `FINAL_EXODUS_ROOT_PASSWORD` for that local instance. The script refuses to reuse an existing database without its configuration. It is not an Aiven migration and must not be repurposed for one.
 
+## JWT and Google sign-in
+
+Email/password now issues a 15-minute JWT; logout still revokes it immediately. Existing accounts and saved battles are preserved. Google sign-in is wired locally, but a real provider login is pending the OAuth client setup in [AUTHENTICATION.md](AUTHENTICATION.md). Re-running local setup adds the Google identity table and a private signing key to an earlier demo installation.
+
 ## Three-to-four-minute walkthrough
 
 | Time | Action |
@@ -58,7 +62,7 @@ The API restart and duplicate-request checks were also rehearsed separately; the
 From the checkout root:
 
 ```sh
-backend/.venv/bin/python -m pytest backend/tests backend/demo/test_demo_integration.py -q
+backend/.venv/bin/python -m pytest backend/tests backend/demo/test_demo_integration.py backend/demo/test_demo_auth.py -q
 backend/.venv/bin/python backend/demo/restart_check.py
 /Users/tylerdang/Downloads/Godot.app/Contents/MacOS/Godot --headless --path frontend --script res://tests/connected_demo.gd
 ```
@@ -68,7 +72,7 @@ The integration tests explicitly load `.env.demo`, refuse a remote database, and
 ## Limits before shared rollout
 
 - Validated locally on macOS, Godot 4.7.2, Python 3.14 and MySQL 8.4. Live Aiven writes and another teammate's machine are not verified.
-- This local copy adds unique email enforcement and three demo persistence tables. Shared-schema changes and access grants need separate approval.
+- This local copy adds unique email enforcement and four demo persistence tables. Shared-schema changes and access grants need separate approval.
 - Settings currently changes only the display name. No recovery, email/password changes, payment, gacha integration, or rewards settlement is included.
 - The three characters and encounter rules are demo fixtures, not a claim that player-owned inventory is connected. Units/Summon show an unavailable message. Shop/gamepass remain previews.
 - The local authentication limiter is single-process. Public hosting would need deployment, access, and rate-limit review.
