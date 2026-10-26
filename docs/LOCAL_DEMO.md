@@ -42,7 +42,7 @@ The API uses the existing Python environment on this Mac through an ignored `bac
 
 ## JWT and Google sign-in
 
-Email/password now issues a 15-minute JWT; logout still revokes it immediately. Existing accounts and saved battles are preserved. Google credentials are configured privately on Tyler’s Mac and the server is ready to start real sign-in. The actual browser consent/login and saved-state check are still pending; see [AUTHENTICATION.md](AUTHENTICATION.md). Re-running local setup adds the Google identity table and a private signing key to an earlier demo installation.
+Email/password now issues a 15-minute JWT; logout still revokes it immediately. Existing accounts and saved battles are preserved. Google credentials are configured privately on Tyler’s Mac and the server is ready to start real sign-in. Real Google login to the hub passed and the account was verified in local storage. Google battle/logout/relogin recovery is still pending; see [AUTHENTICATION.md](AUTHENTICATION.md). Re-running local setup adds the Google identity table and a private signing key to an earlier demo installation.
 
 ## Three-to-four-minute walkthrough
 

@@ -1,6 +1,8 @@
 # Backend setup — Final Exodus
 
-Godot → Python/FastAPI → Aiven MySQL. The API uses the shared `src/` backend and pytest setup. **Run one API: `src.main:app`.** Registration works; login is not implemented. The old dummy `/token` and `/auth-test` routes now return 501 and issue no tokens.
+This page covers the original registration foundation: `src.main:app`, using the legacy `accounts`/`wallets` tables. Login is not implemented in that entrypoint; its old `/token` and `/auth-test` routes return 501.
+
+**For the connected hub, battles, JWT and Google sign-in, follow [LOCAL_DEMO.md](../docs/LOCAL_DEMO.md).** That guide starts `src.demo:app` against the isolated local `Users`/`Currency` database. The demo does not migrate Aiven. Choose the entrypoint for the flow you intend to test; the setup below remains the original Aiven registration guide.
 
 ## 1. Get access to the team's existing Aiven database
 

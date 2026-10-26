@@ -22,7 +22,7 @@ Expired or revoked sessions return 401, clear client account/battle data, and re
 
 ## Enable Google on the local demo
 
-**Local Google credentials are configured on Tyler’s Mac.** The `final-exodus` Cloud project has a Web application client and a test user. The downloaded credentials are stored privately outside Git, and the local server passes Google flow readiness checks. Real browser consent, account creation and saved-state recovery through Google still need an end-to-end check. Fresh installations must complete the setup below.
+**Local Google credentials are configured on Tyler’s Mac.** The `final-exodus` Cloud project has a Web application client and a test user. The downloaded credentials are stored privately outside Git, and the local server passes Google flow readiness checks. Tyler completed real Google sign-in and reached the hub. A read-only local database check confirms one saved Google identity/account, the supplied profile details and initial balances. A Google-specific battle/logout/relogin check is still pending; no battle was started during that first Google login. Fresh installations must complete the setup below.
 
 This version uses a **Web application OAuth client owned by the Python backend**. Godot opens the system browser and polls the backend with a separate private flow secret. The callback is fixed to the API on this same machine. This is deliberately a local integration; a hosted API, exported desktop client or mobile release needs its own redirect/client design and testing.
 

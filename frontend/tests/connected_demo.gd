@@ -62,14 +62,20 @@ func run() -> void:
 	var initial_login: Node = title.popup
 	expect(initial_login.fields.get_global_rect().encloses(initial_login.get_node("%GoogleButton").get_global_rect()), "Google sign-in button fits the login popup")
 	await screenshot("login")
-	initial_login.google_sign_in()
-	var google: Node = initial_login.get_node("GoogleSignIn")
+	expect(initial_login.get_node("%GoogleButton").pressed.is_connected(Callable(initial_login, "google_sign_in")), "Google button is connected to the login controller")
+	# Exercise either configured or unconfigured APIs without opening a real browser.
+	initial_login.set_busy(true)
+	var google: Node = load("res://tests/simulated_google_browser.gd").new()
+	initial_login.add_child(google)
+	google.finished.connect(func() -> void: initial_login.set_busy(false))
+	google.begin()
 	for step in range(100):
 		await create_timer(0.02).timeout
-		if google.status.text.contains("setup"):
+		if google.status.text.contains("setup") or not google.flow.is_empty():
 			break
-	expect(google.status.text.contains("setup") and session.token.is_empty(), "Unconfigured Google sign-in explains setup without entering the hub")
-	await screenshot("google-setup")
+	expect((google.status.text.contains("setup") or not google.flow.is_empty()) and session.token.is_empty(), "Google start reports missing setup or waits for consent without entering the hub")
+	if google.flow.is_empty():
+		await screenshot("google-setup")
 	await google.cancel()
 	expect(not initial_login.pending, "Cancelling Google sign-in restores email login")
 	title._pop_signup()
