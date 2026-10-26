@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://dd2v53h3io3qc" path="res://assets/background.svg" id="1_2hkft"]
 [ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_441x5"]
 [ext_resource type="Texture2D" uid="uid://q8uofkaqjl3o" path="res://assets/particle.svg" id="2_s6eg2"]
-[ext_resource type="Texture2D" uid="uid://b3k4dm0gaa5xf" path="res://assets/483px-Sussex.png" id="3_glsmu"]
 [ext_resource type="Texture2D" uid="uid://kmt05g6wn163" path="res://assets/topbar.svg" id="5_2hkft"]
 [ext_resource type="PackedScene" uid="uid://c0w8741a4hxll" path="res://ui/button.tscn" id="7_3wyi3"]
 [ext_resource type="Texture2D" uid="uid://b0e1jg5f75cfh" path="res://assets/underxp.png" id="8_4oyfp"]
@@ -21,7 +20,7 @@
 [sub_resource type="Gradient" id="Gradient_s6eg2"]
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_3q32m"]
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5ox4q"]
 gradient = SubResource("Gradient_s6eg2")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_phvbg"]
@@ -37,19 +36,19 @@ initial_velocity_max = 139.78
 gravity = Vector3(0, 0, 0)
 linear_accel_min = -2.2351742e-06
 linear_accel_max = 15.379997
-color_ramp = SubResource("GradientTexture1D_3q32m")
+color_ramp = SubResource("GradientTexture1D_5ox4q")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aqapl"]
 bg_color = Color(0.39688924, 0.39688927, 0.3968891, 1)
 
-[sub_resource type="FontVariation" id="FontVariation_5tx5h"]
+[sub_resource type="FontVariation" id="FontVariation_mw5nc"]
 base_font = ExtResource("2_441x5")
 variation_opentype = {
 2003265652: 800
 }
 
 [sub_resource type="LabelSettings" id="LabelSettings_hq8nb"]
-font = SubResource("FontVariation_5tx5h")
+font = SubResource("FontVariation_mw5nc")
 font_size = 20
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
@@ -107,10 +106,9 @@ offset_right = 302.75
 offset_bottom = 367.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_glsmu")
 stretch_mode = 5
 
-[node name="Button" type="Button" parent="." unique_id=578724967]
+[node name="StoryButton" type="Button" parent="." unique_id=578724967]
 layout_mode = 0
 offset_left = 470.0
 offset_top = 937.0
@@ -120,7 +118,7 @@ theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = SubResource("StyleBoxFlat_aqapl")
 text = "Story"
 
-[node name="Button6" parent="." unique_id=1032644258 instance=ExtResource("7_3wyi3")]
+[node name="SettingsButton" parent="." unique_id=1032644258 instance=ExtResource("7_3wyi3")]
 layout_mode = 1
 offset_left = 32.0
 offset_top = 144.0
@@ -128,35 +126,36 @@ offset_right = -588.0
 offset_bottom = -1096.0
 text = "Settings"
 
-[node name="Control" parent="." unique_id=1300157542 instance=ExtResource("9_4oyfp")]
+[node name="HomeButton" parent="." unique_id=1300157542 instance=ExtResource("9_4oyfp")]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
-offset_left = -60.0
+offset_left = 3.0
 offset_top = -120.0
-offset_right = 60.0
+offset_right = 123.0
 offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("10_lcd1r")
 text = "Home"
 
-[node name="Control2" parent="." unique_id=1864429419 instance=ExtResource("9_4oyfp")]
+[node name="SummonButton" parent="." unique_id=1864429419 instance=ExtResource("9_4oyfp")]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
-offset_left = 60.0
+offset_left = 123.0
 offset_top = -120.0
-offset_right = 180.0
+offset_right = 243.0
 offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("10_lcd1r")
 text = "Summon"
+target_scene = "uid://c0w8741a4hxll"
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1799365879]
 layout_mode = 1
@@ -266,20 +265,21 @@ text = "55400
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Control3" parent="." unique_id=89417266 instance=ExtResource("9_4oyfp")]
+[node name="UnitsButton" parent="." unique_id=89417266 instance=ExtResource("9_4oyfp")]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
-offset_left = -180.0
+offset_left = -117.0
 offset_top = -120.0
-offset_right = -60.0
+offset_right = 3.0
 offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("10_lcd1r")
 text = "Units"
+target_scene = "uid://c0w8741a4hxll"
 
 [node name="TextureButton" type="TextureButton" parent="." unique_id=43229150]
 layout_mode = 0
@@ -291,11 +291,26 @@ texture_normal = ExtResource("15_3q32m")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="Control4" parent="." unique_id=1459214309 instance=ExtResource("16_8hrlh")]
+[node name="Currency" parent="." unique_id=1459214309 instance=ExtResource("16_8hrlh")]
 layout_mode = 1
 offset_left = 540.0
 offset_top = 63.0
 offset_right = -51.0
 offset_bottom = -1184.0
-val = "67"
 texture = ExtResource("17_5ox4q")
+
+[node name="ShopButton" parent="." unique_id=70434992 instance=ExtResource("9_4oyfp")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -237.0
+offset_top = -120.0
+offset_right = -117.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("10_lcd1r")
+text = "Shop"
+target_scene = "uid://8r65ldhtel6f"

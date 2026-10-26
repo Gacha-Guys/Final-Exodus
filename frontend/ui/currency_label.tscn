@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://byoilcis3e4if"]
 
-[ext_resource type="Script" uid="uid://cjo5d0aqnqem3" path="res://ui/currency_label.gd" id="1_kcvk7"]
+[ext_resource type="Script" uid="uid://cjo5d0aqnqem3" path="res://ui/scripts/currency_label.gd" id="1_kcvk7"]
 [ext_resource type="Texture2D" uid="uid://cq0urxiugsuc5" path="res://assets/dark_background.svg" id="1_pxahw"]
 [ext_resource type="FontFile" uid="uid://eugmrge5xpgf" path="res://assets/VarelaRound-Regular.ttf" id="3_ukbxc"]
 
