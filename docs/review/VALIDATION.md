@@ -6,7 +6,7 @@ Local source commits: `18b7070` (team UI integration), `86685c6` (API), `366693f
 | --- | --- |
 | Existing backend + isolated MySQL integration suite | 58 tests and 12 subtests passed |
 | Simulated Google Godot integration | 8 checks passed using real HTTP/MySQL with a test provider |
-| Live Google browser sign-in | Pending OAuth client creation and configuration |
+| Live Google browser sign-in | Credentials configured; pending real browser consent/login and saved-state check |
 | Dependency consistency | Passed |
 | Python source compilation | Passed |
 | Godot 4.7.2 editor import and default startup | Passed, no script errors or resource warnings |
@@ -35,3 +35,5 @@ Independent adversarial review subsequently rated local presentation readiness 8
 The independent reviewer reran 58 backend tests plus 12 subtests and reproduced a Google certificate-request wrapper incompatibility. It was fixed and the actual google-auth verifier now passes signed test-certificate cases. Additional probes confirmed cancellation during exchange cannot resurrect a flow and 12 simultaneous callbacks allow one exchange. No further blocking finding was reproduced. A final frontend review checked cancellation and failed profile loading.
 
 The regular native-rendered driver passes 41 assertions at both sizes. A separate Google test starts a loopback port 8009 API with a simulated provider and passes 8 Godot integration assertions for new-user DOB validation, JWT/profile loading, owned battle creation, logout and returning-user battle recovery. It uses scene methods and real HTTP/MySQL, not eight manual mouse clicks. Its temporary account is removed. The production API on 8007 remains unconfigured for Google. See [authentication setup](../AUTHENTICATION.md). Google callback URLs are excluded from access logging in documented launch commands.
+
+Local Google setup follow-up: the downloaded Web client matches the loopback callback, private configuration preserves the existing JWT key/database settings, and the restarted API passes real configured start/scopes/PKCE/cancel readiness checks. The Cloud project remains External/Testing with one test user. This does not yet establish a successful Google account login.
