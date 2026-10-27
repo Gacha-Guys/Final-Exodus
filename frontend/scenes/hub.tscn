@@ -1,0 +1,320 @@
+[gd_scene format=3 uid="uid://klxyuv0db4c3"]
+
+[ext_resource type="Texture2D" uid="uid://dd2v53h3io3qc" path="res://assets/background.svg" id="1_2hkft"]
+[ext_resource type="Script" uid="uid://blxo6usep28ed" path="res://scripts/hub.gd" id="1_5ox4q"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_441x5"]
+[ext_resource type="Texture2D" uid="uid://q8uofkaqjl3o" path="res://assets/particle.svg" id="2_s6eg2"]
+[ext_resource type="Texture2D" uid="uid://kmt05g6wn163" path="res://assets/topbar.svg" id="5_2hkft"]
+[ext_resource type="PackedScene" uid="uid://c0w8741a4hxll" path="res://ui/button.tscn" id="7_3wyi3"]
+[ext_resource type="Texture2D" uid="uid://b0e1jg5f75cfh" path="res://assets/underxp.png" id="8_4oyfp"]
+[ext_resource type="Texture2D" uid="uid://btov0u4o1qcmh" path="res://assets/xpdeco.png" id="8_phvbg"]
+[ext_resource type="Texture2D" uid="uid://c103vjqew1cps" path="res://assets/outer.png" id="9_3q32m"]
+[ext_resource type="PackedScene" uid="uid://cqyhc8uo5aufb" path="res://ui/menubutton.tscn" id="9_4oyfp"]
+[ext_resource type="Texture2D" uid="uid://cyee6418btc25" path="res://assets/outerxp.svg" id="9_lcd1r"]
+[ext_resource type="Texture2D" uid="uid://biwljd3ie8gcn" path="res://assets/inner.png" id="10_8hrlh"]
+[ext_resource type="Texture2D" uid="uid://oyhqoa4315ru" path="res://assets/house.png" id="10_lcd1r"]
+[ext_resource type="Texture2D" uid="uid://p0xy251te8ig" path="res://assets/innerxp.png" id="10_s6eg2"]
+[ext_resource type="Texture2D" uid="uid://beduwmwu8lm43" path="res://assets/daily.svg" id="15_3q32m"]
+[ext_resource type="PackedScene" uid="uid://byoilcis3e4if" path="res://ui/currency_label.tscn" id="16_8hrlh"]
+[ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="17_5ox4q"]
+
+[sub_resource type="Gradient" id="Gradient_s6eg2"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5ox4q"]
+gradient = SubResource("Gradient_s6eg2")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_phvbg"]
+lifetime_randomness = 0.31
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 33.0
+angle_min = -720.0
+angle_max = 720.0
+spread = 180.0
+initial_velocity_min = 86.02
+initial_velocity_max = 139.78
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -2.2351742e-06
+linear_accel_max = 15.379997
+color_ramp = SubResource("GradientTexture1D_5ox4q")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aqapl"]
+bg_color = Color(0.39688924, 0.39688927, 0.3968891, 1)
+
+[sub_resource type="FontVariation" id="FontVariation_mw5nc"]
+base_font = ExtResource("2_441x5")
+variation_opentype = {
+2003265652: 800
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_hq8nb"]
+font = SubResource("FontVariation_mw5nc")
+font_size = 20
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 0.2509804)
+
+[sub_resource type="FontVariation" id="FontVariation_441x5"]
+base_font = ExtResource("2_441x5")
+variation_opentype = {
+2003265652: 800
+}
+
+[node name="Control" type="Control" unique_id=516966562]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5ox4q")
+
+[node name="Background" type="NinePatchRect" parent="." unique_id=562362441]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_2hkft")
+region_rect = Rect2(0, 0, 310, 566)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 30
+patch_margin_bottom = 30
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=77775161]
+visible = false
+position = Vector2(350, 563)
+amount = 64
+texture = ExtResource("2_s6eg2")
+lifetime = 5.0
+process_material = SubResource("ParticleProcessMaterial_phvbg")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=436876703]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -302.75
+offset_top = -367.0
+offset_right = 302.75
+offset_bottom = 367.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="StoryButton" type="Button" parent="." unique_id=578724967]
+layout_mode = 0
+offset_left = 470.0
+offset_top = 937.0
+offset_right = 646.5
+offset_bottom = 1100.0
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_aqapl")
+text = "Story"
+
+[node name="SettingsButton" parent="." unique_id=1032644258 instance=ExtResource("7_3wyi3")]
+layout_mode = 1
+offset_left = 32.0
+offset_top = 144.0
+offset_right = -588.0
+offset_bottom = -1096.0
+text = "Settings"
+
+[node name="HomeButton" parent="." unique_id=1300157542 instance=ExtResource("9_4oyfp")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 3.0
+offset_top = -120.0
+offset_right = 123.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("10_lcd1r")
+text = "Home"
+
+[node name="SummonButton" parent="." unique_id=1864429419 instance=ExtResource("9_4oyfp")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = 123.0
+offset_top = -120.0
+offset_right = 243.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("10_lcd1r")
+text = "Summon"
+target_scene = "uid://c0w8741a4hxll"
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1799365879]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="NinePatchRect" type="NinePatchRect" parent="MarginContainer" unique_id=856514497]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+texture = ExtResource("5_2hkft")
+region_rect = Rect2(0, 0, 264, 264)
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/NinePatchRect" unique_id=1233994163]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -97.5
+offset_top = 12.0
+offset_right = 97.5
+offset_bottom = 97.0
+grow_horizontal = 2
+texture = ExtResource("8_phvbg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/NinePatchRect" unique_id=1088682701]
+layout_mode = 0
+offset_left = 278.0
+offset_right = 378.0
+offset_bottom = 100.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = -16
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/NinePatchRect/MarginContainer" unique_id=368052820]
+layout_mode = 2
+
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer" unique_id=375213263]
+layout_mode = 2
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_over = ExtResource("9_3q32m")
+texture_progress = ExtResource("10_8hrlh")
+
+[node name="Label" type="Label" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer/TextureProgressBar2" unique_id=12818486]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Rank
+67"
+label_settings = SubResource("LabelSettings_hq8nb")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=726593588]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = 24.0
+offset_right = 75.0
+offset_bottom = 174.0
+grow_horizontal = 2
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_under = ExtResource("8_4oyfp")
+texture_over = ExtResource("9_lcd1r")
+texture_progress = ExtResource("10_s6eg2")
+
+[node name="Label2" type="Label" parent="TextureProgressBar" unique_id=506858602]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -42.5
+offset_top = -16.5
+offset_right = 42.5
+offset_bottom = 16.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_441x5")
+theme_override_font_sizes/font_size = 16
+text = "55400
+/
+140323"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UnitsButton" parent="." unique_id=89417266 instance=ExtResource("9_4oyfp")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -117.0
+offset_top = -120.0
+offset_right = 3.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("10_lcd1r")
+text = "Units"
+target_scene = "uid://c0w8741a4hxll"
+
+[node name="TextureButton" type="TextureButton" parent="." unique_id=43229150]
+layout_mode = 0
+offset_left = 585.0
+offset_top = 172.0
+offset_right = 638.0
+offset_bottom = 221.0
+texture_normal = ExtResource("15_3q32m")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Currency" parent="." unique_id=1459214309 instance=ExtResource("16_8hrlh")]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 540.0
+offset_top = 63.0
+offset_right = -51.0
+offset_bottom = -1184.0
+val = "0"
+texture = ExtResource("17_5ox4q")
+
+[node name="ShopButton" parent="." unique_id=70434992 instance=ExtResource("9_4oyfp")]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+offset_left = -237.0
+offset_top = -120.0
+offset_right = -117.0
+offset_bottom = 0.0
+grow_vertical = 0
+icon_texture = ExtResource("10_lcd1r")
+text = "Shop"
+target_scene = "uid://8r65ldhtel6f"

@@ -1,0 +1,14 @@
+[gd_resource type="LabelSettings" format=3 uid="uid://byv37bjldsska"]
+
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="1_xb277"]
+
+[sub_resource type="FontVariation" id="FontVariation_5g2or"]
+base_font = ExtResource("1_xb277")
+variation_opentype = {
+2003265652: 800
+}
+
+[resource]
+font = SubResource("FontVariation_5g2or")
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)

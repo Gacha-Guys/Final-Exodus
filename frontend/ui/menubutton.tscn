@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://cqyhc8uo5aufb"]
+
+[ext_resource type="Script" uid="uid://w0y2qplc656j" path="res://ui/scripts/menubutton.gd" id="1_h7o18"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="1_y5k6y"]
+[ext_resource type="Texture2D" uid="uid://daa6cktorym67" path="res://assets/button_gradient_border.svg" id="2_h7o18"]
+
+[sub_resource type="FontVariation" id="FontVariation_5g2or"]
+base_font = ExtResource("1_y5k6y")
+variation_opentype = {
+2003265652: 800
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_sjaw1"]
+font = SubResource("FontVariation_5g2or")
+font_size = 20
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Control" type="Control" unique_id=1300157542]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 40.0
+offset_right = -516.0
+offset_bottom = -1100.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_h7o18")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="." unique_id=1816208826]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_h7o18")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=66334530]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="." unique_id=208471546]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Button"
+label_settings = SubResource("LabelSettings_sjaw1")
+horizontal_alignment = 1
+vertical_alignment = 1
