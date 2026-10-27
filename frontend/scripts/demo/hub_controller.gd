@@ -101,7 +101,7 @@ func refresh() -> void:
 		return
 	pending = true
 	player_label.text = "Loading account…"
-	$Currency.val = "…"
+	$Currency.set_loading(true)
 	get_node(RANK_PATH).text = "Rank\n…"
 	if not is_shop:
 		battle_button.disabled = true
@@ -114,7 +114,7 @@ func refresh() -> void:
 		pending = false
 		return
 	player_label.text = GameSession.account.display_name
-	$Currency.val = str(int(GameSession.account.paid_currency))
+	$Currency.val = int(GameSession.account.paid_currency)
 	get_node(RANK_PATH).text = "Rank\n%d" % int(GameSession.account.level)
 	if not is_shop:
 		var saved: Dictionary = await GameSession.request("/battles/current")

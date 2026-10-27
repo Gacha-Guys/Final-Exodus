@@ -110,7 +110,7 @@ func run() -> void:
 	await settle(hub)
 	expect(hub.scene_file_path.ends_with("hub.tscn"), "Valid login enters existing hub")
 	expect(session.token.split(".").size() == 3, "Email login uses a signed JWT access token")
-	expect(hub.player_label.text == "UI Demo" and hub.get_node("Currency").val == "0", "Hub displays actual profile and trigger-created balances")
+	expect(hub.player_label.text == "UI Demo" and hub.get_node("Currency").val == 0, "Hub displays actual profile and trigger-created balances")
 	await screenshot("hub")
 	hub.open_settings()
 	hub.name_input.text = "UI Saved Name"

@@ -16,7 +16,7 @@ func _ready() -> void:
 	offers.size = Vector2(500, 865)
 
 func _on_currency_changed() -> void:
-	%Currency.val = str(PlayerData.paid_currency)
+	%Currency.val = PlayerData.paid_currency
 
 func purchase_unavailable() -> void:
 	status_label.text = "Purchases are not connected yet. No currency was charged or granted."

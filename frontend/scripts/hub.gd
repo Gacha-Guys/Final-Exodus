@@ -6,4 +6,4 @@ func _ready() -> void:
 	super._ready()
 
 func _on_currency_changed() -> void:
-	%Currency.val = str(PlayerData.paid_currency)
+	%Currency.val = PlayerData.paid_currency
