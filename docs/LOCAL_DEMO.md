@@ -23,7 +23,7 @@ For Aiven, start `Server.py --env-file /private/aiven-game-api.env` after the ad
 
 ## Team flow and isolated currency prototype
 
-The normal title/hub/Story navigation and shop retain the team’s presentation: four gem offers and a gamepass. The first gem button calls Mihai’s +50 paid-currency prototype. Local setup enables it only for the exact isolated loopback database with `FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE=1`; authenticated updates are limited to the logged-in account, reject negative balances and guard overflow. Shared storage always returns 410 for that update, even with the flag, so the prototype cannot mint shared currency. No real payment is taken.
+The normal title/hub/Story navigation and shop retain the team’s presentation: four gem offers and a gamepass. The four gem buttons call Mihai’s 50/200/500/999 paid-currency prototypes. Local setup enables it only for the exact isolated loopback database with `FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE=1`; authenticated updates are limited to the logged-in account, reject negative balances and guard overflow. Shared storage always returns 410 for that update, even with the flag, so the prototype cannot mint shared currency. No real payment is taken.
 
 ## Optional three-to-four-minute combat walkthrough
 

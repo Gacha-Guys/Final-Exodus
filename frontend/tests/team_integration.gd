@@ -52,8 +52,9 @@ func run() -> void:
 	for index in range(1, 6):
 		var offer: Button = shop.get_node("GridContainer/CurrencyButton%d" % index)
 		expect(shop.get_rect().encloses(offer.get_global_rect()), "Offer %d stays inside the viewport" % index)
-	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer/MidSeparate/Title").text.contains("Gamepass"), "Gamepass remains Riley's fifth offer")
-	expect(shop.get_node("%CurrencyButton1").pressed.is_connected(Callable(shop, "_on_currency_offer_pressed")), "Mihai's currency prototype button is connected")
+	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer2/Title").text.contains("Gamepass"), "Gamepass remains Riley's fifth offer")
+	for index in range(4):
+		expect(shop.get_node("%%CurrencyButton%d" % (index + 1)).pressed.is_connected(Callable(shop, "_on_currency_offer_pressed").bind([50, 200, 500, 999][index])), "Mihai's currency offer %d stays connected" % (index + 1))
 	await shop._on_currency_offer_pressed()
 	expect(shop.message.dialog_text.contains("valid") and legacy.paid_currency == 11, "Failed offer shows feedback and preserves balance")
 	shop._on_currency_changed()

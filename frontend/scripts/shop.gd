@@ -7,18 +7,21 @@ const RANK_PATH := "MarginContainer/NinePatchRect/MarginContainer/AspectRatioCon
 func _ready() -> void:
 	PlayerData.currency_success.connect(_on_currency_changed)
 	PlayerData.currency_fail.connect(_on_currency_failed)
-	%CurrencyButton1.pressed.connect(_on_currency_offer_pressed)
+	for index in range(4):
+		get_node("%%CurrencyButton%d" % (index + 1)).pressed.connect(_on_currency_offer_pressed.bind([50, 200, 500, 999][index]))
 	_on_currency_changed()
 	if not GameSession.token.is_empty():
 		await PlayerData.getCurrency(PlayerData.user_id)
 
-func _on_currency_offer_pressed() -> void:
+func _on_currency_offer_pressed(amount: int = 50) -> void:
 	if pending:
 		return
 	pending = true
-	%CurrencyButton1.disabled = true
-	await PlayerData.update_currency(50, "paid")
-	%CurrencyButton1.disabled = false
+	for index in range(1, 5):
+		get_node("%%CurrencyButton%d" % index).disabled = true
+	await PlayerData.update_currency(amount, "paid")
+	for index in range(1, 5):
+		get_node("%%CurrencyButton%d" % index).disabled = false
 	pending = false
 
 func _on_currency_changed() -> void:

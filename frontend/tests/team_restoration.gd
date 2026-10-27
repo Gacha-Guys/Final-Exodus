@@ -109,10 +109,21 @@ func run() -> void:
 	hub.get_node("ShopButton")._gui_input(release)
 	var shop: Node = await wait_scene("shop.tscn")
 	expect(shop.get_node("GridContainer").get_child_count() == 5, "Shop has Riley's original five offers")
-	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer/MidSeparate/Title").text.contains("Gamepass"), "Fifth offer remains gamepass")
+	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer2/Title").text.contains("Gamepass"), "Fifth offer remains gamepass")
 	expect(shop.get_node(shop.RANK_PATH).text == "Rank\n1", "Shop rank agrees with the saved account")
 	await shop._on_currency_offer_pressed()
 	expect(legacy.paid_currency == 50 and shop.get_node("%Currency").val == 50, "Mihai's +50 local prototype persists and updates the HUD")
+	var expected_balance := 50
+	for index in range(2, 5):
+		shop.get_node("%%CurrencyButton%d" % index).pressed.emit()
+		for step in range(100):
+			await create_timer(0.02).timeout
+			if not shop.pending:
+				break
+		expected_balance += [200, 500, 999][index - 2]
+		expect(legacy.paid_currency == expected_balance and not shop.pending, "Offer %d preserves Mihai's currency amount" % index)
+	await legacy.update_currency(-1699, "paid")
+	expect(legacy.paid_currency == 50, "Prototype currency test restores its known starting balance")
 	var forbidden: Dictionary = await session.request("/currency/update", HTTPClient.METHOD_POST, {"u_id": legacy.user_id + 1, "amount": 50, "type": "paid"})
 	expect(forbidden.status == 403, "Prototype cannot change another player's currency")
 	await legacy.update_currency(-20, "paid")

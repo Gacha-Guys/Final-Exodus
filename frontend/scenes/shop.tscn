@@ -534,36 +534,37 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=474536334]
+[node name="HBoxContainer2" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=474536334]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 5
 
-[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1024291369]
+[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer2" unique_id=1024291369]
 layout_mode = 2
 theme_override_constants/margin_bottom = 20
 
-[node name="TextureRect" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer2" unique_id=1752993698]
+[node name="TextureRect" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer2/MarginContainer2" unique_id=1752993698]
 custom_minimum_size = Vector2(230, 0)
 layout_mode = 2
 texture = ExtResource("5_aa4hd")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1395122197]
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer2" unique_id=1395122197]
 layout_mode = 2
 theme_override_constants/margin_left = -162
 theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 0
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer" unique_id=820343364]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer/CurrencyButton5/HBoxContainer2/MarginContainer" unique_id=820343364]
 custom_maximum_size = Vector2(100, -1)
 layout_mode = 2
 
-[node name="TextureProgressBar2" type="TextureProgressBar" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer/AspectRatioContainer" unique_id=2124997287]
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="GridContainer/CurrencyButton5/HBoxContainer2/MarginContainer/AspectRatioContainer" unique_id=2124997287]
 custom_maximum_size = Vector2(85, 85)
 layout_mode = 2
 value = 100.0
@@ -572,13 +573,10 @@ nine_patch_stretch = true
 texture_over = ExtResource("6_68utx")
 texture_progress = ExtResource("16_j14q8")
 
-[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1483356421]
-layout_mode = 2
-theme_override_constants/margin_left = 0
-
-[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=303588534]
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer2" unique_id=303588534]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Gamepass
 $9.99"
 horizontal_alignment = 1
+

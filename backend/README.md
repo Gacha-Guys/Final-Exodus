@@ -119,6 +119,6 @@ Run [the automated tests](../docs/TESTING.md) before requesting review. The limi
 
 ## Isolated local prototype and optional demo
 
-For Docker/local MySQL setup, see [LOCAL_DEMO.md](../docs/LOCAL_DEMO.md). Start that API with `Server.py --env-file .env.demo` on the same default port 8000. The first gem button retains Mihai’s +50 paid-currency prototype only when local setup enables it for loopback `final_exodus_tyler_demo`. Shared storage always refuses client-directed grants, even if that flag is set. Other offers and the gamepass retain their existing presentation.
+For Docker/local MySQL setup, see [LOCAL_DEMO.md](../docs/LOCAL_DEMO.md). Start that API with `Server.py --env-file .env.demo` on the same default port 8000. The four gem buttons retain Mihai’s 50/200/500/999 paid-currency prototypes only when local setup enables it for loopback `final_exodus_tyler_demo`. Shared storage always refuses client-directed grants, even if that flag is set. Other offers and the gamepass retain their existing presentation.
 
 The added fixture-combat/Google flow is separate: open `frontend/scenes/demo_title.tscn` and press F6. It does not replace the team’s F5 title/hub/navigation. See [authentication](../docs/AUTHENTICATION.md) for the explicit port 8007 Google callback setup and [API contracts](../docs/DEMO_API.md) for supported routes.

@@ -28,7 +28,7 @@ This creates a separate MySQL 8.4 instance on loopback port 3308 with private ig
 ## What's connected
 
 - Riley’s title/account popups, Story/navigation and four gem offers plus gamepass; Jason’s hub and shared model/leveling work.
-- Mihai’s Users/Currency model and trigger, username login and duplicate-username signup protection, and preserved gacha prototype. The first gem button keeps its +50 paid-currency prototype in the guarded isolated local setup.
+- Mihai’s Users/Currency model and trigger, username login and duplicate-username signup protection, and preserved gacha prototype. The four gem buttons keep their 50/200/500/999 paid-currency prototypes in the guarded isolated local setup.
 - Authenticated profiles and protected own-account currency reads. Optional account settings, logout and saved fixture combat remain in separate demo scenes.
 - Argon2 password verifiers and revocable 15-minute JWTs. Optional Google sign-in has separate local configuration.
 
