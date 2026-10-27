@@ -28,13 +28,13 @@ The restart driver uses a separate API process on8008. The Google driver uses800
 ## Godot4.7.2
 
 ```sh
-Godot --headless --editor --path frontend --import --quit
+Godot --headless --editor --path frontend --import
 Godot --headless --path frontend --script res://tests/team_integration.gd
 FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8007 Godot --headless --path frontend --script res://tests/connected_demo.gd
 FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8007 Godot --headless --path frontend --script res://tests/connected_demo.gd -- --small
 ```
 
-Start the API first. Inspect import output for script errors even when the process exits0. Run native UI drivers sequentially and inspect screenshots at both sizes; avoid concurrent walkthroughs sharing one IP's production authentication limit. `FINAL_EXODUS_TEST_ARTIFACT_DIR=/absolute/external/path` writes UI JSON/images outside historical checked-in evidence. UI runs create synthetic accounts in the selected development database; cleanup is deliberate.
+Start the API first. Let `--import` finish and quit by itself; adding `--quit` can exit before a fresh clone finishes importing assets. Inspect import output for script errors even when the process exits0. Run native UI drivers sequentially and inspect screenshots at both sizes; avoid concurrent walkthroughs sharing one IP's production authentication limit. `FINAL_EXODUS_TEST_ARTIFACT_DIR=/absolute/external/path` writes UI JSON/images outside historical checked-in evidence. UI runs create synthetic accounts in the selected development database; cleanup is deliberate.
 
 ## Shared migration and smoke checks
 
