@@ -15,6 +15,8 @@ func _process_sign_up(error_message: Control) -> bool:
 	if  $%PasswordInput.text != $%PasswordConfirmation.text:
 		error_message.text = "Passwords do not match"
 		return false
+	
+	PlayerData.signup($%EmailInput.text, $%UsernameInput.text, $%PasswordInput.text)
 	return true
 	#more logic on passing the stuff to the backend
 	
