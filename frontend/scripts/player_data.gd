@@ -1,169 +1,70 @@
 extends Node
 
+# Compatibility signals for the team's HUD and shop, backed by one JWT session.
 signal login_succeeded
 signal login_failed(message)
-
 signal signup_succeeded
 signal signup_failed(message)
-
 signal currency_success
 signal currency_fail(message)
 
-var user_id = 0
-var http = HTTPRequest.new()
-var url = "http://127.0.0.1:8000"
-var current_request = ""
+var user_id := 0
+var paid_currency := 0
+var free_currency := 0
 
-var paid_currency = 0;
-var free_currency = 0;
+func _ready() -> void:
+	GameSession.account_changed.connect(sync_account)
+	sync_account(GameSession.account)
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	add_child(http)
-	http.request_completed.connect(_on_request_completed)
+func sync_account(profile: Dictionary) -> void:
+	user_id = int(profile.get("id", 0))
+	paid_currency = int(profile.get("paid_currency", 0))
+	free_currency = int(profile.get("free_currency", 0))
+	currency_success.emit()
 
-
-
-func _on_request_completed(results, response_code, headers, body):
-	print(results)
-	print(response_code)
-	print(body.get_string_from_utf8())
-
-	if results != HTTPRequest.RESULT_SUCCESS:
-		match current_request:
-			"login":
-				login_failed.emit("Login Failed, summoners are attempting to summon an entity who may know what has gone wrong")
-			"signup":
-				signup_failed.emit("Signup Failed, unkown reason that not even our wisest wizards could discern")
-			"currency":
-				currency_fail.emit("Currency Retrieval Failed, Our knights are giving chase to the thieving goblins as we speak")
-			_:
-				print("Whatever you're doing isn't implemented yet because time crunch is real")
-		current_request = ""
+func getCurrency(id: int) -> void:
+	if GameSession.token.is_empty() or id != user_id:
+		currency_fail.emit("Log in to view your own currency.")
 		return
+	var result: Dictionary = await GameSession.refresh_account()
+	if not result.ok:
+		currency_fail.emit(result.error)
 
-	var json = JSON.parse_string(body.get_string_from_utf8())
-	
-	if response_code == 200 or response_code == 201:
-		print(response_code)
-		match current_request:
-			"login":
-				current_request = ""
-				user_id = int(json["id"])
-				login_succeeded.emit()
-			"signup":
-				current_request = ""
-				signup_succeeded.emit()
-			"currency":
-				current_request = ""
-				paid_currency = int(json["paid"])
-				free_currency = int(json["free"])
-				currency_success.emit()
-			"update_currency":
-				current_request = ""
-				if json["type"] == "paid":
-					paid_currency = int(json["count"])
-				elif json["type"] == "free":
-					free_currency = int(json["count"])
-				currency_success.emit()
-			_:
-				print("How'd you succeed with an unimplemented query?")
+func login(name: String, password: String) -> void:
+	var result: Dictionary = await GameSession.request("/login", HTTPClient.METHOD_POST, {"name": name, "password": password}, false)
+	password = ""
+	if not result.ok or not result.data is Dictionary or not result.data.get("access_token") is String:
+		login_failed.emit(result.get("error", "Unexpected login response."))
+		return
+	GameSession.clear()
+	GameSession.token = result.data.access_token
+	var profile: Dictionary = await GameSession.refresh_account()
+	if not profile.ok:
+		GameSession.clear()
+		login_failed.emit(profile.error)
+		return
+	login_succeeded.emit()
 
+func signup(email: String, name: String, password: String, dob: String = "") -> void:
+	var body := {"email": email, "name": name, "password": password}
+	if not dob.is_empty():
+		body["dob"] = dob
+	var result: Dictionary = await GameSession.request("/signup", HTTPClient.METHOD_POST, body, false)
+	password = ""
+	if result.ok and result.status == 201:
+		signup_succeeded.emit()
 	else:
-		match current_request:
-			"login":
-				current_request = ""
-				match response_code:
-					401:
-						login_failed.emit("Login Failed, incorrect credentials")
-					_:
-						login_failed.emit("Login Failed, summoners are attempting to summon an entity who may know what has gone wrong")
-			"signup":
-				current_request = ""
-				match response_code:
-					409:
-						signup_failed.emit("Signup Failed, account already exists")
-					422:
-						signup_failed.emit("Signup Failed, email address is invalid")
-					_:
-						signup_failed.emit("Signup Failed, unkown reason that not even our wisest wizards could discern")
-			"currency":
-				current_request = ""
-				if response_code == 401:
-					currency_fail.emit("Currency retrieval failed, invalid user id")
-				else:
-					currency_fail.emit("Currency Retrieval Failed, Our knights are giving chase to the thieving goblins as we speak")
-			"update_currency":
-				current_request = ""
-				if response_code == 453:
-					currency_fail.emit("Not enough currency")
-				else:
-					currency_fail.emit("Currency update failed")
-			_:
-				print("How'd you succeed with an unimplemented query?")
+		signup_failed.emit(result.get("error", "Unexpected registration response."))
 
-
-func signup(email, name, password):
-	print("sign up called")
-	var body = JSON.stringify({"name": name, "password": password, "email": email})
-	var headers = ["Content-Type: application/json"]
-
-	url = "http://127.0.0.1:8000/signup"
-	current_request = "signup"
-
-	print("database query")
-	var result = http.request(url, headers, HTTPClient.METHOD_POST, body)
-	if result == 0:
-		print("Initial connection status: ", result)
-	else:
-		login_failed.emit("Login Failed, summoners are attempting to summon an entity who may know what has gone wrong")
-
-
-func getCurrency(id):
-	print("Currency getter called")
-	
-	url = "http://127.0.0.1:8000/currency?u_id=" + str(id)
-	current_request = "currency"
-	
-	print("databae query")
-	var result = http.request(url, [], HTTPClient.METHOD_GET)
-	if result == 0:
-		print("Initial connection status: ", result)
-	else:
-		currency_fail.emit("Currency Retrieval Failed, Our knights are giving chase to the thieving goblins as we speak")
-
-
-func login(name, password):
-	print("log in called")
-	var body = JSON.stringify({"name": name, "password": password})
-	var headers = ["Content-Type: application/json"]
-	
-	url = "http://127.0.0.1:8000/login"
-	current_request = "login"
-	
-	print("database query")
-	var result = http.request(url, headers, HTTPClient.METHOD_POST, body)
-	if result == 0:
-		print("Initial connection status: ", result)
-	else:
-		signup_failed.emit("Signup Failed, unkown reason that not even our wisest wizards could discern")
-
-
-func update_currency(amt, type):
-	print("currency update called")
-	var body = JSON.stringify({"u_id": user_id, "amount": amt, "type": type})
-	var headers = ["Content-Type: application/json"]
-	
-	url = "http://127.0.0.1:8000/currency/update"
-	
-	print("database query")
-	var result = http.request(url, headers, HTTPClient.METHOD_POST, body)
-	if result == 0:
-		current_request = "update_currency"
-		print("Initial connection status: ", result)
-	else:
-		signup_failed.emit("Currency update failed")
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func update_currency(amount: int, type: String) -> void:
+	if GameSession.token.is_empty():
+		currency_fail.emit("Log in to update your own currency.")
+		return
+	var result: Dictionary = await GameSession.request("/currency/update", HTTPClient.METHOD_POST, {"u_id": user_id, "amount": amount, "type": type})
+	if not result.ok:
+		currency_fail.emit(result.error)
+		return
+	if not result.data is Dictionary or result.data.get("type") != type or not GameSession.number(result.data.get("count")):
+		currency_fail.emit("Unexpected currency response.")
+		return
+	await getCurrency(user_id)

@@ -1,35 +1,72 @@
 extends CanvasLayer
 
 signal signup_signal
+signal logged_in
+var pending := false
+var enable_google := false
+const GOOGLE_SIGN_IN = preload("res://scripts/demo/google_sign_in.gd")
+@onready var fields: VBoxContainer = $LoginScreen/Container/Panel/Margin/VBox
+@onready var message: Label = %ErrorMessage
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	%GoogleButton.visible = enable_google
 	%CloseButton.pressed.connect(queue_free)
-	%SignUpButton.pressed.connect(func():
-		queue_free()
+	%SignUpButton.pressed.connect(func() -> void:
 		signup_signal.emit()
+		queue_free()
 	)
-	
-	%LoginButton.pressed.connect(func():
-			var name = %UsernameInput.text
-			var password = %PasswordInput.text
-			print("LOGIN BUTTON PRESSED")
-			PlayerData.login(name, password)
-			)
-	PlayerData.login_succeeded.connect(success)
-	PlayerData.login_failed.connect(fail)
-	
-	pass # Replace with function body.
+	%LoginButton.pressed.connect(submit)
+	%GoogleButton.pressed.connect(google_sign_in)
+	fields.get_node("PasswordInput").text_submitted.connect(func(_text: String) -> void: submit())
+	message.text = GameSession.notice
+	GameSession.notice = ""
 
-func success() -> void:
-	print("success")
-	PlayerData.getCurrency(PlayerData.user_id)
-	queue_free()
-	
-func fail(message: String) -> void:
-	print("Login failed: ", message)
+func set_busy(value: bool) -> void:
+	pending = value
+	for name in ["LoginButton", "GoogleButton", "SignUpButton", "CloseButton"]:
+		get_node("%" + name).disabled = value
+	fields.get_node("UsernameInput").editable = not value
+	fields.get_node("PasswordInput").editable = not value
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func submit() -> void:
+	if pending:
+		return
+	var username: String = fields.get_node("UsernameInput").text.strip_edges()
+	var password: String = fields.get_node("PasswordInput").text
+	fields.get_node("PasswordInput").clear()
+	if username.is_empty() or password.is_empty():
+		message.text = "Enter your username and password."
+		return
+	set_busy(true)
+	message.text = "Signing in…"
+	var result: Dictionary = await GameSession.request("/sessions", HTTPClient.METHOD_POST, {"name": username, "password": password}, false)
+	password = ""
+	if result.ok and result.data is Dictionary and result.data.get("access_token") is String:
+		await accept_session(result.data)
+		return
+	else:
+		message.text = result.get("error", "Unexpected login response.")
+	set_busy(false)
+
+func accept_session(data: Dictionary) -> void:
+	GameSession.clear()
+	GameSession.token = data.access_token
+	var profile: Dictionary = await GameSession.refresh_account()
+	if profile.ok:
+		logged_in.emit()
+		queue_free()
+		return
+	GameSession.clear()
+	message.text = profile.error
+	set_busy(false)
+
+func google_sign_in() -> void:
+	if pending:
+		return
+	set_busy(true)
+	var google := GOOGLE_SIGN_IN.new()
+	google.name = "GoogleSignIn"
+	add_child(google)
+	google.session_ready.connect(accept_session)
+	google.finished.connect(func() -> void: set_busy(false))
+	google.begin()

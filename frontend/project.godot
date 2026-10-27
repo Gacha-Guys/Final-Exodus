@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="Final Exodus"
-run/main_scene="uid://dt3ckpg0ijv5j"
+run/main_scene="res://scenes/titleScreenNew.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 
-PlayerData="*uid://cvl3n6bmoml"
+GameSession="*res://scripts/demo/game_session.gd"
+PlayerData="*res://scripts/player_data.gd"
 
 [display]
 

@@ -1,6 +1,6 @@
 # Backend setup — Final Exodus
 
-Godot → Python/FastAPI → Aiven MySQL. The API uses the shared `src/` backend and pytest setup. **Run one API: `src.main:app`.** Registration works; login is not implemented. The old dummy `/token` and `/auth-test` routes now return 501 and issue no tokens.
+Godot → Python/FastAPI → Aiven MySQL. The API uses the shared `src/` backend and pytest setup. **Run one API: `src.main:app`.** Registration and username/password login use the team’s `Users`/`Currency` schema, Argon2 password hashes and revocable JWT sessions. The old dummy `/token` and `/auth-test` routes return 501 and issue no tokens. The historical `src.accounts` module and its tests remain available but are not mounted into the supported API.
 
 ## 1. Get access to the team's existing Aiven database
 
@@ -11,13 +11,13 @@ Godot → Python/FastAPI → Aiven MySQL. The API uses the shared `src/` backend
 5. Ask Tyler for the **API application's MySQL credentials**, shared privately. Your Aiven website login is not the database username/password. Do not use the database administrator account for the API.
 6. Open the service's **Overview → Connection information** to confirm the hostname, port and database. Download the project's **CA certificate** and save it outside the repository, e.g. `C:/Users/YourName/.final-exodus/ca.pem` or `/Users/yourname/.final-exodus/ca.pem`. If you cannot view/download these, ask Tyler to provide the connection details and certificate privately.
 
-The normal API database user needs SELECT/INSERT on `accounts` and `wallets`. An administrator sets up those grants and applies `001_accounts.sql` once; teammates do not need to rerun it on the existing shared database. Console project membership does not automatically configure database credentials on your laptop.
+The normal API uses the existing `Users`/`Currency` tables and the reviewed additive session/battle tables. An administrator applies the [shared migration and scoped grants](../docs/SHARED_STORAGE.md) once; teammates do not run the historical `001_accounts.sql` or local demo initializer against Aiven. Console project membership does not automatically configure database credentials on your laptop.
 
 References: [Aiven project permissions](https://aiven.io/docs/platform/howto/manage-permissions), [MySQL connection information](https://aiven.io/docs/products/mysql/howto/connect-from-mysql-workbench), [CA certificates](https://aiven.io/docs/platform/concepts/tls-ssl-certificates).
 
 ## 2. Install the Python backend
 
-Install Python 3.11 or newer. Open a terminal inside this repository's `backend` folder.
+Use Python 3.14 for the verified local environment; backend CI also checks Python 3.12. Open a terminal inside this repository's `backend` folder.
 
 **Windows PowerShell:**
 
@@ -46,11 +46,13 @@ FINAL_EXODUS_DB_HOST=your-service-hostname
 FINAL_EXODUS_DB_PORT=your-service-port
 FINAL_EXODUS_DB_USER=your-api-user
 FINAL_EXODUS_DB_PASSWORD=your-private-password
-FINAL_EXODUS_DB=defaultdb
+FINAL_EXODUS_DB=Final-Exodus-Database
+FINAL_EXODUS_STORAGE_PROFILE=shared-users-v1
+FINAL_EXODUS_JWT_SECRET=replace-with-your-private-random-signing-key
 FINAL_EXODUS_DB_SSL_CA="C:/Users/YourName/.final-exodus/ca.pem"
 ```
 
-On Mac, change the CA path to your actual `/Users/.../ca.pem` path. Use the provided database name if it differs from `defaultdb`. Put values containing `#` or spaces in quotes. Never paste the password into Godot, GitHub, screenshots, PRs or test files. `.env` is ignored by Git; `.env.example` contains placeholders only. Do not disable certificate verification to fix connection errors.
+On Mac, change the CA path to your actual `/Users/.../ca.pem` path. Use the provided database name if it differs from `Final-Exodus-Database`. Generate a private JWT signing key of at least 43 characters and preserve it across restarts. Put values containing `#` or spaces in quotes. Never paste the password into Godot, GitHub, screenshots, PRs or test files. `.env` is ignored by Git; `.env.example` contains placeholders only. Do not disable certificate verification to fix connection errors.
 
 ## 4. Check the database and start the API
 
@@ -58,21 +60,21 @@ On Mac, change the CA path to your actual `/Users/.../ca.pem` path. Use the prov
 
 ```powershell
 .venv\Scripts\python.exe check_connection.py --env-file .env
-.venv\Scripts\python.exe -m uvicorn src.main:app --env-file .env --host 127.0.0.1 --port 8001 --no-proxy-headers
+.venv\Scripts\python.exe Server.py
 ```
 
 **macOS/Linux:**
 
 ```sh
 .venv/bin/python check_connection.py --env-file .env
-.venv/bin/python -m uvicorn src.main:app --env-file .env --host 127.0.0.1 --port 8001 --no-proxy-headers
+.venv/bin/python Server.py
 ```
 
-The first command should say **Connected: accounts and wallets are readable.** It does not create records. Leave the second command running. Open http://127.0.0.1:8001/docs for the API reference.
+The first command prints the selected database/server and table names without creating records. Leave the second command running. `Server.py` defaults to `.env` and loopback port **8000**, matching the Godot client. Open http://127.0.0.1:8000/docs for the API reference. `GET /health` checks database readiness and the shared migration marker; session creation also needs the signing key.
 
 ## 5. Try registration through the API
 
-With the API running, open http://127.0.0.1:8001/docs. Expand **POST /accounts**, choose **Try it out**, and supply a disposable test email, display name, and a 12–128 character password. Execute to create a real test account in the shared database. A repeated email should return409. No login or phone registration screen is included in this backend PR; the Godot screen follows separately.
+With the API running, open http://127.0.0.1:8000/docs. Expand **POST /signup**, choose **Try it out**, and supply a disposable test `email`, `name` and `password`. The team form keeps these three fields; DOB is optional and hidden. Passwords must be nonempty and at most 128 characters; trimmed usernames are 1–255 characters. Repeated usernames or emails return 409. Log in through **POST /login** with `name` and `password`, or use Account in Godot. Successful login closes the popup; press **Start** to enter the team hub. Email is not a login alias. Guest Start still opens the hub preview without private account data.
 
 ## 6. View saved player accounts in MySQL Workbench
 
@@ -80,26 +82,26 @@ Aiven Console manages the database service. Its **Users** section lists database
 
 1. Install the build for your computer from [the official MySQL Workbench downloads](https://dev.mysql.com/downloads/workbench/). On Apple Silicon Mac, choose ARM64. On Windows, use the Windows installer.
 2. Open Workbench. Next to **MySQL Connections**, click **+** and name the connection `Final Exodus - Aiven`.
-3. Use **Standard (TCP/IP)**. Copy the hostname and port from your Aiven service and use the privately supplied API database username. Set **Default Schema** to the database name from your `.env` (normally `defaultdb`).
+3. Use **Standard (TCP/IP)**. Copy the hostname and port from your Aiven service and use the privately supplied API database username. Set **Default Schema** to the database name from your `.env` (use the exact privately supplied name).
 4. In **SSL**, choose **Require and Verify Identity** and set **SSL CA File** to the downloaded project certificate. Leave client certificate/key empty unless the project owner explicitly provides them.
 5. Select **Test Connection** and enter the API database password. Saving it to Keychain/Vault is optional. The app password is not your Aiven website password or game password.
 6. Save and open the connection. If Workbench warns about MySQL 8.4 compatibility, basic SQL queries may still work; this is different from a failed TLS/certificate check. Do not bypass certificate failures.
-7. Inside the SQL editor, choose the **Schemas** tab in the left sidebar. Expand **defaultdb → Tables → accounts**. Right-click **accounts → Select Rows** to browse records, or run the read-only query below to avoid displaying password hashes.
+7. Inside the SQL editor, choose the **Schemas** tab in the left sidebar. Expand **your configured schema → Tables → Users**. Right-click **Users → Select Rows** to browse records, or run the read-only query below to avoid displaying password hashes.
 
 ```sql
-SELECT a.id, a.display_name, a.created_at, w.currency
-FROM defaultdb.accounts AS a
-LEFT JOIN defaultdb.wallets AS w ON w.account_id = a.id
-WHERE a.email = 'your-test@example.com';
+SELECT u.id, u.name, u.level, u.exp, c.Type, c.count
+FROM `Final-Exodus-Database`.Users AS u
+LEFT JOIN `Final-Exodus-Database`.Currency AS c ON c.u_id = u.id
+WHERE u.email = 'your-test@example.com';
 ```
 
-Replace `your-test@example.com` with the exact test email you registered. Email is unique; display names are not. Use your configured database name instead of `defaultdb` if different. One returned row confirms that account was persisted; `currency = 0` is the initial in-game balance. This is a read-only query. Do not edit other teammates' test accounts.
+Replace `your-test@example.com` with the exact test email you registered. Email is unique; API signup, rename and Google registration reject duplicate usernames using the database’s collation and a shared advisory lock. Direct SQL writers must follow that identity policy too; no new unique-name database index is added. Replace `Final-Exodus-Database` with your configured database name if different. The existing trigger creates one free and one paid balance row, so two rows confirm a saved account and its balances. This is a read-only query. Do not edit other teammates' test accounts.
 
 ## Testing and checking the right server
 
 From `backend/`, run `.venv\Scripts\python.exe -m pytest -q` on Windows or `.venv/bin/python -m pytest -q` on Mac/Linux. Ordinary tests need no Aiven account or credentials. [The testing guide](../docs/TESTING.md) explains the optional real-database test and its cleanup requirements.
 
-When using the Godot screen from the separate UI PR, its API origin must match the port you started. The standard command above uses 8001. If another API already occupies it, use a different port in both places, such as 8004. A successful health check proves only that an API process is reachable; it does not prove that process uses Aiven. Start it with the intended `.env`, run the read-only database checker, and verify the saved record through your Aiven Workbench connection. The MySQL port from Aiven and your local API port are different settings.
+The Godot API origin must match the port you started. The standard command above uses 8000. If another API already occupies it, use `Server.py --port 8004` and set `FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8004` for Godot too. A successful health check verifies that process’s configured storage readiness; it does not prove it is the intended Aiven database. Start it with the intended `.env`, run the read-only database checker, and verify the saved record through your Aiven Workbench connection. The MySQL port from Aiven and your local API port are different settings.
 
 ## Troubleshooting
 
@@ -110,7 +112,13 @@ When using the Godot screen from the separate UI PR, its API origin must match t
 | Access denied | Use the API database credentials, not your Aiven website password; ask Tyler to check grants. |
 | Certificate error | Check the CA path and certificate match this project. Keep verification enabled. |
 | Address already in use | Stop your older API, or choose another port and use that port in Godot too. |
-| Health works but registration fails | Health checks only the API process; run the database checker and confirm tables/grants. |
-| Too many attempts | Wait at least 60 seconds. The default limit is 5 registration attempts per IP/minute, including invalid requests. |
+| Health works but registration fails | Run the database checker, confirm runtime grants and inspect the safe API error; health does not test every write or signing-key setting. |
+| Too many attempts | Wait at least 60 seconds. The supported API allows 20 authentication/registration attempts per IP/minute, including invalid requests. |
 
-Run [the automated tests](../docs/TESTING.md) before requesting review. The limiter is for a single local worker; shared deployment requires a reviewed proxy/throttle setup. Account/password/age policies are still provisional. Registration does not implement login or purchase eligibility.
+Run [the automated tests](../docs/TESTING.md) before requesting review. The limiter is for a single local worker; shared deployment requires a reviewed proxy/throttle setup. Account/password/age policies are still provisional; DOB does not establish purchase eligibility. Existing unsupported shared password formats need owner-verified resets; no plaintext fallback is enabled.
+
+## Isolated local prototype and optional demo
+
+For Docker/local MySQL setup, see [LOCAL_DEMO.md](../docs/LOCAL_DEMO.md). Start that API with `Server.py --env-file .env.demo` on the same default port 8000. The four gem buttons retain Mihai’s 50/200/500/999 paid-currency prototypes only when local setup enables it for loopback `final_exodus_tyler_demo`. Shared storage always refuses client-directed grants, even if that flag is set. Other offers and the gamepass retain their existing presentation.
+
+The added fixture-combat/Google flow is separate: open `frontend/scenes/demo_title.tscn` and press F6. It does not replace the team’s F5 title/hub/navigation. See [authentication](../docs/AUTHENTICATION.md) for the explicit port 8007 Google callback setup and [API contracts](../docs/DEMO_API.md) for supported routes.

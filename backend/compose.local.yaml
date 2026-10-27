@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${FINAL_EXODUS_ROOT_PASSWORD:?Run python local_setup.py first}
+    ports:
+      - "127.0.0.1:${FINAL_EXODUS_LOCAL_DB_PORT:-3308}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysqladmin ping -h 127.0.0.1 -u root --silent"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+volumes:
+  mysql-data:

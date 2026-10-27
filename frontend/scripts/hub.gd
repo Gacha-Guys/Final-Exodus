@@ -1,15 +1,13 @@
 extends Control
 
-# Called when the node enters the scene tree for the first time.
+const RANK_PATH := "MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer/TextureProgressBar2/Label"
+
 func _ready() -> void:
-	%Currency.val = PlayerData.paid_currency
 	PlayerData.currency_success.connect(_on_currency_changed)
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	_on_currency_changed()
+	if not GameSession.token.is_empty():
+		await PlayerData.getCurrency(PlayerData.user_id)
 
 func _on_currency_changed() -> void:
 	%Currency.val = PlayerData.paid_currency
+	get_node(RANK_PATH).text = "Rank\n%d" % int(GameSession.account.level) if not GameSession.account.is_empty() else "Rank\n—"

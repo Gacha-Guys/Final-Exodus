@@ -65,12 +65,18 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 27
 text = "Login"
 
+[node name="GoogleButton" type="Button" parent="LoginScreen/Container/Panel/Margin/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Continue with Google"
+
 [node name="SignUpButton" type="LinkButton" parent="LoginScreen/Container/Panel/Margin/VBox" unique_id=235190190]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 text = "Create Account"
-uri = "google.com"
+
 
 [node name="CloseButton" type="Button" parent="LoginScreen/Container/Panel" unique_id=700999856]
 unique_name_in_owner = true
@@ -79,3 +85,8 @@ layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 text = "X"
+
+[node name="ErrorMessage" type="Label" parent="LoginScreen/Container/Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 2
