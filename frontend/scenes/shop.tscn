@@ -535,14 +535,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=15488762]
-[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=474536334]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 29
+layout_mode = 0
 
 [node name="LeftSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=409572415]
 layout_mode = 2
@@ -626,6 +619,13 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "$14.99"
 
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=303588534]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Gamepass
+$9.99"
+horizontal_alignment = 1
+
 [node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1024291369]
 layout_mode = 2
 theme_override_constants/margin_bottom = 20
@@ -656,13 +656,15 @@ nine_patch_stretch = true
 texture_over = ExtResource("6_68utx")
 texture_progress = ExtResource("16_j14q8")
 
-[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1483356421]
+[node name="MidSeparate2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1483356421]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 
-[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=303588534]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Gamepass
-$9.99"
-horizontal_alignment = 1
+[node name="HBoxContainer2" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=474536334]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 29

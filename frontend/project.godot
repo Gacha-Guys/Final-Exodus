@@ -14,6 +14,10 @@ config/name="Final Exodus"
 run/main_scene="uid://dt3ckpg0ijv5j"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+PlayerData="*uid://cvl3n6bmoml"
+
 [display]
 
 window/size/viewport_width=720

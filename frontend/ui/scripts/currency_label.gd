@@ -1,11 +1,11 @@
 @tool
 extends Control
 
-@export var val: String = "0":
+@export var val: int = 0:
 	set(value):
 		val = value
 		if has_node("NinePatchRect/MarginContainer2/Value"):
-			$NinePatchRect/MarginContainer2/Value.text = val
+			$NinePatchRect/MarginContainer2/Value.text = str(val)
 
 @export var texture: Texture2D:
 	set(value):
@@ -15,7 +15,7 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$NinePatchRect/MarginContainer2/Value.text = val
+	$NinePatchRect/MarginContainer2/Value.text = str(val)
 	$NinePatchRect/MarginContainer/TextureRect.texture = texture
 
 
