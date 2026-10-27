@@ -52,7 +52,7 @@ func callback(google: Node) -> void:
 func wait_hub() -> Node:
 	for step in range(200):
 		await create_timer(0.02).timeout
-		if is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("hub.tscn") and not current_scene.pending:
+		if is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("demo_hub.tscn") and not current_scene.pending:
 			return current_scene
 	expect(false, "Google login enters the hub")
 	quit(1)
@@ -60,7 +60,7 @@ func wait_hub() -> Node:
 
 func run() -> void:
 	session = root.get_node("GameSession")
-	title = load("res://scenes/titleScreenNew.tscn").instantiate()
+	title = load("res://scenes/demo_title.tscn").instantiate()
 	root.add_child(title)
 	current_scene = title
 	await process_frame

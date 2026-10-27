@@ -1,22 +1,34 @@
-extends "res://scripts/demo/hub_controller.gd"
+extends Control
+
+var pending := false
+var message: AcceptDialog
+const RANK_PATH := "MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer/TextureProgressBar2/Label"
 
 func _ready() -> void:
 	PlayerData.currency_success.connect(_on_currency_changed)
-	super._ready()
-	# Keep all team offers visible. A purchase needs a verified provider receipt.
-	for index in range(1, 7):
-		var offer := get_node_or_null("GridContainer/CurrencyButton%d" % index)
-		if offer != null:
-			offer.custom_minimum_size.y = 130
-			offer.pressed.connect(purchase_unavailable)
-	# Six offers fit between account details and the existing bottom navigation.
-	var offers: GridContainer = $GridContainer
-	offers.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-	offers.position = Vector2(110, 270)
-	offers.size = Vector2(500, 865)
+	PlayerData.currency_fail.connect(_on_currency_failed)
+	%CurrencyButton1.pressed.connect(_on_currency_offer_pressed)
+	_on_currency_changed()
+	if not GameSession.token.is_empty():
+		await PlayerData.getCurrency(PlayerData.user_id)
+
+func _on_currency_offer_pressed() -> void:
+	if pending:
+		return
+	pending = true
+	%CurrencyButton1.disabled = true
+	await PlayerData.update_currency(50, "paid")
+	%CurrencyButton1.disabled = false
+	pending = false
 
 func _on_currency_changed() -> void:
 	%Currency.val = PlayerData.paid_currency
+	get_node(RANK_PATH).text = "Rank\n%d" % int(GameSession.account.level) if not GameSession.account.is_empty() else "Rank\n—"
 
-func purchase_unavailable() -> void:
-	status_label.text = "Purchases are not connected yet. No currency was charged or granted."
+func _on_currency_failed(reason: String) -> void:
+	if not is_instance_valid(message):
+		message = AcceptDialog.new()
+		message.title = "Currency update"
+		add_child(message)
+	message.dialog_text = reason
+	message.popup_centered()

@@ -25,15 +25,16 @@ func run() -> void:
 	legacy.currency_fail.connect(func(_message: String) -> void: currency_errors += 1)
 	legacy.getCurrency(43)
 	expect(currency_errors == 1 and legacy.user_id == 42, "Legacy getter rejects another player's account")
-	legacy.update_currency(50, "paid")
-	expect(currency_errors == 2 and legacy.paid_currency == 11, "A client purchase cannot mint paid currency")
 	# Invalid origin fails before transport, so these scene checks never access a server.
 	var origin: String = session.api_origin
 	session.api_origin = "invalid-for-offline-check"
+	await legacy.update_currency(50, "paid")
+	expect(currency_errors == 2 and legacy.paid_currency == 11, "Failed currency requests preserve the balance")
 	var hub: Node = load("res://scenes/hub.tscn").instantiate()
 	root.add_child(hub)
 	await process_frame
-	expect(hub.has_method("open_battle") and hub.has_method("_on_currency_changed"), "Team hub and saved-battle controller remain connected")
+	expect(not hub.has_method("open_battle") and hub.has_method("_on_currency_changed"), "Team hub has no injected combat controller")
+	expect(hub.get_node("StoryButton").visible, "Team Story button stays visible")
 	expect(hub.get_node("ShopButton") != null and hub.get_node("SummonButton") != null, "Team hub navigation is retained")
 	hub._on_currency_changed()
 	hub.get_node("%Currency").set_loading(true)
@@ -46,19 +47,20 @@ func run() -> void:
 	var shop: Node = load("res://scenes/shop.tscn").instantiate()
 	root.add_child(shop)
 	await process_frame
-	expect(shop.has_method("refresh") and shop.has_method("purchase_unavailable"), "Team shop uses the same authenticated controller")
-	for index in range(1, 7):
+	expect(not shop.has_method("open_battle"), "Team shop has no injected demo UI")
+	expect(shop.get_node("GridContainer").get_child_count() == 5, "Riley's four gem offers and gamepass remain five offers")
+	for index in range(1, 6):
 		var offer: Button = shop.get_node("GridContainer/CurrencyButton%d" % index)
 		expect(shop.get_rect().encloses(offer.get_global_rect()), "Offer %d stays inside the viewport" % index)
-		expect(offer.pressed.is_connected(Callable(shop, "purchase_unavailable")), "Offer %d remains visible and has safe purchase handling" % index)
-	expect(shop.get_node("GridContainer/CurrencyButton1").get_global_rect().position.y >= shop.status_label.get_global_rect().end.y, "Offers do not overlap account status")
-	expect(shop.get_node("GridContainer/CurrencyButton6").get_global_rect().end.y <= shop.get_node("UnitsButton").get_global_rect().position.y, "Gamepass stays above bottom navigation")
-	shop.get_node("GridContainer/CurrencyButton1").pressed.emit()
-	expect(shop.status_label.text.contains("No currency") and legacy.paid_currency == 11, "Offer click reports unavailable payment without changing balances")
+	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer/MidSeparate/Title").text.contains("Gamepass"), "Gamepass remains Riley's fifth offer")
+	expect(shop.get_node("%CurrencyButton1").pressed.is_connected(Callable(shop, "_on_currency_offer_pressed")), "Mihai's currency prototype button is connected")
+	await shop._on_currency_offer_pressed()
+	expect(shop.message.dialog_text.contains("valid") and legacy.paid_currency == 11, "Failed offer shows feedback and preserves balance")
 	shop._on_currency_changed()
 	expect(shop.get_node("%Currency").val == 11, "Team shop receives the paid-currency signal")
 	session.clear()
 	expect(legacy.user_id == 0 and legacy.paid_currency == 0 and legacy.free_currency == 0, "Logout clears team HUD adapter private state")
+	expect(shop.get_node(shop.RANK_PATH).text == "Rank\n—", "Logout clears the previous account rank")
 	shop.queue_free()
 	session.api_origin = origin
 	await process_frame

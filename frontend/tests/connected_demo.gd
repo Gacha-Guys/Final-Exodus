@@ -48,15 +48,14 @@ func screenshot(name: String) -> void:
 		root.get_texture().get_image().save_png(artifact_path(name + ("-small" if small else "") + ".png"))
 
 func run() -> void:
-	if small:
-		root.size = Vector2i(390, 744)
+	root.size = Vector2i(390, 744) if small else Vector2i(480, 854)
 	session = root.get_node("GameSession")
 	expect(session.valid_origin("http://127.0.0.1:8007"), "Loopback API allowed")
 	for origin in ["http://example.com", "http://127.0.0.1.evil.com", "https://user:pass@example.com", "http://localhost:0", "https://example.com/path", "https://example.com#fragment"]:
 		expect(not session.valid_origin(origin), "Unsafe origin rejected: " + origin)
 	expect(not session.valid_account({"id": 1}), "Malformed account response rejected")
 	expect(not session.valid_battle({"party": []}), "Malformed battle response rejected")
-	var title: Node = load("res://scenes/titleScreenNew.tscn").instantiate()
+	var title: Node = load("res://scenes/demo_title.tscn").instantiate()
 	root.add_child(title)
 	current_scene = title
 	await process_frame
@@ -98,7 +97,6 @@ func run() -> void:
 	other_username = "Other" + suffix
 	signup.get_node("%EmailInput").text = test_email
 	signup.get_node("%UsernameInput").text = test_username
-	signup.get_node("%DoBInput").text = "2000-01-01"
 	signup.get_node("%PasswordInput").text = "LocalUiDemo!2026"
 	signup.get_node("%PasswordConfirmation").text = "LocalUiDemo!2026"
 	await signup.submit()
@@ -118,9 +116,9 @@ func run() -> void:
 	await login.submit()
 	await process_frame
 	await process_frame
-	var hub: Node = await wait_scene("hub.tscn")
+	var hub: Node = await wait_scene("demo_hub.tscn")
 	await settle(hub)
-	expect(hub.scene_file_path.ends_with("hub.tscn"), "Valid login enters existing hub")
+	expect(hub.scene_file_path.ends_with("demo_hub.tscn"), "Valid login enters existing hub")
 	expect(session.token.split(".").size() == 3, "Username login uses a signed JWT access token")
 	expect(hub.player_label.text == test_username and hub.get_node("Currency").val == 0, "Hub displays actual profile and trigger-created balances")
 	await screenshot("hub")
@@ -153,16 +151,16 @@ func run() -> void:
 	await screenshot("battle")
 	var saved_id: String = battle.state.id
 	var saved: Dictionary = battle.state.duplicate(true)
-	await change_scene_to_file("res://scenes/hub.tscn")
+	await change_scene_to_file("res://scenes/demo_hub.tscn")
 	await process_frame
-	hub = await wait_scene("hub.tscn")
+	hub = await wait_scene("demo_hub.tscn")
 	await settle(hub)
 	expect(session.battle.id == saved_id and session.battle.enemy.hp == 52, "Hub reloads saved encounter")
 	await hub.logout()
 	await process_frame
 	await process_frame
 	expect(session.token.is_empty() and session.account.is_empty() and session.battle.is_empty(), "Logout removes all private client state")
-	title = await wait_scene("titleScreenNew.tscn")
+	title = await wait_scene("demo_title.tscn")
 	login = title.popup
 	login.fields.get_node("UsernameInput").text = test_username
 	login.fields.get_node("PasswordInput").text = "LocalUiDemo!2026"
@@ -177,20 +175,20 @@ func run() -> void:
 	await login.submit()
 	await process_frame
 	await process_frame
-	hub = await wait_scene("hub.tscn")
+	hub = await wait_scene("demo_hub.tscn")
 	await settle(hub)
 	expect(hub.player_label.text == other_username and session.battle.is_empty(), "Account switch never displays the previous player's encounter")
 	await hub.logout()
 	await process_frame
 	await process_frame
-	title = await wait_scene("titleScreenNew.tscn")
+	title = await wait_scene("demo_title.tscn")
 	login = title.popup
 	login.fields.get_node("UsernameInput").text = saved_username
 	login.fields.get_node("PasswordInput").text = "LocalUiDemo!2026"
 	await login.submit()
 	await process_frame
 	await process_frame
-	hub = await wait_scene("hub.tscn")
+	hub = await wait_scene("demo_hub.tscn")
 	await settle(hub)
 	expect(hub.player_label.text == saved_username and session.battle == saved, "Login reloads saved name and exact battle")
 	hub.open_battle()
@@ -203,9 +201,9 @@ func run() -> void:
 		await battle.attack(int(battle.state.version) % 3)
 	expect(battle.state.enemy.hp == 0 and battle.attack_buttons[0].disabled, "Victory disables further attacks")
 	await screenshot("victory")
-	await change_scene_to_file("res://scenes/hub.tscn")
+	await change_scene_to_file("res://scenes/demo_hub.tscn")
 	await process_frame
-	hub = await wait_scene("hub.tscn")
+	hub = await wait_scene("demo_hub.tscn")
 	await settle(hub)
 	expect(int(session.account.completed_battles) == 1 and int(session.account.free_currency) == 0, "Hub shows one persisted victory with no invented rewards")
 	# A network failure must not replace known data with successful-looking zeroes.
@@ -220,7 +218,7 @@ func run() -> void:
 	await process_frame
 	var shop: Node = await wait_scene("shop.tscn")
 	await settle(shop)
-	expect(shop.player_label.text == saved_username, "Existing shop displays authenticated account")
+	expect(shop.get_node("%Currency").val == int(session.account.paid_currency), "Team shop displays authenticated currency")
 	await screenshot("shop")
 	# Expiry/invalid-token handling clears the HUD instead of leaving private data visible.
 	session.token = "invalid-session-token-for-ui-test"

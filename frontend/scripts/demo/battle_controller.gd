@@ -17,7 +17,7 @@ var back_button: Button
 
 func _ready() -> void:
 	if GameSession.token.is_empty():
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/titleScreenNew.tscn")
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/demo_title.tscn")
 		return
 	build_ui()
 	await load_saved()
@@ -86,7 +86,7 @@ func build_ui() -> void:
 	back_button.text = "Return to hub"
 	back_button.add_theme_font_size_override("font_size", 24)
 	back_button.custom_minimum_size.y = 64
-	back_button.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/hub.tscn"))
+	back_button.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/demo_hub.tscn"))
 	box.add_child(back_button)
 	set_busy(true)
 

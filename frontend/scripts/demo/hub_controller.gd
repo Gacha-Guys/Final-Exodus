@@ -14,7 +14,7 @@ const RANK_PATH := "MarginContainer/NinePatchRect/MarginContainer/AspectRatioCon
 
 func _ready() -> void:
 	if GameSession.token.is_empty():
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/titleScreenNew.tscn")
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/demo_title.tscn")
 		return
 	is_shop = scene_file_path.ends_with("shop.tscn")
 	player_label = Label.new()
@@ -153,7 +153,7 @@ func logout() -> void:
 	var result: Dictionary = await GameSession.request("/sessions/current", HTTPClient.METHOD_DELETE)
 	if result.ok:
 		GameSession.clear()
-		get_tree().change_scene_to_file("res://scenes/titleScreenNew.tscn")
+		get_tree().change_scene_to_file("res://scenes/demo_title.tscn")
 	else:
 		status_label.text = result.error
 		pending = false

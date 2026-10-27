@@ -7,7 +7,7 @@ var account: Dictionary = {}
 var battle: Dictionary = {}
 var notice := ""
 var generation := 0
-var api_origin := "http://127.0.0.1:8007"
+var api_origin := "http://127.0.0.1:8000"
 
 func _ready() -> void:
 	var configured := OS.get_environment("FINAL_EXODUS_API_ORIGIN")
@@ -78,11 +78,13 @@ func request(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary
 	if data is Dictionary and data.get("detail") is String:
 		message = data.detail
 	elif code == 422:
-		message = "Enter your username and password." if path in ["/sessions", "/login"] else "Check your username, email, birth date, and password (12–128 characters)."
+		message = "Enter your username and password." if path in ["/sessions", "/login"] else "Check the account details and try again."
 	if code == 401 and authenticated:
 		clear()
 		notice = "Session expired. Please log in again."
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/titleScreenNew.tscn")
+		var current := get_tree().current_scene
+		var demo_scene := is_instance_valid(current) and current.scene_file_path in ["res://scenes/demo_hub.tscn", "res://scenes/demo_battle.tscn", "res://scenes/demo_title.tscn"]
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/demo_title.tscn" if demo_scene else "res://scenes/titleScreenNew.tscn")
 	return {"ok": false, "status": code, "error": message}
 
 func refresh_account() -> Dictionary:

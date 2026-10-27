@@ -46,16 +46,25 @@ func login(name: String, password: String) -> void:
 	login_succeeded.emit()
 
 func signup(email: String, name: String, password: String, dob: String = "") -> void:
-	if dob.is_empty():
-		signup_failed.emit("Enter your birth date in the account form.")
-		return
-	var result: Dictionary = await GameSession.request("/accounts", HTTPClient.METHOD_POST, {"email": email, "display_name": name, "password": password, "dob": dob}, false)
+	var body := {"email": email, "name": name, "password": password}
+	if not dob.is_empty():
+		body["dob"] = dob
+	var result: Dictionary = await GameSession.request("/signup", HTTPClient.METHOD_POST, body, false)
 	password = ""
 	if result.ok and result.status == 201:
 		signup_succeeded.emit()
 	else:
 		signup_failed.emit(result.get("error", "Unexpected registration response."))
 
-func update_currency(_amount: int, _type: String) -> void:
-	# Currency changes come from server-verified gameplay or payment operations.
-	currency_fail.emit("Currency requires a verified reward or purchase.")
+func update_currency(amount: int, type: String) -> void:
+	if GameSession.token.is_empty():
+		currency_fail.emit("Log in to update your own currency.")
+		return
+	var result: Dictionary = await GameSession.request("/currency/update", HTTPClient.METHOD_POST, {"u_id": user_id, "amount": amount, "type": type})
+	if not result.ok:
+		currency_fail.emit(result.error)
+		return
+	if not result.data is Dictionary or result.data.get("type") != type or not GameSession.number(result.data.get("count")):
+		currency_fail.emit("Unexpected currency response.")
+		return
+	await getCurrency(user_id)

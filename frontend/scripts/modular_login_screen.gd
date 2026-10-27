@@ -3,11 +3,13 @@ extends CanvasLayer
 signal signup_signal
 signal logged_in
 var pending := false
+var enable_google := false
 const GOOGLE_SIGN_IN = preload("res://scripts/demo/google_sign_in.gd")
 @onready var fields: VBoxContainer = $LoginScreen/Container/Panel/Margin/VBox
 @onready var message: Label = %ErrorMessage
 
 func _ready() -> void:
+	%GoogleButton.visible = enable_google
 	%CloseButton.pressed.connect(queue_free)
 	%SignUpButton.pressed.connect(func() -> void:
 		signup_signal.emit()

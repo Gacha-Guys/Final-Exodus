@@ -15,7 +15,7 @@ func set_busy(value: bool) -> void:
 	pending = value
 	for name in ["SignUpButton", "LoginButton", "CloseButton"]:
 		get_node("%" + name).disabled = value
-	for name in ["EmailInput", "UsernameInput", "PasswordInput", "PasswordConfirmation", "DoBInput"]:
+	for name in ["EmailInput", "UsernameInput", "PasswordInput", "PasswordConfirmation"]:
 		get_node("%" + name).editable = not value
 
 func submit() -> void:
@@ -24,18 +24,18 @@ func submit() -> void:
 	if %PasswordInput.text != %PasswordConfirmation.text:
 		%ErrorMessage.text = "Passwords do not match."
 		return
-	if %EmailInput.text.strip_edges().is_empty() or %UsernameInput.text.strip_edges().is_empty() or %DoBInput.text.strip_edges().is_empty():
-		%ErrorMessage.text = "Enter your email, username, and birth date."
+	if %EmailInput.text.strip_edges().is_empty() or %UsernameInput.text.strip_edges().is_empty():
+		%ErrorMessage.text = "Enter your email and username."
 		return
-	if %PasswordInput.text.length() < 12 or %PasswordInput.text.length() > 128:
-		%ErrorMessage.text = "Use a password with 12–128 characters."
+	if %PasswordInput.text.is_empty() or %PasswordInput.text.length() > 128:
+		%ErrorMessage.text = "Enter a password (up to 128 characters)."
 		return
-	var body := {"email": %EmailInput.text.strip_edges(), "display_name": %UsernameInput.text, "password": %PasswordInput.text, "dob": %DoBInput.text.strip_edges()}
+	var body := {"email": %EmailInput.text.strip_edges(), "name": %UsernameInput.text, "password": %PasswordInput.text}
 	%PasswordInput.clear()
 	%PasswordConfirmation.clear()
 	set_busy(true)
 	%ErrorMessage.text = "Creating account…"
-	var result: Dictionary = await GameSession.request("/accounts", HTTPClient.METHOD_POST, body, false)
+	var result: Dictionary = await GameSession.request("/signup", HTTPClient.METHOD_POST, body, false)
 	body.clear()
 	set_busy(false)
 	if result.ok and result.status == 201 and result.data is Dictionary and result.data.has("id"):
