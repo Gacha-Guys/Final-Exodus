@@ -1,16 +1,21 @@
-"""Shared API entrypoint. Authentication is a future SCRUM-7 feature."""
+"""Supported secure account/session/combat API with guarded storage."""
 from fastapi import HTTPException
-from .accounts import app
+from .demo import app
+from .compatibility import router
+
+app.include_router(router)
+
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
+
 @app.post("/token", deprecated=True)
-def login_placeholder():
-    # Never issue dummy credentials from the shared API.
-    raise HTTPException(501, "Login is not implemented yet")
+def retired_token():
+    raise HTTPException(501, "Use /sessions for authentication")
+
 
 @app.get("/auth-test", deprecated=True)
-def authentication_placeholder():
+def retired_auth_test():
     raise HTTPException(501, "Login is not implemented yet")

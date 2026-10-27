@@ -1,5 +1,7 @@
 # Registration contract for the Godot screen
 
+> Historical registration-foundation contract for `src.accounts` and the older standalone UI. The supported connected API uses `src.main:app`, requires DOB on new registrations, and is documented in [DEMO_API.md](DEMO_API.md). The historical module remains covered by its original tests.
+
 POST `/accounts` with JSON:
 
 ```json

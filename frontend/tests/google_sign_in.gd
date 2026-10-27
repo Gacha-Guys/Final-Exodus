@@ -16,6 +16,13 @@ func expect(condition: bool, description: String) -> void:
 		failures += 1
 		push_error(description)
 
+func artifact_path(name: String) -> String:
+	var directory := OS.get_environment("FINAL_EXODUS_TEST_ARTIFACT_DIR")
+	if directory.is_empty():
+		directory = "res://../docs/review"
+	DirAccess.make_dir_recursive_absolute(directory)
+	return directory.path_join(name)
+
 func start_google() -> Node:
 	login = title.popup
 	login.set_busy(true)
@@ -65,7 +72,7 @@ func run() -> void:
 	expect(google.registration_ready and google.dob_input.visible, "New Google user is asked for real DOB")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://../docs/review/google-registration-simulated.png")
+		root.get_texture().get_image().save_png(artifact_path("google-registration-simulated.png"))
 	google.name_input.text = "Google UI Tester"
 	google.dob_input.text = "2999-01-01"
 	await google.complete_registration()
@@ -88,7 +95,7 @@ func run() -> void:
 	await hub.logout()
 	await create_timer(0.1).timeout
 	expect(session.token.is_empty() and session.account.is_empty(), "Google logout clears the client")
-	var report := FileAccess.open("res://../docs/review/google-ui-simulated-result.json", FileAccess.WRITE)
+	var report := FileAccess.open(artifact_path("google-ui-simulated-result.json"), FileAccess.WRITE)
 	report.store_string(JSON.stringify({"provider": "simulated", "checks": checks, "failures": failures}, "  "))
 	report.close()
 	print("Simulated Google UI checks: %d passed, %d failed" % [checks-failures,failures])

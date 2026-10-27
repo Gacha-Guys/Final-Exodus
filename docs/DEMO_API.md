@@ -1,16 +1,18 @@
-# Local connected demo
+# Supported connected API
 
-This branch keeps the team's current UI and adds a separate `src.demo:app` API. The existing `src.main:app` registration foundation stays available. The demo runs only against `final_exodus_tyler_demo` on loopback MySQL. It does not migrate Aiven.
+`src.main:app` is the supported entrypoint; `src.demo:app` remains an alias for the same underlying account/battle application. The legacy `src.accounts` module remains available for regression tests but is not exposed through this API. Storage defaults to isolated loopback `final_exodus_tyler_demo`; the deliberate shared profile requires the reviewed additive migration. See [SHARED_STORAGE.md](SHARED_STORAGE.md).
 
-The local `Users` and `Currency` tables follow Mihai's model. Registration includes a real date of birth, stores an Argon2 password verifier in `Users.password`, and relies on the insert trigger for free/paid balances. This local copy adds unique email enforcement, plus `DemoSessions`, `DemoBattles`, `DemoActions` and `DemoGoogleIdentities`. Shared-schema constraints, grants and persistence tables need separate review before an Aiven rollout.
+`Users` and `Currency` follow Mihai's model. Registration requires a real date of birth, stores an Argon2 password verifier in `Users.password`, and relies on the existing insert trigger for free/paid balances. Persistence uses `DemoSessions`, `DemoBattles`, `DemoActions` and `DemoGoogleIdentities`. Existing shared rows retain their IDs, balances and credentials; missing historical DOB may stay NULL. Unsupported legacy password formats require an owner-verified reset, with no plaintext fallback.
 
 All request bodies reject extra fields. Errors use `detail`; validation errors return field names/messages without submitted values. Signed JWT bearer access tokens expire after 15 minutes and remain revocable through the session table. See [AUTHENTICATION.md](AUTHENTICATION.md) for the exact stack, Google setup and current verification limits. Local HTTP is allowed only on loopback; remote use needs HTTPS.
 
 | Method/path | Request | Result |
 | --- | --- | --- |
-| GET /health | None | Process and local database readiness |
+| GET /health | None | Configured database readiness; shared profile also requires migration marker |
 | POST /accounts | email, display_name, password (12–128 chars), dob (YYYY-MM-DD) | 201 account; 409 duplicate email |
 | POST /sessions | email, password | access_token, token_type, expires_in |
+| POST /login | name (unique username or email), password | Same JWT session plus id; ambiguous names rejected |
+| POST /signup | name, email, password, dob | Same validation/result as /accounts |
 | POST /auth/google/start | None | Browser authorization URL, flow_id, poll_secret, expires_in |
 | GET /auth/google/callback | Google code/state (browser only) | Fixed return-to-game page; never returns JWT in URL/HTML |
 | POST /auth/google/poll | flow_id, poll_secret | pending, registration_required with suggested display_name, or authenticated with JWT |
@@ -19,6 +21,8 @@ All request bodies reject extra fields. Errors use `detail`; validation errors r
 | DELETE /sessions/current | Bearer | 204; session revoked |
 | GET /me | Bearer | id, email, display_name, level, experience, free_currency, paid_currency, gamepass, completed_battles |
 | PATCH /me | Bearer; display_name | Updated account |
+| GET /currency | Bearer; optional u_id must equal session account | free and paid balances |
+| POST /currency/update | Bearer | 410 retired; never grants client-requested currency |
 | POST /battles | Bearer; request_id (UUID) | Existing active battle or new battle |
 | GET /battles/current | Bearer | Latest saved battle, or null |
 | POST /battles/{id}/actions | Bearer; request_id (UUID), actor (0–2), version | Saved battle after one attack |

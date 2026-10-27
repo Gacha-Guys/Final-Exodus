@@ -1,0 +1,42 @@
+name: Backend tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.12', '3.14']
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: disposable-ci-only
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="MYSQL_PWD=disposable-ci-only mysqladmin ping -h 127.0.0.1 -u root --silent"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: backend/requirements-lock.txt
+      - run: python -m pip install -r backend/requirements-lock.txt
+      - run: python -m pip check
+      - name: Initialize disposable test database
+        run: |
+          umask 077
+          printf '%s\n' 'FINAL_EXODUS_ROOT_PASSWORD=disposable-ci-only' > backend/.env.test-admin
+          python backend/setup_demo.py --admin-env backend/.env.test-admin --port 3307
+      - name: Run preserved unit tests and explicit MySQL integration suites
+        env:
+          FINAL_EXODUS_RUN_DB_TESTS: '1'
+          FINAL_EXODUS_TEST_ENV_FILE: ${{ github.workspace }}/backend/.env.demo
+        run: python -m pytest backend -q

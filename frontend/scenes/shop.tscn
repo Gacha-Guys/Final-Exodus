@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://8r65ldhtel6f"]
 
-[ext_resource type="Script" path="res://scripts/demo/hub_controller.gd" id="99_demo"]
+[ext_resource type="Script" uid="uid://b1npo27q7r1kt" path="res://scripts/shop.gd" id="1_5u241"]
 [ext_resource type="Texture2D" uid="uid://dd2v53h3io3qc" path="res://assets/background.svg" id="1_j14q8"]
 [ext_resource type="PackedScene" uid="uid://cqyhc8uo5aufb" path="res://ui/menubutton.tscn" id="2_5u241"]
 [ext_resource type="Texture2D" uid="uid://oyhqoa4315ru" path="res://assets/house.png" id="3_pqync"]
@@ -48,13 +48,13 @@ texture = ExtResource("15_j14q8")
 texture = ExtResource("14_gobkm")
 
 [node name="Shop" type="Control" unique_id=657998352]
-script = ExtResource("99_demo")
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_5u241")
 
 [node name="Background" type="NinePatchRect" parent="." unique_id=558837077]
 layout_mode = 1
@@ -227,6 +227,7 @@ text = "Units"
 target_scene = "uid://c0w8741a4hxll"
 
 [node name="Currency" parent="." unique_id=1459214309 instance=ExtResource("12_ouqob")]
+unique_name_in_owner = true
 layout_mode = 1
 offset_left = 540.0
 offset_top = 63.0
@@ -261,6 +262,7 @@ grow_vertical = 2
 theme_override_constants/v_separation = 17
 
 [node name="CurrencyButton1" type="Button" parent="GridContainer" unique_id=836134227]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
@@ -306,6 +308,7 @@ theme_override_font_sizes/font_size = 32
 text = "$1.99"
 
 [node name="CurrencyButton2" type="Button" parent="GridContainer" unique_id=2061278524]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
@@ -362,6 +365,7 @@ theme_override_font_sizes/font_size = 32
 text = "$2.99"
 
 [node name="CurrencyButton3" type="Button" parent="GridContainer" unique_id=1822821962]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
@@ -436,6 +440,7 @@ theme_override_font_sizes/font_size = 32
 text = "$5.99"
 
 [node name="CurrencyButton4" type="Button" parent="GridContainer" unique_id=1563679057]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
@@ -522,6 +527,7 @@ theme_override_font_sizes/font_size = 32
 text = "$9.99"
 
 [node name="CurrencyButton5" type="Button" parent="GridContainer" unique_id=160343402]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
@@ -535,29 +541,129 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 29
 
-[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1024291369]
+[node name="LeftSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=409572415]
+layout_mode = 2
+theme_override_constants/margin_right = 0
+
+[node name="GemMargin1" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1563427058]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = -30
+
+[node name="Gem1" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin1" unique_id=1969896388]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=827932267]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem2" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin2" unique_id=67755949]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin3" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=198757511]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem3" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin3" unique_id=2079129704]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin4" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=839330821]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem4" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin4" unique_id=655862393]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="GemMargin5" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=228945015]
+layout_mode = 2
+theme_override_constants/margin_left = -30
+theme_override_constants/margin_right = -30
+
+[node name="Gem5" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/GemMargin5" unique_id=1035729198]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("13_p0at6")
+expand_mode = 5
+
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1221053214]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+
+[node name="PriceContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=391548091]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate/PriceContainer" unique_id=416014828]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "2000 Gems"
+
+[node name="Price" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate/PriceContainer" unique_id=1414198800]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "$14.99"
+
+[node name="CurrencyButton6" type="Button" parent="GridContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 150)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
+theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton6"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 29
+
+[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton6/HBoxContainer" unique_id=1024291369]
 layout_mode = 2
 theme_override_constants/margin_bottom = 20
 
-[node name="TextureRect" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer2" unique_id=1752993698]
+[node name="TextureRect" type="TextureRect" parent="GridContainer/CurrencyButton6/HBoxContainer/MarginContainer2" unique_id=1752993698]
 custom_minimum_size = Vector2(230, 0)
 layout_mode = 2
 texture = ExtResource("5_aa4hd")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1395122197]
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton6/HBoxContainer" unique_id=1395122197]
 layout_mode = 2
 theme_override_constants/margin_left = -162
 theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 0
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer" unique_id=820343364]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer/CurrencyButton6/HBoxContainer/MarginContainer" unique_id=820343364]
 custom_maximum_size = Vector2(100, -1)
 layout_mode = 2
 
-[node name="TextureProgressBar2" type="TextureProgressBar" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer/AspectRatioContainer" unique_id=2124997287]
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="GridContainer/CurrencyButton6/HBoxContainer/MarginContainer/AspectRatioContainer" unique_id=2124997287]
 custom_maximum_size = Vector2(85, 85)
 layout_mode = 2
 value = 100.0
@@ -566,11 +672,11 @@ nine_patch_stretch = true
 texture_over = ExtResource("6_68utx")
 texture_progress = ExtResource("16_j14q8")
 
-[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1483356421]
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton6/HBoxContainer" unique_id=1483356421]
 layout_mode = 2
 theme_override_constants/margin_left = 0
 
-[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=303588534]
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton6/HBoxContainer/MidSeparate" unique_id=303588534]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "Gamepass

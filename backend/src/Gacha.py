@@ -1,8 +1,10 @@
 import random
-from datetime import datetime
 import os
 from dotenv import load_dotenv
-from database import connect
+if __package__:
+    from .database import connect
+else:  # Keep the original direct-script prototype entrypoint working too.
+    from database import connect
 
 class Unit_banner:
     def __init__(self, characters, items, rates):
@@ -53,13 +55,45 @@ def build_banner(connection, character_id, max_item_id): #very temporary. Consid
 
     return Unit_banner(characters, items, rates)
 
+
+def award_roll(connection, user_id, result):
+    """Persist one prototype roll atomically; the caller owns the connection.
+
+    Duplicate characters are skipped, while item duplicates increase their count.
+    This retains the prototype's inventory behavior; it is not a public summon API.
+    """
+    cursor = connection.cursor()
+    try:
+        if result[1] == "character":
+            cursor.execute("SELECT c_id FROM C_owned WHERE u_id = %s AND c_id = %s",
+                           (user_id, result[0][0]))
+            if cursor.fetchone() is None:
+                cursor.execute("INSERT INTO C_owned (u_id, c_id) VALUES (%s, %s)",
+                               (user_id, result[0][0]))
+        else:
+            item_id = result[0][0]
+            cursor.execute("SELECT count FROM I_owned WHERE u_id = %s AND i_id = %s",
+                           (user_id, item_id))
+            if cursor.fetchone() is None:
+                cursor.execute("INSERT INTO I_owned (u_id, i_id, count) VALUES (%s, %s, %s)",
+                               (user_id, item_id, 1))
+            else:
+                cursor.execute("UPDATE I_owned SET count = count + 1 WHERE u_id = %s AND i_id = %s",
+                               (user_id, item_id))
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        cursor.close()
+
 if __name__ == "__main__": #temporary main since we don't have a runtime file
     env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
     load_dotenv(env_path, override=True)
 
     connection = connect()
     try:
-        banner = build_banner(connection, [1], 5)
+        banner = build_banner(connection, 1, 5)
     finally:
         connection.close()
 
@@ -70,31 +104,7 @@ if __name__ == "__main__": #temporary main since we don't have a runtime file
         result = banner.roll()
         print("rolled a " + result[0][1])
         connection = connect()
-        try: #Entire block is EXTREMELY temporary, and it's only to show connection between our project and our database. In the future, I_owned will probably have triggers to initialize each user having 0 of each item at the start, so safety checks and inserts won't be necessary, and it will be a simple +1 to count
-            cursor = connection.cursor()
-            if result[1] == "character":
-
-                cursor.execute("SELECT c_id FROM C_owned WHERE u_id = %s AND c_id = %s",(2, result[0][0]))
-                existing = cursor.fetchone()
-
-                if existing is None:
-                    cursor.execute("INSERT INTO C_owned (u_id, c_id) VALUES (%s, %s)",(2, result[0][0]))
-                    connection.commit()
-
-                else:
-                    print("Already owned, skipping")
-
-            else:
-                item_id = result[0][0]
-                cursor.execute("SELECT count FROM I_owned WHERE u_id = %s AND i_id = %s", (2, item_id))
-                existing = cursor.fetchone()
-
-                if existing is None:
-                    cursor.execute("INSERT INTO I_owned (u_id, i_id, count) VALUES (%s, %s, %s)",(2, item_id, 1))
-
-                else:
-                    cursor.execute("UPDATE I_owned SET count = count + 1 WHERE u_id = %s AND i_id = %s",(2, item_id))
-
-                connection.commit()
+        try:
+            award_roll(connection, 2, result)
         finally:
             connection.close()

@@ -2,20 +2,36 @@
 
 Shared Godot game project for Intro to Software Engineering.
 
-## Local connected demo
+## Run the connected build
 
-On `feature/tyler-connected-demo`, follow [the local demo guide](docs/LOCAL_DEMO.md) to run the API and game, review validation, and rehearse the presentation. This uses an isolated local database and does not migrate Aiven. Authentication uses JWT and Argon2; [Google sign-in setup and validation limits](docs/AUTHENTICATION.md) are documented separately.
+Use **Godot 4.7.2 standard** and **Python 3.14** (the verified local version). From `backend/`:
 
-## Start here
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-lock.txt
+.venv/bin/python local_setup.py
+.venv/bin/python Server.py --env-file .env.demo --port 8007
+```
 
-Install **Godot 4.7.2 standard** (GDScript). Clone this repository and import **frontend/project.godot** in Godot, then press Play. No .NET SDK or backend is needed for the first sync test.
+`local_setup.py` requires Docker and creates an isolated MySQL8.4 instance on loopback port3308 with private ignored credentials. On Windows use `.venv\Scripts\python.exe`. Open `frontend/project.godot` in Godot and press Play. Register a new account, log in, enter a battle, then log out/log back in to resume it.
 
-Follow [the team setup and sync checklist](docs/SETUP.md). Each teammate changes their own file in frontend/team_checkins/, shares it through a pull request, and verifies everyone can see the merged change.
+For shared Aiven, use your separately provisioned application configuration and [shared-storage guide](docs/SHARED_STORAGE.md). Aiven hosts the database; each developer still runs the API locally unless a shared HTTPS API is deployed. Credentials stay server-side.
 
-- **frontend/** — Godot project, scenes, GDScript and assets.
-- **backend/** — Python APIs, local demo setup and backend tests.
-- **docs/** — setup guide and future shared API contracts.
+## What's connected
 
-This branch opens the team title screen with login and signup popups. The local demo connects accounts, hub data and a basic saved encounter. The original sync-test scene remains available for team setup.
+- Riley's title/account popups, shop and gamepass presentation; Jason's hub and shared model/leveling work.
+- Mihai's Users/Currency model and trigger, secure login/signup/currency compatibility, and preserved gacha prototype.
+- Authenticated profiles, display-name settings, logout, and server-calculated encounters with saved health/results and safe action retries.
+- Argon2 password verifiers and revocable15-minute JWTs. Optional Google sign-in has separate local configuration.
 
-The original registration API and Aiven connection setup remain documented in [backend/README.md](backend/README.md). The isolated demo uses the separate entrypoint described above.
+Shop/gamepass are previews. Combat uses a fixed three-character party; owned-roster selection, reward payouts, authenticated summons/pity and payments are not implemented by this integration. Existing unsupported password formats need owner-verified resets; migration preserves their rows.
+
+## Project layout and verification
+
+- `frontend/`: Godot scenes, assets, scripts and UI regression drivers.
+- `backend/`: supported `src.main:app`, setup/migration tools, preserved tests and new gacha/leveling/auth regressions.
+- `docs/`: [setup](docs/SETUP.md), [walkthrough](docs/LOCAL_DEMO.md), [API contract](docs/DEMO_API.md), [authentication](docs/AUTHENTICATION.md), [testing](docs/TESTING.md), and [shared storage](docs/SHARED_STORAGE.md).
+
+The historical registration module remains testable; it is not an alternate public account database. Original sync-test scene and all four individual team check-ins remain available. Use branches and reviewed PRs; preserve authorship and never put private environment files or generated Godot caches in Git.
+
+See the [backend guide](backend/README.md) for launch and compatibility details. The [historical registration contract](docs/ACCOUNTS.md) and [earlier review proposal and evidence](docs/review/PR_DRAFTS.md) remain available for provenance.

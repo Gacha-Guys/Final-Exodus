@@ -1,11 +1,13 @@
 """Opt-in tests against the isolated local MySQL demo, never Aiven.
 
-Run: python -m pytest demo/test_demo_integration.py -q
+Run with FINAL_EXODUS_RUN_DB_TESTS=1 and an explicitly configured disposable DB.
+FINAL_EXODUS_TEST_ENV_FILE may name a test-only environment file.
 """
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 import hashlib
 import json
+import os
 from pathlib import Path
 from uuid import uuid4
 
@@ -14,7 +16,14 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 import pytest
 
-load_dotenv(Path(__file__).parents[1] / '.env.demo', override=True)
+if os.getenv('FINAL_EXODUS_RUN_DB_TESTS') != '1':
+    pytest.skip('Disposable database tests require FINAL_EXODUS_RUN_DB_TESTS=1',
+                allow_module_level=True)
+if os.getenv('FINAL_EXODUS_TEST_ENV_FILE'):
+    load_dotenv(Path(os.environ['FINAL_EXODUS_TEST_ENV_FILE']), override=False)
+if (os.getenv('FINAL_EXODUS_DB_HOST') not in ('127.0.0.1', 'localhost')
+        or os.getenv('FINAL_EXODUS_DB') != 'final_exodus_tyler_demo'):
+    raise RuntimeError('Database tests require the isolated loopback final_exodus_tyler_demo database')
 from src import demo, demo_accounts
 from src.demo_store import transaction
 from src.rate_limit import RegistrationLimiter

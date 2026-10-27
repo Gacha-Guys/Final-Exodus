@@ -1,5 +1,7 @@
 extends Node
 
+signal account_changed(profile: Dictionary)
+
 var token := ""
 var account: Dictionary = {}
 var battle: Dictionary = {}
@@ -29,6 +31,7 @@ func clear() -> void:
 	account = {}
 	battle = {}
 	generation += 1
+	account_changed.emit(account)
 
 func uuid() -> String:
 	var bytes := Crypto.new().generate_random_bytes(16)
@@ -89,6 +92,7 @@ func refresh_account() -> Dictionary:
 		if not valid_account(data):
 			return {"ok": false, "status": 0, "error": "Unexpected account response."}
 		account = data
+		account_changed.emit(account)
 	return result
 
 func number(value: Variant) -> bool:

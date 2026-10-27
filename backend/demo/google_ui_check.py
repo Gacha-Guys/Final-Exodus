@@ -13,12 +13,14 @@ import httpx
 BACKEND = Path(__file__).resolve().parents[1]
 load_dotenv(BACKEND / '.env.demo', override=True)
 sys.path.insert(0, str(BACKEND))
+from src.local_test_target import require_local_test_database
+require_local_test_database()
 from src.demo_store import transaction
 
 
 def serve():
     import uvicorn
-    from src import demo, demo_google
+    from src import main as demo, demo_google
     os.environ['FINAL_EXODUS_GOOGLE_CLIENT_ID'] = 'simulated.apps.googleusercontent.com'
     os.environ['FINAL_EXODUS_GOOGLE_CLIENT_SECRET'] = 'simulated-client-secret'
     def simulated_identity(code, flow):

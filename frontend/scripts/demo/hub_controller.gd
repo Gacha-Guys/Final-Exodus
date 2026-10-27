@@ -114,7 +114,7 @@ func refresh() -> void:
 		pending = false
 		return
 	player_label.text = GameSession.account.display_name
-	$Currency.val = str(int(GameSession.account.free_currency))
+	$Currency.val = str(int(GameSession.account.paid_currency))
 	get_node(RANK_PATH).text = "Rank\n%d" % int(GameSession.account.level)
 	if not is_shop:
 		var saved: Dictionary = await GameSession.request("/battles/current")
@@ -195,6 +195,7 @@ func apply_name_result(result: Dictionary) -> void:
 			settings_message.text = "Unexpected account response. Refresh and retry."
 			return
 		GameSession.account = result.data
+		GameSession.account_changed.emit(GameSession.account)
 		player_label.text = GameSession.account.display_name
 		settings_message.text = "Name saved."
 	else:

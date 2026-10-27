@@ -13,14 +13,20 @@ DATABASE = "final_exodus_tyler_demo"
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--admin-env", required=True, type=Path)
+    parser.add_argument("--port", type=int, help="Loopback MySQL port (otherwise private admin env, then 3307)")
     args = parser.parse_args()
+    private = dotenv_values(args.admin_env)
+    port = args.port if args.port is not None else int(private.get("FINAL_EXODUS_DB_PORT", "3307"))
+    if not 1 <= port <= 65535:
+        raise SystemExit("Use a valid MySQL port")
     target = Path(__file__).parent / ".env.demo"
     if target.exists():
         existing = dotenv_values(target)
         if existing.get("FINAL_EXODUS_DB_HOST") != "127.0.0.1" or existing.get("FINAL_EXODUS_DB") != DATABASE:
             raise SystemExit("Existing configuration is not the isolated local demo. No changes made.")
-        private = dotenv_values(args.admin_env)
-        with pymysql.connect(host="127.0.0.1", port=3307, user="root",
+        if int(existing.get("FINAL_EXODUS_DB_PORT", "3307")) != port:
+            raise SystemExit("Existing demo configuration uses another port. No changes made.")
+        with pymysql.connect(host="127.0.0.1", port=port, user="root",
                              password=private["FINAL_EXODUS_ROOT_PASSWORD"], database=DATABASE) as connection:
             with connection.cursor() as cursor:
                 cursor.execute((Path(__file__).parent / "demo/google_schema.sql").read_text())
@@ -31,9 +37,8 @@ def main():
         target.chmod(0o600)
         print("Local auth setup ready. Existing accounts and battles preserved.")
         return
-    private = dotenv_values(args.admin_env)
     password = secrets.token_urlsafe(32)
-    connection = pymysql.connect(host="127.0.0.1", port=3307, user="root",
+    connection = pymysql.connect(host="127.0.0.1", port=port, user="root",
                                  password=private["FINAL_EXODUS_ROOT_PASSWORD"],
                                  charset="utf8mb4", autocommit=True)
     try:
@@ -57,8 +62,9 @@ def main():
             cursor.execute((Path(__file__).parent / "demo/google_schema.sql").read_text())
             cursor.execute("CREATE USER 'tyler_demo_api'@'%%' IDENTIFIED BY %s", (password,))
             cursor.execute(f"GRANT SELECT, INSERT, UPDATE, DELETE ON `{DATABASE}`.* TO 'tyler_demo_api'@'%'")
-        content = ("FINAL_EXODUS_DB_HOST=127.0.0.1\nFINAL_EXODUS_DB_PORT=3307\n"
+        content = (f"FINAL_EXODUS_DB_HOST=127.0.0.1\nFINAL_EXODUS_DB_PORT={port}\n"
                    "FINAL_EXODUS_DB_USER=tyler_demo_api\n"
+                   "FINAL_EXODUS_STORAGE_PROFILE=local-demo\n"
                    f"FINAL_EXODUS_DB_PASSWORD={password}\nFINAL_EXODUS_DB={DATABASE}\n"
                    f"FINAL_EXODUS_JWT_SECRET={secrets.token_urlsafe(48)}\n")
         fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)

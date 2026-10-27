@@ -32,10 +32,17 @@ func wait_scene(suffix: String) -> Node:
 	quit(1)
 	return null
 
+func artifact_path(name: String) -> String:
+	var directory := OS.get_environment("FINAL_EXODUS_TEST_ARTIFACT_DIR")
+	if directory.is_empty():
+		directory = "res://../docs/review"
+	DirAccess.make_dir_recursive_absolute(directory)
+	return directory.path_join(name)
+
 func screenshot(name: String) -> void:
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://../docs/review/" + name + ("-small" if small else "") + ".png")
+		root.get_texture().get_image().save_png(artifact_path(name + ("-small" if small else "") + ".png"))
 
 func run() -> void:
 	if small:
@@ -121,6 +128,10 @@ func run() -> void:
 	await process_frame
 	var battle: Node = await wait_scene("demo_battle.tscn")
 	await settle(battle)
+	if not session.valid_battle(battle.state):
+		expect(false, "Encounter failed to load: " + battle.status_label.text)
+		quit(1)
+		return
 	expect(battle.state.enemy.hp == 100 and battle.state.party.size() == 3, "Encounter loads three characters")
 	for button in battle.attack_buttons + [battle.retry_button, battle.back_button]:
 		expect(battle.get_rect().encloses(button.get_global_rect()), "Battle control stays inside viewport")
@@ -201,7 +212,7 @@ func run() -> void:
 	await process_frame
 	await wait_scene("titleScreenNew.tscn")
 	expect(current_scene.scene_file_path.ends_with("titleScreenNew.tscn") and session.account.is_empty(), "Invalid session returns to login and clears profile")
-	var file := FileAccess.open("res://../docs/review/" + ("ui-small-result.json" if small else "ui-result.json"), FileAccess.WRITE)
+	var file := FileAccess.open(artifact_path("ui-small-result.json" if small else "ui-result.json"), FileAccess.WRITE)
 	file.store_string(JSON.stringify({"checks": checks, "failures": failures, "synthetic_test_email": test_email}, "  "))
 	file.close()
 	print("Connected UI checks: %d passed, %d failed" % [checks - failures, failures])

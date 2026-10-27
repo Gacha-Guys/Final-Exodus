@@ -14,15 +14,16 @@ import pymysql
 
 BACKEND = Path(__file__).resolve().parents[1]
 load_dotenv(BACKEND / '.env.demo', override=True)
-assert os.environ['FINAL_EXODUS_DB'] == 'final_exodus_tyler_demo'
-assert os.environ['FINAL_EXODUS_DB_HOST'] == '127.0.0.1'
+sys.path.insert(0, str(BACKEND))
+from src.local_test_target import require_local_test_database
+require_local_test_database()
 email = f'restart-{uuid4().hex}@example.com'
 process = None
 report = {}
 
 
 def boot(log):
-    process = subprocess.Popen([sys.executable, '-m', 'uvicorn', 'src.demo:app', '--host', '127.0.0.1', '--port', '8008', '--no-proxy-headers'], cwd=BACKEND, stdout=log, stderr=log)
+    process = subprocess.Popen([sys.executable, '-m', 'uvicorn', 'src.main:app', '--host', '127.0.0.1', '--port', '8008', '--no-proxy-headers'], cwd=BACKEND, stdout=log, stderr=log)
     for attempt in range(100):
         if process.poll() is not None:
             raise RuntimeError('Test API could not start. Is port 8008 already occupied?')
@@ -72,4 +73,6 @@ finally:
         cursor.execute('DELETE FROM Users WHERE email=%s', (email,))
     connection.close()
     if report:
-        (BACKEND.parent/'docs/review/restart-result.json').write_text(json.dumps(report, indent=2)+'\n')
+        artifact_dir = Path(os.getenv('FINAL_EXODUS_TEST_ARTIFACT_DIR', str(BACKEND.parent/'docs/review')))
+        artifact_dir.mkdir(parents=True, exist_ok=True)
+        (artifact_dir/'restart-result.json').write_text(json.dumps(report, indent=2)+'\n')

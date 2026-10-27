@@ -45,6 +45,23 @@ class Login(Body):
     password: SecretStr = Field(min_length=1, max_length=128)
 
 
+def verify_password(cursor, identifier, password, *, allow_name=False):
+    if allow_name:
+        cursor.execute("SELECT id,password FROM Users WHERE email=%s OR name=%s LIMIT 2", (identifier.lower(), identifier))
+        rows = cursor.fetchall()
+        account = rows[0] if len(rows) == 1 else None
+    else:
+        cursor.execute("SELECT id,password FROM Users WHERE email=%s", (identifier.lower(),))
+        account = cursor.fetchone()
+    try:
+        valid = password_hash.verify(password, account["password"] if account else DUMMY_HASH)
+    except (UnknownHashError, ValueError):
+        valid = False
+    if not account or not valid:
+        raise HTTPException(401, "Incorrect email or password")
+    return account["id"]
+
+
 def profile(cursor, user_id):
     cursor.execute("SELECT id,email,name AS display_name,level,exp AS experience,gamepass FROM Users WHERE id=%s", (user_id,))
     account = cursor.fetchone()
@@ -73,15 +90,8 @@ def register(body: Registration):
 @router.post("/sessions")
 def login(body: Login):
     with transaction() as cursor:
-        cursor.execute("SELECT id,password FROM Users WHERE email=%s", (str(body.email).lower(),))
-        account = cursor.fetchone()
-        try:
-            valid = password_hash.verify(body.password.get_secret_value(), account["password"] if account else DUMMY_HASH)
-        except (UnknownHashError, ValueError):
-            valid = False
-        if not account or not valid:
-            raise HTTPException(401, "Incorrect email or password")
-        return issue_session(cursor, account["id"])
+        user_id = verify_password(cursor, str(body.email), body.password.get_secret_value())
+        return issue_session(cursor, user_id)
 
 
 @router.get("/me")

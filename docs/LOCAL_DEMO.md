@@ -1,78 +1,41 @@
-# Local connected demo
+# Local development and connected walkthrough
 
-Branch: `feature/tyler-connected-demo`
+Use Godot4.7.2 standard. The supported API is `src.main:app`; the game defaults to `http://127.0.0.1:8007`. HTTP is accepted only for loopback; other API hosts require HTTPS. An optional `FINAL_EXODUS_API_ORIGIN` changes the client API address.
 
-Checkout: `/Users/tylerdang/Documents/GitHub/Final-Exodus-demo`
+## Fresh setup
 
-The demo uses Riley's title/account popups and shop, Jason's hub, and a separate local Python API and MySQL database. Shared Aiven data and teammate branches are untouched.
-
-## Run on Tyler's Mac
-
-Docker's existing `final-exodus-mysql-1` container must be running. Local configuration is already saved privately in `backend/.env.demo`; do not copy it into a PR.
-
-Start the API in one terminal:
+Install Docker, Python and Godot. From `backend/`:
 
 ```sh
-cd /Users/tylerdang/Documents/GitHub/Final-Exodus-demo/backend
-.venv/bin/python -m uvicorn src.demo:app --env-file .env.demo --host 127.0.0.1 --port 8007 --no-proxy-headers --no-access-log
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-lock.txt
+.venv/bin/python local_setup.py
+.venv/bin/python Server.py --env-file .env.demo --port 8007
 ```
 
-Open `frontend/project.godot` in Godot **4.7.2 standard** and press Play, or run:
+Windows uses `.venv\Scripts\python.exe`. Import `frontend/project.godot` in Godot and press Play. No preloaded review account is assumed: register a new account with a valid birth date and12–128-character password.
 
-```sh
-/Users/tylerdang/Downloads/Godot.app/Contents/MacOS/Godot --path /Users/tylerdang/Documents/GitHub/Final-Exodus-demo/frontend
-```
+`local_setup.py` generates private `.env.mysql-local`, starts project `final-exodus-local` with MySQL8.4 on `127.0.0.1:3308`, and initializes only `final_exodus_tyler_demo` with a scoped application user. Both environment files are ignored; retain them for repeat runs. The database uses a persistent Docker volume. Re-running preserves accounts and battles. Do not delete its volume to troubleshoot a login.
 
-The client defaults to `http://127.0.0.1:8007`. An optional `FINAL_EXODUS_API_ORIGIN` environment variable changes the API origin. HTTP is accepted only for loopback; other hosts require HTTPS.
+For an existing local MySQL installation, use `setup_demo.py --admin-env /private/local-admin.env --port YOUR_PORT`; the input contains `FINAL_EXODUS_ROOT_PASSWORD`. It refuses mismatched existing configuration. This initializer must never be used against Aiven.
 
-For a quick review, this synthetic local account exists:
-
-- Email: `tyler.demo@example.com`
-- Password: `DemoReview!2026`
-- Name: Tyler Connected
-- Its partially completed encounter was retained for resume testing. Use a new email to demonstrate registration from scratch.
-
-These are disposable demo credentials, not a real account or a database credential. Closing the game clears its in-memory session. Log in again to load the saved account and battle.
-
-## Fresh local setup
-
-The API uses the existing Python environment on this Mac through an ignored `backend/.venv` symlink. On another machine, create a virtual environment and install `backend/requirements-lock.txt` using the existing backend setup guide.
-
-`backend/setup_demo.py --admin-env /path/to/private/local-admin.env` creates only `final_exodus_tyler_demo` on MySQL at `127.0.0.1:3307`, its scoped application user, and the ignored configuration file. The private input needs `FINAL_EXODUS_ROOT_PASSWORD` for that local instance. The script refuses to reuse an existing database without its configuration. It is not an Aiven migration and must not be repurposed for one.
-
-## JWT and Google sign-in
-
-Email/password now issues a 15-minute JWT; logout still revokes it immediately. Existing accounts and saved battles are preserved. Google credentials are configured privately on Tyler’s Mac and the server is ready to start real sign-in. Real Google login to the hub passed and the account was verified in local storage. Google battle/logout/relogin recovery is still pending; see [AUTHENTICATION.md](AUTHENTICATION.md). Re-running local setup adds the Google identity table and a private signing key to an earlier demo installation.
+For Aiven, start `Server.py --env-file /private/aiven-game-api.env --port 8007` after the additive migration and scoped credentials are verified. The app environment deliberately selects `shared-users-v1`. Database hosting and a remotely hosted HTTPS API are separate. See SHARED_STORAGE.md.
 
 ## Three-to-four-minute walkthrough
 
 | Time | Action |
 | --- | --- |
-| 0:00–0:45 | Create an account with a new email, name, birth date and 12+ character password. |
-| 0:45–1:15 | Log in. Show the saved name, rank and actual free/paid balances. Optionally change the name in Settings. |
-| 1:15–1:50 | Enter Battle. Attack once with Ember, Rowan and Vale. The enemy now has 52 HP. |
-| 1:50–2:40 | Return to the hub, close the game, reopen it, and log in. Resume the same battle at 52 HP. |
-| 2:40–3:15 | Finish the encounter. Return to the hub to show one saved victory. |
-| 3:15–3:40 | Log out. Explain that rewards, purchases and the full roster remain separate features. |
+|0:00–0:45|Register a fresh account with email, name, birth date and password.|
+|0:45–1:15|Log in and show persisted name, rank and actual free/paid balances; optionally change the name in Settings.|
+|1:15–1:50|Enter Battle; attack once with Ember, Rowan and Vale. Enemy health reaches52.|
+|1:50–2:40|Return to hub, close/reopen the game, log in and resume that same52HP encounter.|
+|2:40–3:15|Finish the encounter and return to show one saved victory.|
+|3:15–3:40|Show the shop/gamepass previews, then log out.|
 
-The API restart and duplicate-request checks were also rehearsed separately; there is no need to interrupt the server during the presentation.
+No currency/XP payouts are granted by this encounter. The three characters are fixtures rather than the player's owned inventory. Summon, full roster, payment, recovery and quests remain separate work.
 
-## Verification
+## Verification and limits
 
-From the checkout root:
+See TESTING.md for full commands. The ordinary pytest command retains historical tests plus gacha/leveling/auth/storage regressions. Real database suites require explicit opt-in and reject shared targets. API restart and native Godot UI checks exercise the real disposable local MySQL database. Preserve historical evidence by selecting an external `FINAL_EXODUS_TEST_ARTIFACT_DIR` for UI output.
 
-```sh
-backend/.venv/bin/python -m pytest backend/tests backend/demo/test_demo_integration.py backend/demo/test_demo_auth.py -q
-backend/.venv/bin/python backend/demo/restart_check.py
-/Users/tylerdang/Downloads/Godot.app/Contents/MacOS/Godot --headless --path frontend --script res://tests/connected_demo.gd
-```
-
-The integration tests explicitly load `.env.demo`, refuse a remote database, and clean up their synthetic accounts. The UI driver also exercises the real API; it creates disposable `ui-...@example.com` users. Add `-- --small` to run its smaller-window variant. Screenshots and compact results are in `docs/review/`.
-
-## Limits before shared rollout
-
-- Validated locally on macOS, Godot 4.7.2, Python 3.14 and MySQL 8.4. Live Aiven writes and another teammate's machine are not verified.
-- This local copy adds unique email enforcement and four demo persistence tables. Shared-schema changes and access grants need separate approval.
-- Settings currently changes only the display name. No recovery, email/password changes, payment, gacha integration, or rewards settlement is included.
-- The three characters and encounter rules are demo fixtures, not a claim that player-owned inventory is connected. Units/Summon show an unavailable message. Shop/gamepass remain previews.
-- The local authentication limiter is single-process. Public hosting would need deployment, access, and rate-limit review.
+Optional Google sign-in requires private local provider configuration; simulated provider checks do not prove a live Google consent flow. The current callback is loopback8007, and flow state/rate limiting are single-process. Do not expose a public multi-worker API without the corresponding deployment changes. See AUTHENTICATION.md.

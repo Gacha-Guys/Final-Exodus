@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://klxyuv0db4c3"]
 
-[ext_resource type="Script" path="res://scripts/demo/hub_controller.gd" id="99_demo"]
 [ext_resource type="Texture2D" uid="uid://dd2v53h3io3qc" path="res://assets/background.svg" id="1_2hkft"]
+[ext_resource type="Script" uid="uid://blxo6usep28ed" path="res://scripts/hub.gd" id="1_5ox4q"]
 [ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_441x5"]
 [ext_resource type="Texture2D" uid="uid://q8uofkaqjl3o" path="res://assets/particle.svg" id="2_s6eg2"]
 [ext_resource type="Texture2D" uid="uid://kmt05g6wn163" path="res://assets/topbar.svg" id="5_2hkft"]
@@ -63,7 +63,6 @@ variation_opentype = {
 }
 
 [node name="Control" type="Control" unique_id=516966562]
-script = ExtResource("99_demo")
 clip_contents = true
 layout_mode = 3
 anchors_preset = 15
@@ -71,6 +70,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_5ox4q")
 
 [node name="Background" type="NinePatchRect" parent="." unique_id=562362441]
 layout_mode = 1
@@ -294,11 +294,13 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="Currency" parent="." unique_id=1459214309 instance=ExtResource("16_8hrlh")]
+unique_name_in_owner = true
 layout_mode = 1
 offset_left = 540.0
 offset_top = 63.0
 offset_right = -51.0
 offset_bottom = -1184.0
+val = "0"
 texture = ExtResource("17_5ox4q")
 
 [node name="ShopButton" parent="." unique_id=70434992 instance=ExtResource("9_4oyfp")]

@@ -3,7 +3,7 @@ Leveling System
 Uses User and Unit struct
 """
 
-from lib.struct import User
+from lib.struct import Unit, User
 from enum import Enum
 
 # The max possible level a user can have
@@ -46,11 +46,11 @@ def requiredExp(u : Unit):
 def updateLevelUser(u : User):
     if u.level >= MAX_USER_LEVEL: return
     # Check if user has enough xp to level up.
-    while u.experience >= requiredExpUser(u):
+    while u.level < MAX_USER_LEVEL and u.experience >= requiredExpUser(u):
         u.level += 1
 
 def updateLevel(u : Unit):
     if u.level >= MAX_UNIT_LEVEL: return
     # Check if unit has enough xp to level up.
-    while u.experience >= requiredExp(u):
+    while u.level < MAX_UNIT_LEVEL and u.experience >= requiredExp(u):
         u.level += 1

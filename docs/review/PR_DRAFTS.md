@@ -1,5 +1,7 @@
 # Proposed review units — not published
 
+> Historical October 26 review proposal for the earlier local demo. The current integration branch consolidates the supported API in `src.main:app`; follow [the current setup](../SETUP.md) and [shared-storage procedure](../SHARED_STORAGE.md). The original proposal, [validation](VALIDATION.md) and [independent review](ADVERSARIAL_REVIEW.md) are preserved for provenance.
+
 Prepare the final implementation as three focused draft PRs. The current local commits record implementation milestones; do not publish an older opaque-session backend as the final API and immediately replace it in another PR. The publication branches have not been assembled or pushed yet. Preserve the existing integration branch and teammate commit history.
 
 ## Bring the latest team hub and account screens into the demo
