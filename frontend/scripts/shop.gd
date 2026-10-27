@@ -18,9 +18,6 @@ func _ready() -> void:
 	%CurrencyButton4.pressed.connect(func():
 		PlayerData.update_currency(999, "paid")
 	)
-	%CurrencyButton5.pressed.connect(func():
-		PlayerData.update_currency(2000, "paid")
-	)
 	pass # Replace with function body.
 
 func _on_currency_changed() -> void:
