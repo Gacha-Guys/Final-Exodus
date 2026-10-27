@@ -74,11 +74,11 @@ if __name__ == "__main__": #temporary main since we don't have a runtime file
             cursor = connection.cursor()
             if result[1] == "character":
 
-                cursor.execute("SELECT c_id FROM C_owned WHERE u_id = %s AND c_id = %s",(2, result[0][0]))
+                cursor.execute("SELECT c_id FROM C_owned WHERE u_id = %s AND c_id = %s",(3, result[0][0]))
                 existing = cursor.fetchone()
 
                 if existing is None:
-                    cursor.execute("INSERT INTO C_owned (u_id, c_id) VALUES (%s, %s)",(2, result[0][0]))
+                    cursor.execute("INSERT INTO C_owned (u_id, c_id) VALUES (%s, %s)",(3, result[0][0]))
                     connection.commit()
 
                 else:
@@ -86,14 +86,14 @@ if __name__ == "__main__": #temporary main since we don't have a runtime file
 
             else:
                 item_id = result[0][0]
-                cursor.execute("SELECT count FROM I_owned WHERE u_id = %s AND i_id = %s", (2, item_id))
+                cursor.execute("SELECT count FROM I_owned WHERE u_id = %s AND i_id = %s", (3, item_id))
                 existing = cursor.fetchone()
 
                 if existing is None:
-                    cursor.execute("INSERT INTO I_owned (u_id, i_id, count) VALUES (%s, %s, %s)",(2, item_id, 1))
+                    cursor.execute("INSERT INTO I_owned (u_id, i_id, count) VALUES (%s, %s, %s)",(3, item_id, 1))
 
                 else:
-                    cursor.execute("UPDATE I_owned SET count = count + 1 WHERE u_id = %s AND i_id = %s",(2, item_id))
+                    cursor.execute("UPDATE I_owned SET count = count + 1 WHERE u_id = %s AND i_id = %s",(3, item_id))
 
                 connection.commit()
         finally:
