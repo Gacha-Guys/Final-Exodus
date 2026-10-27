@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="13_p0at6"]
 [ext_resource type="Texture2D" uid="uid://o1kfamne8eu7" path="res://assets/blue.png" id="14_gobkm"]
 [ext_resource type="Texture2D" uid="uid://l6y15ycm74ox" path="res://assets/blue_pressed.png" id="15_j14q8"]
+[ext_resource type="Texture2D" uid="uid://cp7a16wdr3in5" path="res://assets/inner_gold.png" id="16_j14q8"]
 
 [sub_resource type="FontVariation" id="FontVariation_5tx5h"]
 base_font = ExtResource("8_lxs01")
@@ -534,6 +535,7 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=15488762]
+[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/CurrencyButton5" unique_id=474536334]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -623,3 +625,44 @@ text = "2000 Gems"
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "$14.99"
+
+[node name="MarginContainer2" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1024291369]
+layout_mode = 2
+theme_override_constants/margin_bottom = 20
+
+[node name="TextureRect" type="TextureRect" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer2" unique_id=1752993698]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+texture = ExtResource("5_aa4hd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MarginContainer" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1395122197]
+layout_mode = 2
+theme_override_constants/margin_left = -162
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 0
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer" unique_id=820343364]
+custom_maximum_size = Vector2(100, -1)
+layout_mode = 2
+
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="GridContainer/CurrencyButton5/HBoxContainer/MarginContainer/AspectRatioContainer" unique_id=2124997287]
+custom_maximum_size = Vector2(85, 85)
+layout_mode = 2
+value = 100.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_over = ExtResource("6_68utx")
+texture_progress = ExtResource("16_j14q8")
+
+[node name="MidSeparate" type="MarginContainer" parent="GridContainer/CurrencyButton5/HBoxContainer" unique_id=1483356421]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+
+[node name="Title" type="Label" parent="GridContainer/CurrencyButton5/HBoxContainer/MidSeparate" unique_id=303588534]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Gamepass
+$9.99"
+horizontal_alignment = 1
