@@ -16,7 +16,7 @@ All request bodies reject extra fields. Errors use `detail`; validation errors r
 | POST /auth/google/start | None | Browser authorization URL, flow_id, poll_secret, expires_in |
 | GET /auth/google/callback | Google code/state (browser only) | Fixed return-to-game page; never returns JWT in URL/HTML |
 | POST /auth/google/poll | flow_id, poll_secret | pending, registration_required with suggested display_name, or authenticated with JWT |
-| POST /auth/google/register | flow_id, poll_secret, display_name, dob | authenticated with JWT for a new verified Google identity |
+| POST /auth/google/register | flow_id, poll_secret, display_name, optional dob | authenticated with JWT for a new verified Google identity |
 | POST /auth/google/cancel | flow_id, poll_secret | 204; pending flow invalidated |
 | DELETE /sessions/current | Bearer | 204; session revoked |
 | GET /me | Bearer | id, email, display_name, level, experience, free_currency, paid_currency, gamepass, completed_battles |

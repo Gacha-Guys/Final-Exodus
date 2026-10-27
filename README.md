@@ -4,18 +4,26 @@ Shared Godot game project for Intro to Software Engineering.
 
 ## Run the team build
 
-Use **Godot 4.7.2 standard** and **Python 3.14** (the verified local version). From `backend/`:
+Use **Godot 4.7.2 standard** and **Python 3.14** (the verified local version). Follow the [backend guide](backend/README.md) to get the team’s Aiven access and configure private `backend/.env` settings. Aiven hosts the shared database, so this path does not require Docker. From `backend/`:
 
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-lock.txt
+.venv/bin/python Server.py
+```
+
+On Windows use `.venv\Scripts\python.exe`. Open `frontend/project.godot` in Godot and press Play. `Server.py` defaults to `.env` and API port **8000**, matching the client. Register with email, username and password, then log in with username/password. Login closes the popup; press **Start** to enter the team hub. Guest Start still opens the hub preview.
+
+The [shared-storage guide](docs/SHARED_STORAGE.md) covers the reviewed migration and application privileges. Each developer still runs the API locally unless a shared HTTPS API is deployed. Credentials stay server-side.
+
+For an **optional isolated local prototype**, install Docker and follow [LOCAL_DEMO.md](docs/LOCAL_DEMO.md). After installing the Python requirements, run these from `backend/`:
+
+```sh
 .venv/bin/python local_setup.py
 .venv/bin/python Server.py --env-file .env.demo
 ```
 
-`local_setup.py` requires Docker and creates an isolated MySQL 8.4 instance on loopback port 3308 with private ignored credentials. On Windows use `.venv\Scripts\python.exe`. Open `frontend/project.godot` in Godot and press Play. The default API port is **8000**, matching the client. Register with email, username and password, then log in with username/password. Login closes the popup; press **Start** to enter the team hub. Guest Start still opens the hub preview. The shared Aiven launcher defaults to `.env` with `Server.py`.
-
-For shared Aiven, use your separately provisioned application configuration and [shared-storage guide](docs/SHARED_STORAGE.md). Aiven hosts the database; each developer still runs the API locally unless a shared HTTPS API is deployed. Credentials stay server-side.
+This creates a separate MySQL 8.4 instance on loopback port 3308 with private ignored credentials; it does not replace the team’s shared Aiven configuration.
 
 ## What's connected
 
