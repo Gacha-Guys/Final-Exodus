@@ -1,6 +1,6 @@
 # Shared Users/Currency integration
 
-The supported API is `src.main:app` on port 8007. Its connected account and combat contract is in `DEMO_API.md`. The old `src.accounts` implementation remains testable but is not mounted into this API.
+The supported API is `src.main:app` on default port 8000. Its connected account and combat contract is in `DEMO_API.md`. The old `src.accounts` implementation remains testable but is not mounted into this API.
 
 ## Before applying the additive migration
 
@@ -26,9 +26,9 @@ MySQL DDL auto-commits. A failed migration may leave already-created additive ob
 
 ## Existing accounts and authentication
 
-New registration requires a real DOB and an Argon2 verifier. Existing DOB values may remain NULL; do not fill them with invented dates. Existing raw or unsupported password formats remain untouched by migration and are rejected by secure login. An account owner must complete a verified password reset before using such an account. This integration does not implement a public recovery feature or automatic account linking. Never log password values during compatibility checks.
+New registration uses the team’s email/username/password form and an Argon2 verifier. DOB is optional and hidden in the normal form. Existing DOB values may remain NULL; do not fill them with invented dates. Existing raw or unsupported password formats remain untouched by migration and are rejected by secure login. An account owner must complete a verified password reset before using such an account. This integration does not implement a public recovery feature or automatic account linking. Never log password values during compatibility checks.
 
-Case-normalized duplicate emails must be resolved before applying the unique index. Both password-login routes identify an unambiguous `Users.name`; email is not a login alias. Existing duplicate names are rejected rather than selecting an arbitrary account. A Settings name change also changes the username for the next login. A matching Google email does not automatically link an existing password account.
+Case-normalized duplicate emails must be resolved before applying the unique index. Both password-login routes identify an unambiguous `Users.name`; email is not a login alias. API signup, profile rename and Google registration check name availability under the database collation while holding a database-wide advisory lock. Existing duplicate names are rejected at login rather than selecting an arbitrary account. No new unique-name DDL is applied: direct SQL writers must follow this policy, and existing duplicates require deliberate resolution. A Settings name change also changes the username for the next login. A matching Google email does not automatically link an existing password account.
 
 ## Application configuration and privileges
 
@@ -36,10 +36,12 @@ Use a separate private application environment with `FINAL_EXODUS_STORAGE_PROFIL
 
 The application needs SELECT on its runtime tables, INSERT/UPDATE on Users, INSERT/DELETE on DemoSessions, INSERT/UPDATE on DemoBattles, INSERT/UPDATE on DemoActions, and INSERT on DemoGoogleIdentities. The replay journal's UPDATE privilege is required by MySQL's `SELECT ... FOR UPDATE` locking read; the API inserts immutable replay responses. Currency initialization runs through the preserved trigger rather than a second API write. Review actual grants narrowly; the API does not need CREATE, ALTER, DROP, GRANT or permission to modify catalog/ownership tables in the current account/battle slice. The migration administrator applies schema changes separately. The runtime requires SELECT on `FinalExodusSchemaMigrations` and refuses shared requests without its verified version marker.
 
+Shared `/currency/update` always returns 410 for authenticated callers, even if `FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE=1` is accidentally set. The +50 shop prototype runs only against the opted-in isolated local database.
+
 The trigger initializes free/paid balances exactly once on registration. The API must not add a second balance initialization path. Battle victory state persists; XP/currency payouts, owned-roster combat and gacha remain separate features.
 
 ## Acceptance after migration
 
-Verify existing row IDs/counts, balances, ownership and trigger remain unchanged; valid/duplicate registration; current and legacy login aliases; invalid/unsupported credentials; own-account-only currency/profile reads; logout revocation; saved battle resume; repeated/concurrent action handling; failed-transaction rollback; and two independently configured clients. Do not use the opt-in local demo test cleanup against Aiven. Record shared smoke checks separately using specifically authorized disposable identities and cleanup.
+Verify existing row IDs/counts, balances, ownership and trigger remain unchanged; valid/duplicate registration; both username-login routes; invalid/unsupported credentials; own-account-only currency/profile reads; logout revocation; saved battle resume; repeated/concurrent action handling; failed-transaction rollback; and two independently configured clients. Do not use the opt-in local demo test cleanup against Aiven. Record shared smoke checks separately using specifically authorized disposable identities and cleanup.
 
-Aiven MySQL access and API hosting are separate. Each teammate may run the API locally against the shared database; a remotely hosted API instead requires HTTPS, callback configuration and reviewed worker/rate-limit behavior. The current Google callback remains loopback port 8007.
+Aiven MySQL access and API hosting are separate. Each teammate may run the API locally against the shared database; a remotely hosted API instead requires HTTPS, callback configuration and reviewed worker/rate-limit behavior. The optional Google callback remains loopback port 8007; select that port explicitly for the separate demo and its client.

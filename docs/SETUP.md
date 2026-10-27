@@ -8,7 +8,7 @@ Use **Godot 4.7.2 standard**, GDScript. No .NET SDK or Godot Git plugin is requi
 2. In GitHub Desktop, clone that repository to a normal local folder (not a OneDrive/iCloud/Dropbox synced folder).
 3. Fetch and pull the branch containing this starter. If it is in an open pull request, switch to its branch; after merge, use main.
 4. In Godot, choose Import and select `frontend/project.godot` inside your clone. Do not create a separate new project.
-5. For the original sync test, open `frontend/scenes/sync_test.tscn` and press F6. F5 runs the title/account flow on this branch; follow [LOCAL_DEMO.md](LOCAL_DEMO.md) for that connected demo. On some laptops hold Fn too; the Play button also works.
+5. For the original sync test, open `frontend/scenes/sync_test.tscn` and press F6. F5 runs the team title/account/hub flow on this branch. Username login closes the popup, then Start enters the hub; guest preview remains available. Follow [LOCAL_DEMO.md](LOCAL_DEMO.md) for API setup on default port 8000 and the separate optional F6 combat demo. On some laptops hold Fn too; the Play button also works.
 6. Confirm all four names appear and the test button counts clicks without errors.
 
 ## Prove everyone's changes sync
@@ -29,4 +29,4 @@ Commit project.godot, .tscn/.tres scenes/resources, .gd scripts, .uid sidecars, 
 
 ## Next connection milestone
 
-The integration branch includes account, hub and saved-combat connections. See LOCAL_DEMO.md for reproducible local setup and SHARED_STORAGE.md for the deliberate Aiven profile. Another teammate must still verify their own machine. A shared HTTPS API address is required for remote backend testing; localhost refers to the machine running Godot. The limited demo does not mark the complete Jira stories done.
+The integration branch connects the team account/hub flow and keeps added saved fixture combat in separate optional scenes. See LOCAL_DEMO.md for reproducible local setup and SHARED_STORAGE.md for the deliberate Aiven profile. Another teammate must still verify their own machine. A shared HTTPS API address is required for remote backend testing; localhost refers to the machine running Godot. The limited demo does not mark the complete Jira stories done.

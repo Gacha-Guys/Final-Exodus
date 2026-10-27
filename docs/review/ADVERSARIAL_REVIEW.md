@@ -1,4 +1,6 @@
-# Independent adversarial review
+# Historical independent adversarial review
+
+> This review describes the earlier October 26 local demo and preserves its original findings, counts and boundaries. It does not rate the restored default team flow or the later authorized Aiven integration. See [current verification](../TESTING.md#october-27-teammate-restoration-verification).
 
 October 26, 2026. Requested by Tyler before any push. A separate agent inspected the actual implementation and tests; this was distinct from the original author's second-pass review.
 

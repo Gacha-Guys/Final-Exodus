@@ -1,4 +1,6 @@
-# Review results — October 26
+# Historical review results — October 26
+
+> Historical local-demo evidence, preserved with its original counts, screenshots and limits. It is not the current default team-flow acceptance report. The October 27 restoration keeps the team F5 title/hub/navigation and shop, with fixture combat/Google isolated behind F6 on `demo_title.tscn`. See [current verification](../TESTING.md#october-27-teammate-restoration-verification) and [current setup](../LOCAL_DEMO.md). Later publication and authorized Aiven integration supersede the no-push/no-shared-write statements below.
 
 Local source commits: `18b7070` (team UI integration), `86685c6` (API), `366693f` (client). Main was `4d9744d`; Riley's branch was `f2a04b5`. A final fetch found no newer commits on these branches.
 
