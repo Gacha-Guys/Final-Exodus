@@ -5,7 +5,7 @@ CREATE TABLE Users (
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
-  Dob DATE NOT NULL,
+  Dob DATE NULL,
   gamepass BOOLEAN DEFAULT FALSE,
   UNIQUE KEY demo_unique_email (email)
 );

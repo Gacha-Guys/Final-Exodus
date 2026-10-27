@@ -19,7 +19,7 @@ class Body(BaseModel):
 
 
 class Name(Body):
-    display_name: str = Field(min_length=1, max_length=64)
+    display_name: str = Field(min_length=1, max_length=255)
 
     @field_validator("display_name", mode="before")
     @classmethod
@@ -29,13 +29,13 @@ class Name(Body):
 
 class Registration(Name):
     email: EmailStr
-    password: SecretStr = Field(min_length=12, max_length=128)
-    dob: date
+    password: SecretStr = Field(min_length=1, max_length=128)
+    dob: date | None = None
 
     @field_validator("dob")
     @classmethod
     def valid_birth_date(cls, value):
-        if not date(1900, 1, 1) <= value <= date.today():
+        if value is not None and not date(1900, 1, 1) <= value <= date.today():
             raise ValueError("Enter a valid birth date from 1900 through today")
         return value
 
@@ -79,10 +79,19 @@ def profile(cursor, user_id):
     return account
 
 
+def require_available_name(cursor, name, user_id=None):
+    """Run inside an identity-write transaction; comparison follows DB collation."""
+    cursor.execute("SELECT id FROM Users WHERE name=%s AND (%s IS NULL OR id<>%s) LIMIT 1",
+                   (name, user_id, user_id))
+    if cursor.fetchone():
+        raise HTTPException(409, "That username already has an account")
+
+
 @router.post("/accounts", status_code=201)
 def register(body: Registration):
     hashed = password_hash.hash(body.password.get_secret_value())
-    with transaction() as cursor:
+    with transaction(identity_write=True) as cursor:
+        require_available_name(cursor, body.display_name)
         cursor.execute("INSERT INTO Users(name,email,password,Dob) VALUES(%s,%s,%s,%s)",
                        (body.display_name, str(body.email).lower(), hashed, body.dob))
         return profile(cursor, cursor.lastrowid)
@@ -103,8 +112,9 @@ def me(authorization: str | None = Depends(authorization_header)):
 
 @router.patch("/me")
 def update_name(body: Name, authorization: str | None = Depends(authorization_header)):
-    with transaction() as cursor:
+    with transaction(identity_write=True) as cursor:
         user_id = authenticate(cursor, authorization)
+        require_available_name(cursor, body.display_name, user_id)
         cursor.execute("UPDATE Users SET name=%s WHERE id=%s", (body.display_name, user_id))
         return profile(cursor, user_id)
 

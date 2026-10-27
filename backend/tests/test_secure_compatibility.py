@@ -10,6 +10,7 @@ from src import compatibility as compat, demo_accounts as accounts
 
 @pytest.fixture
 def cursor(monkeypatch):
+    monkeypatch.setenv("FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE", "0")
     cursor = MagicMock()
     @contextmanager
     def transaction():
@@ -53,13 +54,44 @@ def test_legacy_login_issues_session_not_bare_id(cursor, monkeypatch):
     assert response.json()["access_token"] == "signed" and response.json()["id"] == 7
 
 
-@pytest.mark.parametrize("extra", [{}, {"dob": "1800-01-01"}, {"dob": "2000-01-01", "password": "short"}])
-def test_signup_cannot_invent_dob_or_bypass_validation(extra, monkeypatch):
+@pytest.mark.parametrize("extra", [{"dob": "1800-01-01"}, {"password": ""}, {"name": " "}])
+def test_signup_rejects_invalid_optional_fields(extra, monkeypatch):
     create = MagicMock()
     monkeypatch.setattr(compat, "register", create)
     body = {"name": "Player", "email": "player@example.com", "password": "validpassword", **extra}
     assert TestClient(app).post("/signup", json=body).status_code == 422
     create.assert_not_called()
+
+
+def test_signup_restores_team_contract_without_dob(monkeypatch):
+    create = MagicMock(return_value={"id": 7})
+    monkeypatch.setattr(compat, "register", create)
+    body = {"name": "Player" * 40, "email": "player@example.com", "password": "short"}
+    assert TestClient(app).post("/signup", json=body).status_code == 201
+    registration = create.call_args.args[0]
+    assert registration.dob is None
+    assert registration.display_name == body["name"]
+    assert registration.password.get_secret_value() == "short"
+
+
+@pytest.mark.parametrize("profile,host,db,flag", [
+    ("shared-users-v1", "127.0.0.1", "final_exodus_tyler_demo", "1"),
+    ("local-demo", "remote.invalid", "final_exodus_tyler_demo", "1"),
+    ("local-demo", "127.0.0.1", "shared", "1"),
+    ("local-demo", "127.0.0.1", "final_exodus_tyler_demo", "0"),
+])
+def test_currency_flag_never_enables_shared_or_other_target(cursor, monkeypatch, profile, host, db, flag):
+    for key, value in {"STORAGE_PROFILE": profile, "DB_HOST": host, "DB": db,
+                       "ENABLE_CURRENCY_PROTOTYPE": flag}.items():
+        monkeypatch.setenv("FINAL_EXODUS_" + key, value)
+    body = {"u_id": 7, "amount": 50, "type": "paid"}
+    assert TestClient(app).post("/currency/update", json=body, headers={"Authorization": "Bearer valid"}).status_code == 410
+    cursor.execute.assert_not_called()
+
+
+@pytest.mark.parametrize("route", ["/account/inventory", "/account/units", "/unit"])
+def test_teammate_extension_points_remain_explicit_placeholders(route):
+    assert TestClient(app).get(route).status_code == 501
 
 
 def test_plaintext_password_is_not_accepted_as_hash():

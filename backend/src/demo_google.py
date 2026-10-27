@@ -17,7 +17,7 @@ from google.oauth2 import id_token
 import httpx
 from pydantic import EmailStr, Field, SecretStr, TypeAdapter, field_validator
 
-from .demo_accounts import Body, Name, Registration
+from .demo_accounts import Body, Name, Registration, require_available_name
 from .demo_store import transaction
 from .demo_tokens import issue_session
 
@@ -47,7 +47,7 @@ class FlowKey(Body):
 
 
 class GoogleRegistration(FlowKey, Name):
-    dob: date
+    dob: date | None = None
 
     # Reuse the same DOB rules as email registration.
     _valid_dob = field_validator("dob")(Registration.valid_birth_date.__func__)
@@ -178,7 +178,8 @@ def register(body: GoogleRegistration):
         flow = get_flow(body)
         if flow.status != "verified":
             raise HTTPException(400, "Finish Google sign-in in the browser first.")
-        with transaction() as cursor:
+        with transaction(identity_write=True) as cursor:
+            require_available_name(cursor, body.display_name)
             if existing_user(cursor, flow.identity) is not None:
                 raise HTTPException(409, "Account already exists. Start Google sign-in again.")
             cursor.execute("INSERT INTO Users(name,email,password,Dob) VALUES(%s,%s,%s,%s)",
