@@ -57,7 +57,7 @@ def configuration():
     client_id = os.getenv("FINAL_EXODUS_GOOGLE_CLIENT_ID", "")
     client_secret = os.getenv("FINAL_EXODUS_GOOGLE_CLIENT_SECRET", "")
     if not client_id.endswith(".apps.googleusercontent.com") or not client_secret:
-        raise HTTPException(503, "Google sign-in needs local OAuth setup. Use email/password for now.")
+        raise HTTPException(503, "Google sign-in needs local OAuth setup. Use username/password for now.")
     return client_id, client_secret
 
 

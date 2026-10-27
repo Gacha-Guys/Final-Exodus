@@ -99,7 +99,7 @@ def test_forged_jwt_denied_even_if_recorded_in_database(isolated_test_accounts, 
 def test_missing_signing_key_fails_closed(isolated_test_accounts, monkeypatch):
     client, body, _ = register(isolated_test_accounts)
     monkeypatch.delenv('FINAL_EXODUS_JWT_SECRET')
-    assert client.post('/sessions', json=dict(email=body['email'],password=PASSWORD)).status_code == 503
+    assert client.post('/sessions', json=dict(name=body['display_name'],password=PASSWORD)).status_code == 503
 
 
 def test_google_unconfigured_and_state_replay(monkeypatch):
@@ -128,7 +128,7 @@ def test_google_registration_returning_user_logout_and_no_password(isolated_test
     profile = client.get('/me',headers=headers).json()
     assert profile['email'] == who['email'] and profile['free_currency'] == 0
     assert client.post('/auth/google/poll',json=key).status_code == 400
-    assert client.post('/sessions',json=dict(email=who['email'],password='!google-only')).status_code == 401
+    assert client.post('/sessions',json=dict(name=profile['display_name'],password='!google-only')).status_code == 401
     assert client.delete('/sessions/current',headers=headers).status_code == 204
     assert client.get('/me',headers=headers).status_code == 401
     # Stable provider subject finds the same account even if Google's email changes.

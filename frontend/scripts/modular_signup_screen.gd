@@ -39,7 +39,7 @@ func submit() -> void:
 	body.clear()
 	set_busy(false)
 	if result.ok and result.status == 201 and result.data is Dictionary and result.data.has("id"):
-		GameSession.notice = "Account created. Log in with your email."
+		GameSession.notice = "Account created. Log in with your username."
 		login_signal.emit()
 		queue_free()
 	else:

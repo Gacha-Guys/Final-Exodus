@@ -26,7 +26,7 @@ For Aiven, start `Server.py --env-file /private/aiven-game-api.env --port 8007` 
 | Time | Action |
 | --- | --- |
 |0:00–0:45|Register a fresh account with email, name, birth date and password.|
-|0:45–1:15|Log in and show persisted name, rank and actual free/paid balances; optionally change the name in Settings.|
+|0:45–1:15|Log in with the signup username and show persisted name, rank and actual free/paid balances; optionally change the name in Settings.|
 |1:15–1:50|Enter Battle; attack once with Ember, Rowan and Vale. Enemy health reaches52.|
 |1:50–2:40|Return to hub, close/reopen the game, log in and resume that same52HP encounter.|
 |2:40–3:15|Finish the encounter and return to show one saved victory.|

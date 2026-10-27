@@ -10,8 +10,8 @@ All request bodies reject extra fields. Errors use `detail`; validation errors r
 | --- | --- | --- |
 | GET /health | None | Configured database readiness; shared profile also requires migration marker |
 | POST /accounts | email, display_name, password (12–128 chars), dob (YYYY-MM-DD) | 201 account; 409 duplicate email |
-| POST /sessions | email, password | access_token, token_type, expires_in |
-| POST /login | name (unique username or email), password | Same JWT session plus id; ambiguous names rejected |
+| POST /sessions | name (username), password | access_token, token_type, expires_in |
+| POST /login | name (username), password | Same JWT session plus id; ambiguous names rejected |
 | POST /signup | name, email, password, dob | Same validation/result as /accounts |
 | POST /auth/google/start | None | Browser authorization URL, flow_id, poll_secret, expires_in |
 | GET /auth/google/callback | Google code/state (browser only) | Fixed return-to-game page; never returns JWT in URL/HTML |

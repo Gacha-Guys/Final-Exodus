@@ -78,7 +78,7 @@ func request(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary
 	if data is Dictionary and data.get("detail") is String:
 		message = data.detail
 	elif code == 422:
-		message = "Check the fields. Use a valid email, birth date, and a 12–128 character password."
+		message = "Enter your username and password." if path in ["/sessions", "/login"] else "Check your username, email, birth date, and password (12–128 characters)."
 	if code == 401 and authenticated:
 		clear()
 		notice = "Session expired. Please log in again."

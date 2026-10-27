@@ -49,7 +49,7 @@ vertical_alignment = 1
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
-placeholder_text = "Email"
+placeholder_text = "Username"
 
 [node name="PasswordInput" type="LineEdit" parent="LoginScreen/Container/Panel/Margin/VBox" unique_id=1008475449]
 unique_name_in_owner = true

@@ -47,7 +47,7 @@ def register(created, client=None):
     client = client or TestClient(demo.app)
     email = f'demo-{uuid4().hex}@example.com'
     created.append(email)
-    body = dict(email=email, display_name='Demo Tester', password=PASSWORD, dob='2000-01-01')
+    body = dict(email=email, display_name='Demo-' + uuid4().hex[:12], password=PASSWORD, dob='2000-01-01')
     response = client.post('/accounts', json=body)
     assert response.status_code == 201, response.text
     return client, body, response.json()
@@ -55,7 +55,7 @@ def register(created, client=None):
 
 def signed_in(created):
     client, body, account = register(created)
-    response = client.post('/sessions', json=dict(email=body['email'], password=PASSWORD))
+    response = client.post('/sessions', json=dict(name=body['display_name'], password=PASSWORD))
     assert response.status_code == 200
     token = response.json()['access_token']
     return client, {'Authorization': 'Bearer ' + token}, account
@@ -124,10 +124,10 @@ def test_wrong_password_expired_session_and_rate_limit(isolated_test_accounts, m
     with transaction() as cursor:
         cursor.execute('UPDATE DemoSessions SET expires_at=%s WHERE u_id=%s', (datetime.now()-timedelta(days=1), account['id']))
     assert client.get('/me', headers=headers).status_code == 401
-    assert client.post('/sessions', json={'email':account['email'], 'password':'wrong-password'}).status_code == 401
+    assert client.post('/sessions', json={'name':account['display_name'], 'password':'wrong-password'}).status_code == 401
     monkeypatch.setattr(demo, 'limiter', RegistrationLimiter(limit=1))
-    assert client.post('/sessions', json={'email':account['email'], 'password':'wrong-password'}).status_code == 401
-    assert client.post('/sessions', json={'email':account['email'], 'password':'wrong-password'}).status_code == 429
+    assert client.post('/sessions', json={'name':account['display_name'], 'password':'wrong-password'}).status_code == 401
+    assert client.post('/sessions', json={'name':account['display_name'], 'password':'wrong-password'}).status_code == 429
 
 
 def test_battle_account_isolation_and_forged_damage(isolated_test_accounts):

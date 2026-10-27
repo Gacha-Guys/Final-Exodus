@@ -4,6 +4,9 @@ var checks := 0
 var failures := 0
 var session: Node
 var test_email := ""
+var test_username := ""
+var saved_username := ""
+var other_username := ""
 var small := "--small" in OS.get_cmdline_user_args()
 
 func _initialize() -> void:
@@ -84,13 +87,17 @@ func run() -> void:
 	if google.flow.is_empty():
 		await screenshot("google-setup")
 	await google.cancel()
-	expect(not initial_login.pending, "Cancelling Google sign-in restores email login")
+	expect(not initial_login.pending, "Cancelling Google sign-in restores username login")
 	title._pop_signup()
 	await process_frame
 	var signup: Node = title.popup
-	test_email = "ui-%s@example.com" % session.uuid().left(8)
+	var suffix: String = session.uuid().left(8)
+	test_email = "ui-%s@example.com" % suffix
+	test_username = "UI" + suffix
+	saved_username = "Saved" + suffix
+	other_username = "Other" + suffix
 	signup.get_node("%EmailInput").text = test_email
-	signup.get_node("%UsernameInput").text = "UI Demo"
+	signup.get_node("%UsernameInput").text = test_username
 	signup.get_node("%DoBInput").text = "2000-01-01"
 	signup.get_node("%PasswordInput").text = "LocalUiDemo!2026"
 	signup.get_node("%PasswordConfirmation").text = "LocalUiDemo!2026"
@@ -98,10 +105,15 @@ func run() -> void:
 	await process_frame
 	expect(title.popup != signup, "Successful registration opens login")
 	var login: Node = title.popup
-	login.fields.get_node("UsernameInput").text = test_email
+	login.fields.get_node("UsernameInput").text = test_username
 	login.fields.get_node("PasswordInput").text = "incorrect-password"
 	await login.submit()
 	expect(session.token.is_empty() and login.message.text.contains("Incorrect"), "Wrong password cannot enter hub")
+	login.fields.get_node("UsernameInput").text = test_email
+	login.fields.get_node("PasswordInput").text = "LocalUiDemo!2026"
+	await login.submit()
+	expect(session.token.is_empty() and login.message.text.contains("Incorrect"), "Account email cannot be used as a username alias")
+	login.fields.get_node("UsernameInput").text = test_username
 	login.fields.get_node("PasswordInput").text = "LocalUiDemo!2026"
 	await login.submit()
 	await process_frame
@@ -109,19 +121,19 @@ func run() -> void:
 	var hub: Node = await wait_scene("hub.tscn")
 	await settle(hub)
 	expect(hub.scene_file_path.ends_with("hub.tscn"), "Valid login enters existing hub")
-	expect(session.token.split(".").size() == 3, "Email login uses a signed JWT access token")
-	expect(hub.player_label.text == "UI Demo" and hub.get_node("Currency").val == 0, "Hub displays actual profile and trigger-created balances")
+	expect(session.token.split(".").size() == 3, "Username login uses a signed JWT access token")
+	expect(hub.player_label.text == test_username and hub.get_node("Currency").val == 0, "Hub displays actual profile and trigger-created balances")
 	await screenshot("hub")
 	hub.open_settings()
-	hub.name_input.text = "UI Saved Name"
+	hub.name_input.text = saved_username
 	await hub.save_name()
-	expect(hub.player_label.text == "UI Saved Name", "Settings updates persisted name")
+	expect(hub.player_label.text == saved_username, "Settings updates persisted name")
 	var profile_before: Dictionary = session.account.duplicate(true)
 	var wrong_profile: Dictionary = profile_before.duplicate(true)
 	wrong_profile.id = int(profile_before.id) + 1
 	for invalid_profile in [null, {}, wrong_profile]:
 		hub.apply_name_result({"ok": true, "data": invalid_profile})
-		expect(session.account == profile_before and hub.player_label.text == "UI Saved Name" and hub.settings_message.text.contains("Unexpected"), "Invalid settings response cannot replace the current account")
+		expect(session.account == profile_before and hub.player_label.text == saved_username and hub.settings_message.text.contains("Unexpected"), "Invalid settings response cannot replace the current account")
 	hub.settings.hide()
 	hub.open_battle()
 	await process_frame
@@ -151,31 +163,36 @@ func run() -> void:
 	await process_frame
 	expect(session.token.is_empty() and session.account.is_empty() and session.battle.is_empty(), "Logout removes all private client state")
 	title = await wait_scene("titleScreenNew.tscn")
+	login = title.popup
+	login.fields.get_node("UsernameInput").text = test_username
+	login.fields.get_node("PasswordInput").text = "LocalUiDemo!2026"
+	await login.submit()
+	expect(session.token.is_empty() and login.message.text.contains("Incorrect"), "Renaming the account stops the old username from logging in")
 	var other_email := "ui-%s@example.com" % session.uuid().left(8)
-	var other_registration: Dictionary = await session.request("/accounts", HTTPClient.METHOD_POST, {"email": other_email, "display_name": "Other Player", "password": "LocalUiDemo!2026", "dob": "2000-01-01"}, false)
+	var other_registration: Dictionary = await session.request("/accounts", HTTPClient.METHOD_POST, {"email": other_email, "display_name": other_username, "password": "LocalUiDemo!2026", "dob": "2000-01-01"}, false)
 	expect(other_registration.ok, "Second account created for account-switch check")
 	login = title.popup
-	login.fields.get_node("UsernameInput").text = other_email
+	login.fields.get_node("UsernameInput").text = other_username
 	login.fields.get_node("PasswordInput").text = "LocalUiDemo!2026"
 	await login.submit()
 	await process_frame
 	await process_frame
 	hub = await wait_scene("hub.tscn")
 	await settle(hub)
-	expect(hub.player_label.text == "Other Player" and session.battle.is_empty(), "Account switch never displays the previous player's encounter")
+	expect(hub.player_label.text == other_username and session.battle.is_empty(), "Account switch never displays the previous player's encounter")
 	await hub.logout()
 	await process_frame
 	await process_frame
 	title = await wait_scene("titleScreenNew.tscn")
 	login = title.popup
-	login.fields.get_node("UsernameInput").text = test_email
+	login.fields.get_node("UsernameInput").text = saved_username
 	login.fields.get_node("PasswordInput").text = "LocalUiDemo!2026"
 	await login.submit()
 	await process_frame
 	await process_frame
 	hub = await wait_scene("hub.tscn")
 	await settle(hub)
-	expect(hub.player_label.text == "UI Saved Name" and session.battle == saved, "Login reloads saved name and exact battle")
+	expect(hub.player_label.text == saved_username and session.battle == saved, "Login reloads saved name and exact battle")
 	hub.open_battle()
 	await process_frame
 	await process_frame
@@ -203,7 +220,7 @@ func run() -> void:
 	await process_frame
 	var shop: Node = await wait_scene("shop.tscn")
 	await settle(shop)
-	expect(shop.player_label.text == "UI Saved Name", "Existing shop displays authenticated account")
+	expect(shop.player_label.text == saved_username, "Existing shop displays authenticated account")
 	await screenshot("shop")
 	# Expiry/invalid-token handling clears the HUD instead of leaving private data visible.
 	session.token = "invalid-session-token-for-ui-test"
@@ -213,7 +230,7 @@ func run() -> void:
 	await wait_scene("titleScreenNew.tscn")
 	expect(current_scene.scene_file_path.ends_with("titleScreenNew.tscn") and session.account.is_empty(), "Invalid session returns to login and clears profile")
 	var file := FileAccess.open(artifact_path("ui-small-result.json" if small else "ui-result.json"), FileAccess.WRITE)
-	file.store_string(JSON.stringify({"checks": checks, "failures": failures, "synthetic_test_email": test_email}, "  "))
+	file.store_string(JSON.stringify({"checks": checks, "failures": failures, "synthetic_test_email": test_email, "synthetic_test_username": test_username, "renamed_username": saved_username}, "  "))
 	file.close()
 	print("Connected UI checks: %d passed, %d failed" % [checks - failures, failures])
 	current_scene.queue_free()

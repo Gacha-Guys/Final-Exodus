@@ -1,16 +1,15 @@
 """Secure aliases for earlier routes; identity always comes from a session."""
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import Field, SecretStr
-from .demo_accounts import Body, Registration, register, verify_password
+from pydantic import Field
+from .demo_accounts import Login, Registration, register, verify_password
 from .demo_store import transaction
 from .demo_tokens import authenticate, authorization_header, issue_session
 
 router = APIRouter(tags=["Compatibility"])
 
 
-class LegacyLogin(Body):
-    name: str = Field(min_length=1, max_length=255)
-    password: SecretStr = Field(min_length=1, max_length=128)
+class LegacyLogin(Login):
+    pass
 
 
 class LegacySignup(Registration):
@@ -20,7 +19,7 @@ class LegacySignup(Registration):
 @router.post("/login")
 def login(body: LegacyLogin):
     with transaction() as cursor:
-        user_id = verify_password(cursor, body.name.strip(), body.password.get_secret_value(), allow_name=True)
+        user_id = verify_password(cursor, body.name, body.password.get_secret_value())
         return {**issue_session(cursor, user_id), "id": user_id}
 
 

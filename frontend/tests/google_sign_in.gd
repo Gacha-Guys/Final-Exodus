@@ -5,6 +5,7 @@ var failures := 0
 var session: Node
 var login: Node
 var title: Node
+var test_username := ""
 
 func _initialize() -> void:
 	create_timer(35.0).timeout.connect(func() -> void: push_error("Google UI test timed out"); quit(1))
@@ -73,7 +74,8 @@ func run() -> void:
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png(artifact_path("google-registration-simulated.png"))
-	google.name_input.text = "Google UI Tester"
+	test_username = "Google" + session.uuid().left(8)
+	google.name_input.text = test_username
 	google.dob_input.text = "2999-01-01"
 	await google.complete_registration()
 	expect(google.status.text.contains("Check") and session.token.is_empty(), "Invalid DOB cannot finish Google registration")
@@ -81,7 +83,7 @@ func run() -> void:
 	await google.complete_registration()
 	var hub: Node = await wait_hub()
 	var account_id: int = int(session.account.id)
-	expect(hub.player_label.text == "Google UI Tester" and session.token.split(".").size() == 3, "Google registration issues JWT and loads the real profile")
+	expect(hub.player_label.text == test_username and session.token.split(".").size() == 3, "Google registration issues JWT and loads the real profile")
 	var started: Dictionary = await session.request("/battles", HTTPClient.METHOD_POST, {"request_id":session.uuid()})
 	expect(started.ok, "Google account can start an owned battle")
 	var battle_id: String = started.data.id

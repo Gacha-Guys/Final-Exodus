@@ -3,6 +3,7 @@
 ## 0.0.0.4 — 2026-10-26
 
 - Integrate the preserved team title, account popups, hub, six shop/gamepass offers and gacha prototype with authenticated profiles and saved combat.
+- Authenticate password logins by username (`Users.name`); keep email for registration and clarify username changes in Settings.
 - Use one supported API and session client, with Argon2/JWT authentication and secure compatibility for the team's login/signup/currency routes; retire client-directed currency grants.
 - Add guarded shared Users/Currency storage, an additive migration and reproducible isolated MySQL setup. Keep existing account IDs, balances, catalog, inventory and currency trigger intact.
 - Fix both leveling caps and gacha import/transaction cleanup; retain every original backend test and add deterministic gacha, leveling, authentication, migration and UI regressions.

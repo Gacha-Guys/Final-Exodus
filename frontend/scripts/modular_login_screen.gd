@@ -29,15 +29,15 @@ func set_busy(value: bool) -> void:
 func submit() -> void:
 	if pending:
 		return
-	var email: String = fields.get_node("UsernameInput").text.strip_edges()
+	var username: String = fields.get_node("UsernameInput").text.strip_edges()
 	var password: String = fields.get_node("PasswordInput").text
 	fields.get_node("PasswordInput").clear()
-	if email.is_empty() or password.is_empty():
-		message.text = "Enter your email and password."
+	if username.is_empty() or password.is_empty():
+		message.text = "Enter your username and password."
 		return
 	set_busy(true)
 	message.text = "Signing in…"
-	var result: Dictionary = await GameSession.request("/sessions", HTTPClient.METHOD_POST, {"email": email, "password": password}, false)
+	var result: Dictionary = await GameSession.request("/sessions", HTTPClient.METHOD_POST, {"name": username, "password": password}, false)
 	password = ""
 	if result.ok and result.data is Dictionary and result.data.get("access_token") is String:
 		await accept_session(result.data)

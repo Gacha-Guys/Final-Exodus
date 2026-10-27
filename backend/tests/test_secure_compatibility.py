@@ -64,9 +64,9 @@ def test_signup_cannot_invent_dob_or_bypass_validation(extra, monkeypatch):
 
 def test_plaintext_password_is_not_accepted_as_hash():
     cursor = MagicMock()
-    cursor.fetchone.return_value = {"id": 7, "password": "the-old-password"}
+    cursor.fetchall.return_value = [{"id": 7, "password": "the-old-password"}]
     with pytest.raises(HTTPException) as error:
-        accounts.verify_password(cursor, "player@example.com", "the-old-password")
+        accounts.verify_password(cursor, "Player", "the-old-password")
     assert error.value.status_code == 401
 
 
@@ -74,5 +74,5 @@ def test_ambiguous_username_is_rejected():
     cursor = MagicMock()
     cursor.fetchall.return_value = [{"id": 7, "password": "x"}, {"id": 8, "password": "y"}]
     with pytest.raises(HTTPException) as error:
-        accounts.verify_password(cursor, "same name", "password", allow_name=True)
+        accounts.verify_password(cursor, "same name", "password")
     assert error.value.status_code == 401

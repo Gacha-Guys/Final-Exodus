@@ -40,9 +40,9 @@ def boot(log):
 try:
     with tempfile.TemporaryFile() as log, httpx.Client(base_url='http://127.0.0.1:8008', timeout=4) as client:
         process = boot(log)
-        result = client.post('/accounts', json=dict(email=email, display_name='Restart Test', password='RestartDemo!2026', dob='2000-01-01'))
+        result = client.post('/accounts', json=dict(email=email, display_name='Restart-'+email.split('@')[0][-12:], password='RestartDemo!2026', dob='2000-01-01'))
         assert result.status_code == 201
-        token = client.post('/sessions', json=dict(email=email, password='RestartDemo!2026')).json()['access_token']
+        token = client.post('/sessions', json=dict(name='Restart-'+email.split('@')[0][-12:], password='RestartDemo!2026')).json()['access_token']
         headers = {'Authorization': 'Bearer ' + token}
         battle = client.post('/battles', headers=headers, json={'request_id':str(uuid4())}).json()
         action = dict(request_id=str(uuid4()), actor=0, version=0)
@@ -53,7 +53,7 @@ try:
         process.terminate(); process.wait(timeout=5)
         process = boot(log)
         assert first_pid != process.pid
-        assert client.get('/me', headers=headers).json()['display_name'] == 'Restart Test'
+        assert client.get('/me', headers=headers).json()['display_name'] == 'Restart-'+email.split('@')[0][-12:]
         assert client.get('/battles/current', headers=headers).json() == saved
         assert client.post(path, headers=headers, json=action).json() == saved
         assert client.get('/battles/current', headers=headers).json()['version'] == 1

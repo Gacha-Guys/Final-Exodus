@@ -164,11 +164,11 @@ func open_settings() -> void:
 	if not is_instance_valid(settings):
 		settings = ConfirmationDialog.new()
 		settings.title = "Account settings"
-		settings.ok_button_text = "Save name"
+		settings.ok_button_text = "Save username"
 		settings.dialog_hide_on_ok = false
 		var box := VBoxContainer.new()
 		name_input = LineEdit.new()
-		name_input.placeholder_text = "Display name"
+		name_input.placeholder_text = "Username"
 		name_input.max_length = 64
 		box.add_child(name_input)
 		settings_message = Label.new()
@@ -179,7 +179,7 @@ func open_settings() -> void:
 		settings.confirmed.connect(save_name)
 		add_child(settings)
 	name_input.text = GameSession.account.display_name
-	settings_message.text = "Change the name shown on your account."
+	settings_message.text = "Changing your username also changes what you enter to log in."
 	settings.popup_centered(Vector2i(520, 240))
 
 func save_name() -> void:
@@ -197,6 +197,6 @@ func apply_name_result(result: Dictionary) -> void:
 		GameSession.account = result.data
 		GameSession.account_changed.emit(GameSession.account)
 		player_label.text = GameSession.account.display_name
-		settings_message.text = "Name saved."
+		settings_message.text = "Username saved. Use it next time you log in."
 	else:
 		settings_message.text = result.error

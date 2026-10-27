@@ -28,7 +28,7 @@ MySQL DDL auto-commits. A failed migration may leave already-created additive ob
 
 New registration requires a real DOB and an Argon2 verifier. Existing DOB values may remain NULL; do not fill them with invented dates. Existing raw or unsupported password formats remain untouched by migration and are rejected by secure login. An account owner must complete a verified password reset before using such an account. This integration does not implement a public recovery feature or automatic account linking. Never log password values during compatibility checks.
 
-Case-normalized duplicate emails must be resolved before applying the unique index. Legacy username login supports only an unambiguous matching account; email login is preferred. A matching Google email does not automatically link an existing password account.
+Case-normalized duplicate emails must be resolved before applying the unique index. Both password-login routes identify an unambiguous `Users.name`; email is not a login alias. Existing duplicate names are rejected rather than selecting an arbitrary account. A Settings name change also changes the username for the next login. A matching Google email does not automatically link an existing password account.
 
 ## Application configuration and privileges
 

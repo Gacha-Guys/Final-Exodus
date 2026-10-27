@@ -12,9 +12,9 @@ The connected demo uses **FastAPI + MySQL + Argon2 + JWT**, with optional **Goog
 
 Argon2 and JWT serve different purposes. Argon2 remains when JWT replaces the previous opaque session token. This is also the combination shown in [FastAPI's JWT tutorial](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/).
 
-## Email/password login
+## Username/password login
 
-Register with the existing form, then log in. The response contract remains `access_token`, `token_type: bearer`, `expires_in`; the lifetime is now **900 seconds**. The client sends `Authorization: Bearer <JWT>` and keeps the token only in memory. Tokens require a valid HS256 signature, issuer, audience, subject, timestamps and token identifier, plus an unexpired database session. The API docs at `http://127.0.0.1:8007/docs` include a JWT Bearer authorization control.
+Register with the existing form, then log in with the username stored in `Users.name` and your password. Email is collected at signup and is not a password-login alias. Both `/sessions` and `/login` accept `{name, password}`. Leading/trailing username spaces are trimmed; an ambiguous duplicate name is rejected rather than choosing an account. Changing your account name in Settings changes the username used at the next login. The response contract remains `access_token`, `token_type: bearer`, `expires_in`; the lifetime is now **900 seconds**. The client sends `Authorization: Bearer <JWT>` and keeps the token only in memory. Tokens require a valid HS256 signature, issuer, audience, subject, timestamps and token identifier, plus an unexpired database session. The API docs at `http://127.0.0.1:8007/docs` include a JWT Bearer authorization control.
 
 Expired or revoked sessions return 401, clear client account/battle data, and return to login. There is no refresh token yet; log in again after 15 minutes. Account and battle records remain saved. Old opaque sessions are rejected after this update. Existing Argon2 accounts continue to work; unsupported historical shared-password formats are preserved but require an owner-verified reset, as described in [SHARED_STORAGE.md](SHARED_STORAGE.md).
 

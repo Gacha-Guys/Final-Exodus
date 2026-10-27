@@ -25,7 +25,7 @@ func _ready() -> void:
 	status.custom_minimum_size.x = 280
 	content.add_child(status)
 	name_input = LineEdit.new()
-	name_input.placeholder_text = "Display name"
+	name_input.placeholder_text = "Username"
 	name_input.max_length = 64
 	content.add_child(name_input)
 	dob_input = LineEdit.new()

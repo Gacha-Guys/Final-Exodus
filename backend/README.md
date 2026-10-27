@@ -23,7 +23,7 @@ New accounts require a real DOB; existing rows may retain NULL. Existing non-Arg
 
 ## HTTP contracts
 
-See [DEMO_API.md](../docs/DEMO_API.md) for `/accounts`, `/sessions`, `/me` and battle request/response contracts, which remain the connected client's contract. `/login` accepts the former `name`/`password` request and returns a JWT session plus the account ID; ambiguous names are rejected. `/signup` accepts `name`, `email`, `password`, and mandatory `dob` with the same validation as `/accounts`.
+See [DEMO_API.md](../docs/DEMO_API.md) for `/accounts`, `/sessions`, `/me` and battle request/response contracts, which remain the connected client's contract. Both `/sessions` and `/login` accept `name`/`password` and authenticate against `Users.name` only. Email is not a login alias; `/login` also includes the account ID in its JWT response. Ambiguous names are rejected. `/signup` accepts `name`, `email`, `password`, and mandatory `dob` with the same validation as `/accounts`.
 
 `GET /currency` requires a bearer token; an optional `u_id` must equal that session's account. `POST /currency/update` returns 401 without a valid session and 410 for an authenticated caller. Client-directed currency grants are retired. Shop/payment previews do not grant currency. Rewards and gacha integration remain separate work.
 
