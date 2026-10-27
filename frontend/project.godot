@@ -11,14 +11,15 @@ config_version=5
 [application]
 
 config/name="Final Exodus"
-run/main_scene="uid://5qj20j5am4lt"
+run/main_scene="uid://dt3ckpg0ijv5j"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]
 
-window/size/viewport_width=960
-window/size/viewport_height=640
+window/size/viewport_width=720
+window/size/viewport_height=1280
 window/stretch/mode="canvas_items"
+window/handheld/orientation=1
 
 [rendering]
 
