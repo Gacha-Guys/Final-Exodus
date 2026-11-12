@@ -8,7 +8,7 @@ Use **Godot 4.7.2 standard**, GDScript. No .NET SDK or Godot Git plugin is requi
 2. In GitHub Desktop, clone that repository to a normal local folder (not a OneDrive/iCloud/Dropbox synced folder).
 3. Fetch and pull the branch containing this starter. If it is in an open pull request, switch to its branch; after merge, use main.
 4. In Godot, choose Import and select `frontend/project.godot` inside your clone. Do not create a separate new project.
-5. For the original sync test, open `frontend/scenes/sync_test.tscn` and press F6. F5 runs the team title/account/hub flow on this branch. Username login closes the popup, then Start enters the hub; guest preview remains available. Follow [LOCAL_DEMO.md](LOCAL_DEMO.md) for API setup on default port 8000 and the separate optional F6 combat demo. On some laptops hold Fn too; the Play button also works.
+5. For the original sync test, open `frontend/scenes/sync_test.tscn` and press F6. F5 runs the team title/account/hub flow on this branch. Username login closes the popup, then Start enters the hub; guest preview remains available. In the normal hub, select Battle to start or resume the saved encounter. Guests are returned to login; Return to hub brings signed-in players back here. Story remains available for its separate storyline. Follow [LOCAL_DEMO.md](LOCAL_DEMO.md) for API setup on default port 8000 and the separate optional F6 combat demo. On some laptops hold Fn too; the Play button also works.
 6. Confirm all four names appear and the test button counts clicks without errors.
 
 ## Prove everyone's changes sync

@@ -26,6 +26,7 @@ All request bodies reject extra fields. Errors use `detail`; validation errors r
 | POST /battles | Bearer; request_id (UUID) | Existing active battle or new battle |
 | GET /battles/current | Bearer | Latest saved battle, or null |
 | POST /battles/{id}/actions | Bearer; request_id (UUID), actor (0–2), version | Saved battle after one attack |
+| POST /battles/{id}/rounds | Bearer; request_id, version, taps (one to three ordered actor/at_ms pairs) | Saved battle with last_round containing taps, hits and counterattack |
 
 The default launcher and client use loopback port **8000**. Signup, Settings rename and Google registration serialize username writes with a database advisory lock and reject duplicate names under the database collation. No unique-name DDL is added; direct SQL writers must honor the same policy. Existing ambiguous names cannot log in. `/account/inventory`, `/account/units` and `/unit` remain explicit 501 placeholders.
 
@@ -33,4 +34,6 @@ The currency prototype requires all of: `local-demo` profile, `FINAL_EXODUS_ENAB
 
 Each optional demo battle contains three fixed demo characters and one enemy. Damage and enemy retaliation are calculated by the server. Every accepted action advances the version. Exact request retries return the original saved response; reusing the ID with different input or acting on stale state returns 409. A session can access only its own battles. Battles, action responses and sessions survive API restarts. No currency or XP is awarded.
 
-The client retains the session only in memory. Closing the client requires another login; the account and battle are loaded from MySQL. The team shop retains four gem offers plus gamepass. Its four gem buttons add 50, 200, 500 or 999 paid currency only in the guarded local prototype; it cannot initiate a payment. The optional fixture-combat UI starts through F6 on `scenes/demo_title.tscn`, separately from the normal F5 team flow.
+The client retains the session only in memory. Closing the client requires another login; the account and battle are loaded from MySQL. The team shop retains four gem offers plus gamepass. Its four gem buttons add 50, 200, 500 or 999 paid currency only in the guarded local prototype; it cannot initiate a payment. F5 → hub → Battle and the F6 demo title use the same battle API. The normal hub loads `res://scenes/team_battle.tscn`, an inherited battle scene with its own return and login destinations. A later Story scene can reuse that controller with its own return destination; the client never awards story progress or rewards.
+
+A squad round starts with a tap at 0 ms. Other living allies can act once within 900 ms. Ember, Rowan and Vale hit 300, 550 and 150 ms after their taps. Hits within 120 ms of the preceding impact gain 50% damage on the later hit. The surviving Sentinel counters the first selected ally once. One round advances the saved version once. Replaying the same request returns its original result. The older single-attack route and existing saves remain supported.
