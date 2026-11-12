@@ -37,6 +37,18 @@ func screenshot(name: String) -> void:
 	await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png(directory.path_join(name + ("-small" if small else "") + ".png"))
 
+func wait_idle(battle: Node) -> void:
+	for step in range(250):
+		if not battle.pending:
+			return
+		await create_timer(0.02).timeout
+	expect(false, "Battle request completed")
+
+func ready_battle() -> Node:
+	var battle := await wait_scene("/team_battle.tscn")
+	await wait_idle(battle)
+	return battle
+
 func start_click() -> InputEventMouseButton:
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
@@ -59,8 +71,9 @@ func run() -> void:
 	var hub: Node = await wait_scene("hub.tscn")
 	expect(session.token.is_empty() and legacy.user_id == 0, "Team Start still permits a guest preview without an account")
 	expect(hub.get_node("StoryButton").visible and not hub.has_method("build_encounter_panel"), "Guest hub retains Story without injected combat")
-	await change_scene_to_file("res://scenes/titleScreenNew.tscn")
+	hub.get_node("BattleButton").pressed.emit()
 	title = await wait_scene("titleScreenNew.tscn")
+	expect(title.popup.message.text.contains("Log in"), "Guest battle entry explains the sign-in requirement")
 	title._pop_signup()
 	await process_frame
 	var signup: Node = title.popup
@@ -103,6 +116,28 @@ func run() -> void:
 	for name in ["UnitsButton", "SummonButton"]:
 		expect(not hub.get_node(name).target_scene.is_empty(), "Team %s destination is retained" % name)
 	await screenshot("team-hub")
+	hub.get_node("BattleButton").pressed.emit()
+	var battle: Node = await ready_battle()
+	var battle_id: String = battle.state.id
+	battle.attack_buttons[0].pressed.emit()
+	await wait_idle(battle)
+	var saved_hp := int(battle.state.enemy.hp)
+	expect(saved_hp > 0 and saved_hp < 100, "Pressing Attack changes enemy HP")
+	battle.back_button.pressed.emit()
+	hub = await wait_scene("/hub.tscn")
+	hub.get_node("BattleButton").pressed.emit()
+	battle = await ready_battle()
+	expect(battle.state.id == battle_id and int(battle.state.enemy.hp) == saved_hp, "Re-entry resumes the same encounter and HP")
+	for turn in range(12):
+		if battle.state.status != "active":
+			break
+		battle.attack_buttons[turn % 3].pressed.emit()
+		await wait_idle(battle)
+	expect(battle.state.status == "won", "Team battle reaches server-confirmed victory")
+	battle.back_button.pressed.emit()
+	hub = await wait_scene("/hub.tscn")
+	var saved: Dictionary = await session.request("/battles/current")
+	expect(saved.ok and saved.data.id == battle_id and saved.data.status == "won", "Victory is saved after returning to the team hub")
 	# Use Riley's actual menu event, not a direct scene switch.
 	var release := start_click()
 	release.pressed = false
@@ -140,7 +175,9 @@ func run() -> void:
 	expect(fetched.ok and int(fetched.data.paid_currency) == 30, "Currency balance is saved on the server")
 	var result: Dictionary = await session.request("/sessions/current", HTTPClient.METHOD_DELETE)
 	expect(result.ok, "Authenticated logout revokes the session")
-	session.clear()
+	hub.get_node("BattleButton").pressed.emit()
+	title = await wait_scene("/titleScreenNew.tscn")
+	expect(title.popup.message.text.contains("expired"), "Expired battle session returns to team login")
 	expect(legacy.user_id == 0 and legacy.paid_currency == 0, "Account clearing removes private HUD data")
 	print("Team restoration checks: %d passed, %d failed; test account: %s" % [checks - failures, failures, email])
 	current_scene.queue_free()

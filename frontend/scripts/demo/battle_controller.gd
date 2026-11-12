@@ -1,5 +1,8 @@
 extends Control
 
+@export_file("*.tscn") var return_scene := "res://scenes/demo_hub.tscn"
+@export_file("*.tscn") var login_scene := "res://scenes/demo_title.tscn"
+
 var state: Dictionary = {}
 var pending := false
 var pending_action: Dictionary = {}
@@ -17,7 +20,7 @@ var back_button: Button
 
 func _ready() -> void:
 	if GameSession.token.is_empty():
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/demo_title.tscn")
+		get_tree().call_deferred("change_scene_to_file", login_scene)
 		return
 	build_ui()
 	await load_saved()
@@ -86,7 +89,7 @@ func build_ui() -> void:
 	back_button.text = "Return to hub"
 	back_button.add_theme_font_size_override("font_size", 24)
 	back_button.custom_minimum_size.y = 64
-	back_button.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/demo_hub.tscn"))
+	back_button.pressed.connect(func() -> void: get_tree().change_scene_to_file(return_scene))
 	box.add_child(back_button)
 	set_busy(true)
 
