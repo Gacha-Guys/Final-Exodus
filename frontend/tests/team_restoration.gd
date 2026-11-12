@@ -132,10 +132,15 @@ func run() -> void:
 	click_button(hub.get_node("BattleButton"))
 	var battle: Node = await ready_battle()
 	var battle_id: String = battle.state.id
-	click_button(battle.attack_buttons[0])
+	# Rowan swings slowly. A later Vale tap makes the two hits land together.
+	click_button(battle.attack_buttons[1])
+	await create_timer(0.45).timeout
+	click_button(battle.attack_buttons[2])
 	await wait_idle(battle)
 	var saved_hp := int(battle.state.enemy.hp)
-	expect(saved_hp > 0 and saved_hp < 100, "Pressing Attack changes enemy HP")
+	expect(saved_hp == 63 and battle.state.last_round.hits[1].combo, "Two timed portrait taps land a combo")
+	expect(battle.state.party[1].hp == 92 and battle.state.version == 1, "One enemy response per squad round")
+	await screenshot("team-battle")
 	click_button(battle.back_button)
 	hub = await wait_scene("/hub.tscn")
 	click_button(hub.get_node("BattleButton"))
