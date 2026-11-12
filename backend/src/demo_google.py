@@ -9,7 +9,7 @@ import threading
 import time
 from urllib.parse import urlencode
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 from google.auth.exceptions import GoogleAuthError
 from google.auth.transport.requests import Request as GoogleRequest
@@ -22,10 +22,11 @@ from .demo_store import transaction
 from .demo_tokens import issue_session
 
 router = APIRouter(prefix="/auth/google", tags=["Google sign-in"])
-REDIRECT = "http://127.0.0.1:8007/auth/google/callback"
 AUTHORIZATION = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
 FLOW_SECONDS = 300
+# Google's issue time and the local API clock can differ by a few seconds.
+GOOGLE_CLOCK_SKEW_SECONDS = 5
 lock = threading.Lock()
 flows = {}
 
@@ -36,6 +37,7 @@ class Flow:
     nonce: str
     verifier: str
     expires: float
+    redirect_uri: str
     status: str = "pending"
     identity: dict | None = None
     error: str = ""
@@ -53,10 +55,20 @@ class GoogleRegistration(FlowKey, Name):
     _valid_dob = field_validator("dob")(Registration.valid_birth_date.__func__)
 
 
+def google_enabled():
+    return (os.getenv("FINAL_EXODUS_GOOGLE_CLIENT_ID", "").endswith(".apps.googleusercontent.com")
+            and bool(os.getenv("FINAL_EXODUS_GOOGLE_CLIENT_SECRET")))
+
+
+@router.get("/status")
+def status():
+    return {"enabled": google_enabled()}
+
+
 def configuration():
     client_id = os.getenv("FINAL_EXODUS_GOOGLE_CLIENT_ID", "")
     client_secret = os.getenv("FINAL_EXODUS_GOOGLE_CLIENT_SECRET", "")
-    if not client_id.endswith(".apps.googleusercontent.com") or not client_secret:
+    if not google_enabled():
         raise HTTPException(503, "Google sign-in needs local OAuth setup. Use username/password for now.")
     return client_id, client_secret
 
@@ -80,16 +92,21 @@ def get_flow(body):
 
 
 @router.post("/start")
-def start():
+def start(request: Request):
     client_id, _ = configuration()
+    # Use the listener's port, never a Host/Forwarded header or a client-supplied URL.
+    server = request.scope.get("server")
+    if not server or not isinstance(server[1], int) or not 1 <= server[1] <= 65535:
+        raise HTTPException(503, "Google sign-in needs a local API listener")
+    redirect_uri = f"http://127.0.0.1:{server[1]}/auth/google/callback"
     state, poll_secret, nonce, verifier = [secrets.token_urlsafe(32) for _ in range(4)]
     challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
     with lock:
         prune()
         if len(flows) >= 100:
             raise HTTPException(429, "Too many sign-ins. Try again shortly.")
-        flows[state] = Flow(digest(poll_secret), nonce, verifier, time.monotonic() + FLOW_SECONDS)
-    query = dict(client_id=client_id, redirect_uri=REDIRECT, response_type="code", scope="openid email profile",
+        flows[state] = Flow(digest(poll_secret), nonce, verifier, time.monotonic() + FLOW_SECONDS, redirect_uri)
+    query = dict(client_id=client_id, redirect_uri=redirect_uri, response_type="code", scope="openid email profile",
                  state=state, nonce=nonce, code_challenge=challenge, code_challenge_method="S256", prompt="select_account")
     return {"authorization_url": AUTHORIZATION + "?" + urlencode(query), "flow_id": state,
             "poll_secret": poll_secret, "expires_in": FLOW_SECONDS}
@@ -100,13 +117,14 @@ def verified_identity(code, flow):
     # Both endpoints are fixed Google HTTPS addresses; never accept them from a client.
     with httpx.Client(timeout=5, follow_redirects=False) as client:
         response = client.post(TOKEN_ENDPOINT, data=dict(code=code, client_id=client_id, client_secret=client_secret,
-                               redirect_uri=REDIRECT, grant_type="authorization_code", code_verifier=flow.verifier))
+                               redirect_uri=flow.redirect_uri, grant_type="authorization_code", code_verifier=flow.verifier))
         response.raise_for_status()
         token = response.json()["id_token"]
     request = GoogleRequest()
     def bounded_request(url, **kwargs):
         return request(url=url, **(kwargs | {"timeout": 5}))
-    claims = id_token.verify_oauth2_token(token, bounded_request, audience=client_id)
+    claims = id_token.verify_oauth2_token(token, bounded_request, audience=client_id,
+                                          clock_skew_in_seconds=GOOGLE_CLOCK_SKEW_SECONDS)
     if (claims.get("nonce") != flow.nonce or claims.get("email_verified") is not True
             or not isinstance(claims.get("sub"), str) or not 1 <= len(claims["sub"]) <= 255
             or claims.get("azp", client_id) != client_id):
@@ -128,18 +146,27 @@ def callback(state: str = Query(min_length=40, max_length=128),
         if not flow or flow.status != "pending":
             raise HTTPException(400, "Google sign-in expired or already used. Start again.")
         flow.status = "exchanging"
-    try:
-        if error or not code:
-            raise ValueError("Google sign-in cancelled")
-        identity = verified_identity(code, flow)
-        with lock:
+    message = ""
+    if error == "access_denied":
+        message = "Google sign-in was declined. Start again when you're ready."
+    elif error or not code:
+        message = "Google did not return a sign-in code. Start again in Final Exodus."
+    else:
+        try:
+            identity = verified_identity(code, flow)
+        except httpx.HTTPError:
+            message = "The game server could not exchange the sign-in code with Google. Start again."
+        except (GoogleAuthError, ValueError, KeyError, TypeError):
+            message = "The game server could not verify your Google identity. Check the server clock and try again."
+    with lock:
+        if message:
+            flow.status, flow.error = "failed", message
+        else:
             flow.identity, flow.status = identity, "verified"
-    except (httpx.HTTPError, GoogleAuthError, ValueError, KeyError, TypeError):
-        with lock:
-            flow.status, flow.error = "failed", "Google sign-in failed or was cancelled. Please try again."
     # Do not echo callback parameters, provider errors, credentials or tokens into HTML.
+    instruction = message or "You can close this tab and continue in the game."
     return HTMLResponse("<!doctype html><title>Final Exodus</title><h1>Return to Final Exodus</h1>"
-                        "<p>You can close this tab and continue in the game.</p>",
+                        f"<p>{instruction}</p>",
                         headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
                                  "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'"})
 

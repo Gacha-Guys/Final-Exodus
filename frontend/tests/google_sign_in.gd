@@ -20,8 +20,8 @@ func expect(condition: bool, description: String) -> void:
 func artifact_path(name: String) -> String:
 	var directory := OS.get_environment("FINAL_EXODUS_TEST_ARTIFACT_DIR")
 	if directory.is_empty():
-		directory = "res://../docs/review"
-	DirAccess.make_dir_recursive_absolute(directory)
+		directory = "user://google-ui-checks"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
 	return directory.path_join(name)
 
 func start_google() -> Node:
@@ -60,11 +60,26 @@ func wait_hub() -> Node:
 
 func run() -> void:
 	session = root.get_node("GameSession")
-	title = load("res://scenes/demo_title.tscn").instantiate()
+	title = load("res://scenes/titleScreenNew.tscn").instantiate()
 	root.add_child(title)
 	current_scene = title
 	await process_frame
+	for step in range(100):
+		if title.popup.get_node("%GoogleButton").visible:
+			break
+		await create_timer(0.02).timeout
+	var button: Button = title.popup.get_node("%GoogleButton")
+	expect(button.visible and button.pressed.is_connected(Callable(title.popup, "google_sign_in")), "F5 offers the configured provider")
 	var google: Node = await start_google()
+	title._on_account_pressed()
+	var blocked_click := InputEventMouseButton.new()
+	blocked_click.button_index = MOUSE_BUTTON_LEFT
+	blocked_click.pressed = true
+	title._start_input(blocked_click)
+	expect(current_scene == title and title.popup == login, "Pending browser login cannot be replaced by Account or Start")
+	await google.cancel()
+	expect(not login.pending and session.token.is_empty(), "Cancelling Google restores password input")
+	google = await start_google()
 	await callback(google)
 	for step in range(200):
 		await create_timer(0.02).timeout
@@ -81,14 +96,41 @@ func run() -> void:
 	expect(google.status.text.contains("Check") and session.token.is_empty(), "Invalid DOB cannot finish Google registration")
 	google.dob_input.text = "2000-01-01"
 	await google.complete_registration()
-	var hub: Node = await wait_hub()
+	for step in range(100):
+		if not is_instance_valid(login):
+			break
+		await create_timer(0.02).timeout
+	expect(current_scene == title and not is_instance_valid(login), "F5 Google login closes the popup and waits for Start")
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	title._start_input(click)
+	await scene_changed
+	var hub: Node = current_scene
+	expect(hub.scene_file_path == "res://scenes/hub.tscn", "Start opens the team hub")
 	var account_id: int = int(session.account.id)
-	expect(hub.player_label.text == test_username and session.token.split(".").size() == 3, "Google registration issues JWT and loads the real profile")
+	expect(session.account.display_name == test_username and root.get_node("PlayerData").user_id == account_id, "Team HUD receives the signed-in account")
 	var started: Dictionary = await session.request("/battles", HTTPClient.METHOD_POST, {"request_id":session.uuid()})
 	expect(started.ok, "Google account can start an owned battle")
 	var battle_id: String = started.data.id
-	await hub.logout()
-	await create_timer(0.1).timeout
+	var settings: Control = hub.get_node("SettingsButton")
+	click.position = settings.get_global_transform_with_canvas() * (settings.size / 2)
+	var motion := InputEventMouseMotion.new()
+	motion.position = click.position
+	root.push_input(motion, true)
+	root.push_input(click, true)
+	click = click.duplicate()
+	click.pressed = false
+	root.push_input(click, true)
+	expect(is_instance_valid(hub.account_dialog) and hub.account_dialog.visible, "Clicking Settings opens the account dialog")
+	if not is_instance_valid(hub.account_dialog):
+		quit(1)
+		return
+	hub.account_dialog.confirmed.emit()
+	await scene_changed
+	expect(current_scene.scene_file_path.ends_with("/titleScreenNew.tscn") and session.token.is_empty(), "Team sign-out returns to team login")
+	change_scene_to_file("res://scenes/demo_title.tscn")
+	await scene_changed
 	title = current_scene
 	google = await start_google()
 	await callback(google)

@@ -133,6 +133,7 @@ func show_error(text: String) -> void:
 
 func cancel() -> void:
 	running = false
+	dialog.hide()
 	if not flow.is_empty():
 		await GameSession.request("/auth/google/cancel", HTTPClient.METHOD_POST, flow, false)
 	flow = {}
