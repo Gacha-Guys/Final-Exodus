@@ -49,6 +49,18 @@ func ready_battle() -> Node:
 	await wait_idle(battle)
 	return battle
 
+func click_button(button: Control) -> void:
+	var center := button.get_global_transform_with_canvas() * (button.size / 2)
+	var motion := InputEventMouseMotion.new()
+	motion.position = center
+	root.push_input(motion, true)
+	var click := start_click()
+	click.position = center
+	root.push_input(click, true)
+	click = click.duplicate()
+	click.pressed = false
+	root.push_input(click, true)
+
 func start_click() -> InputEventMouseButton:
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
@@ -71,7 +83,7 @@ func run() -> void:
 	var hub: Node = await wait_scene("hub.tscn")
 	expect(session.token.is_empty() and legacy.user_id == 0, "Team Start still permits a guest preview without an account")
 	expect(hub.get_node("StoryButton").visible and not hub.has_method("build_encounter_panel"), "Guest hub retains Story without injected combat")
-	hub.get_node("BattleButton").pressed.emit()
+	click_button(hub.get_node("BattleButton"))
 	title = await wait_scene("titleScreenNew.tscn")
 	expect(title.popup.message.text.contains("Log in"), "Guest battle entry explains the sign-in requirement")
 	title._pop_signup()
@@ -116,16 +128,16 @@ func run() -> void:
 	for name in ["UnitsButton", "SummonButton"]:
 		expect(not hub.get_node(name).target_scene.is_empty(), "Team %s destination is retained" % name)
 	await screenshot("team-hub")
-	hub.get_node("BattleButton").pressed.emit()
+	click_button(hub.get_node("BattleButton"))
 	var battle: Node = await ready_battle()
 	var battle_id: String = battle.state.id
-	battle.attack_buttons[0].pressed.emit()
+	click_button(battle.attack_buttons[0])
 	await wait_idle(battle)
 	var saved_hp := int(battle.state.enemy.hp)
 	expect(saved_hp > 0 and saved_hp < 100, "Pressing Attack changes enemy HP")
-	battle.back_button.pressed.emit()
+	click_button(battle.back_button)
 	hub = await wait_scene("/hub.tscn")
-	hub.get_node("BattleButton").pressed.emit()
+	click_button(hub.get_node("BattleButton"))
 	battle = await ready_battle()
 	expect(battle.state.id == battle_id and int(battle.state.enemy.hp) == saved_hp, "Re-entry resumes the same encounter and HP")
 	for turn in range(12):
@@ -134,7 +146,7 @@ func run() -> void:
 		battle.attack_buttons[turn % 3].pressed.emit()
 		await wait_idle(battle)
 	expect(battle.state.status == "won", "Team battle reaches server-confirmed victory")
-	battle.back_button.pressed.emit()
+	click_button(battle.back_button)
 	hub = await wait_scene("/hub.tscn")
 	var saved: Dictionary = await session.request("/battles/current")
 	expect(saved.ok and saved.data.id == battle_id and saved.data.status == "won", "Victory is saved after returning to the team hub")
@@ -175,7 +187,7 @@ func run() -> void:
 	expect(fetched.ok and int(fetched.data.paid_currency) == 30, "Currency balance is saved on the server")
 	var result: Dictionary = await session.request("/sessions/current", HTTPClient.METHOD_DELETE)
 	expect(result.ok, "Authenticated logout revokes the session")
-	hub.get_node("BattleButton").pressed.emit()
+	click_button(hub.get_node("BattleButton"))
 	title = await wait_scene("/titleScreenNew.tscn")
 	expect(title.popup.message.text.contains("expired"), "Expired battle session returns to team login")
 	expect(legacy.user_id == 0 and legacy.paid_currency == 0, "Account clearing removes private HUD data")
