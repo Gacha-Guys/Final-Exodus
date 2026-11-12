@@ -20,6 +20,16 @@ func _ready() -> void:
 	fields.get_node("PasswordInput").text_submitted.connect(func(_text: String) -> void: submit())
 	message.text = GameSession.notice
 	GameSession.notice = ""
+	if not enable_google:
+		check_google_availability()
+
+func check_google_availability() -> void:
+	# The browser callback is local to the machine running the game.
+	if not (GameSession.api_origin.begins_with("http://127.0.0.1:") or GameSession.api_origin.begins_with("http://localhost:")):
+		return
+	var result: Dictionary = await GameSession.request("/auth/google/status", HTTPClient.METHOD_GET, {}, false)
+	if result.ok and result.data is Dictionary and result.data.get("enabled") is bool:
+		%GoogleButton.visible = result.data.enabled
 
 func set_busy(value: bool) -> void:
 	pending = value

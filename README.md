@@ -25,6 +25,8 @@ For an **optional isolated local prototype**, install Docker and follow [LOCAL_D
 
 This creates a separate MySQL 8.4 instance on loopback port 3308 with private ignored credentials; it does not replace the team’s shared Aiven configuration.
 
+For Google login on F5, follow the [local callback setup](docs/AUTHENTICATION.md). Press Start after login; choose Settings in the hub to sign out.
+
 ## What's connected
 
 - Riley’s title/account popups, Story/navigation and four gem offers plus gamepass; Jason’s hub and shared model/leveling work.

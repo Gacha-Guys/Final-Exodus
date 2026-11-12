@@ -52,7 +52,8 @@ func run() -> void:
 	current_scene = title
 	await process_frame
 	expect(not title.demo_mode, "Default title is the team's flow")
-	expect(not title.popup.get_node("%GoogleButton").visible, "Optional Google demo does not change the default team login")
+	var availability: Dictionary = await session.request("/auth/google/status", HTTPClient.METHOD_GET, {}, false)
+	expect(availability.ok and title.popup.get_node("%GoogleButton").visible == availability.data.enabled, "Team login follows the local provider configuration")
 	title.popup.queue_free()
 	await process_frame
 	title._start_input(start_click())

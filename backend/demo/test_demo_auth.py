@@ -36,7 +36,7 @@ def begin(client):
     query = parse_qs(urlsplit(data['authorization_url']).query)
     assert query['scope'] == ['openid email profile']
     assert query['code_challenge_method'] == ['S256']
-    assert query['redirect_uri'] == [google.REDIRECT]
+    assert query['redirect_uri'] == [f'http://127.0.0.1:{client.base_url.port or 80}/auth/google/callback']
     assert query['state'] == [data['flow_id']]
     assert data['poll_secret'] not in data['authorization_url']
     assert 'client_secret' not in data['authorization_url']
@@ -158,7 +158,7 @@ def test_google_cancel_expiry_capacity_and_early_registration(monkeypatch):
     key = begin(client)
     google.flows[key['flow_id']].expires = 0
     assert client.post('/auth/google/poll',json=key).status_code == 400
-    google.flows.update({str(i):google.Flow('hash','nonce','verifier',float('inf')) for i in range(100)})
+    google.flows.update({str(i):google.Flow('hash','nonce','verifier',float('inf'), 'http://127.0.0.1:8000/auth/google/callback') for i in range(100)})
     assert client.post('/auth/google/start').status_code == 429
 
 
@@ -185,6 +185,7 @@ def test_actual_google_id_token_verification(monkeypatch, change):
     def exchange(request):
         assert request.url == google.TOKEN_ENDPOINT
         assert b'code_verifier=verifier' in request.content
+        assert parse_qs(request.content.decode())['redirect_uri'] == [flow.redirect_uri]
         return httpx.Response(200,json={'id_token':token})
     monkeypatch.setattr(google.httpx,'Client',lambda **kwargs: real_client(transport=httpx.MockTransport(exchange),**kwargs))
     cert_body = json.dumps({'test-cert':cert.public_bytes(serialization.Encoding.PEM).decode()}).encode()
@@ -192,7 +193,7 @@ def test_actual_google_id_token_verification(monkeypatch, change):
         assert kwargs['url'] == 'https://www.googleapis.com/oauth2/v1/certs' and kwargs['timeout'] == 5
         return SimpleNamespace(status=200,data=cert_body)
     monkeypatch.setattr(google,'GoogleRequest',lambda:cert_request)
-    flow = google.Flow('poll-hash','expected-nonce','verifier',float('inf'))
+    flow = google.Flow('poll-hash','expected-nonce','verifier',float('inf'), 'http://127.0.0.1:8000/auth/google/callback')
     if change == 'valid':
         assert google.verified_identity('code',flow)['subject'] == 'google-subject'
     else:

@@ -34,6 +34,7 @@ def serve():
 def main():
     parser = __import__('argparse').ArgumentParser(description=__doc__)
     parser.add_argument('--godot', required=True, type=Path)
+    parser.add_argument('--headless', action='store_true', help='Run without opening the game window')
     args = parser.parse_args()
     environment = os.environ | {'FINAL_EXODUS_TEST_EMAIL':f'google-ui-{uuid4().hex}@example.com',
                                  'FINAL_EXODUS_TEST_SUBJECT':uuid4().hex,
@@ -53,7 +54,8 @@ def main():
                 time.sleep(0.05)
             else:
                 raise RuntimeError('Simulated test API not ready')
-            subprocess.run([str(args.godot),'--path',str(BACKEND.parent/'frontend'),
+            display_args = ['--headless'] if args.headless else []
+            subprocess.run([str(args.godot), *display_args, '--path',str(BACKEND.parent/'frontend'),
                             '--script','res://tests/google_sign_in.gd'],env=environment,check=True,timeout=45)
     finally:
         if process and process.poll() is None:
