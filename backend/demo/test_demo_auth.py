@@ -113,7 +113,8 @@ def test_google_unconfigured_and_state_replay(monkeypatch):
     assert client.get('/auth/google/callback', params={'state':'x'*43,'code':'code'}).status_code == 400
     assert client.get('/auth/google/callback', params={'state':key['flow_id'],'error':'access_denied'}).status_code == 200
     assert client.get('/auth/google/callback', params={'state':key['flow_id'],'code':'code'}).status_code == 400
-    assert client.post('/auth/google/poll',json=key).status_code == 400
+    poll = client.post('/auth/google/poll',json=key)
+    assert poll.status_code == 400 and 'declined' in poll.json()['detail']
 
 
 def test_google_registration_returning_user_logout_and_no_password(isolated_test_accounts, monkeypatch):
@@ -162,7 +163,7 @@ def test_google_cancel_expiry_capacity_and_early_registration(monkeypatch):
     assert client.post('/auth/google/start').status_code == 429
 
 
-@pytest.mark.parametrize('change',['valid','audience','issuer','signature','expired','nonce','unverified','subject'])
+@pytest.mark.parametrize('change',['valid','small_skew','future','audience','issuer','signature','expired','nonce','unverified','subject'])
 def test_actual_google_id_token_verification(monkeypatch, change):
     private = rsa.generate_private_key(public_exponent=65537,key_size=2048)
     now = datetime.now(timezone.utc)
@@ -176,6 +177,8 @@ def test_actual_google_id_token_verification(monkeypatch, change):
     if change == 'audience': claims['aud'] = 'other-client'
     if change == 'issuer': claims['iss'] = 'https://attacker.example'
     if change == 'expired': claims['exp'] = int(now.timestamp())-10
+    if change == 'small_skew': claims['iat'] += 3
+    if change == 'future': claims['iat'] += 30
     if change == 'nonce': claims['nonce'] = 'wrong'
     if change == 'unverified': claims['email_verified'] = False
     if change == 'subject': del claims['sub']
@@ -194,7 +197,7 @@ def test_actual_google_id_token_verification(monkeypatch, change):
         return SimpleNamespace(status=200,data=cert_body)
     monkeypatch.setattr(google,'GoogleRequest',lambda:cert_request)
     flow = google.Flow('poll-hash','expected-nonce','verifier',float('inf'), 'http://127.0.0.1:8000/auth/google/callback')
-    if change == 'valid':
+    if change in ('valid', 'small_skew'):
         assert google.verified_identity('code',flow)['subject'] == 'google-subject'
     else:
         with pytest.raises((ValueError, google.GoogleAuthError)):
