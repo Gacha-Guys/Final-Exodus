@@ -20,8 +20,8 @@ func expect(condition: bool, description: String) -> void:
 func artifact_path(name: String) -> String:
 	var directory := OS.get_environment("FINAL_EXODUS_TEST_ARTIFACT_DIR")
 	if directory.is_empty():
-		directory = "res://../docs/review"
-	DirAccess.make_dir_recursive_absolute(directory)
+		directory = "user://google-ui-checks"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
 	return directory.path_join(name)
 
 func start_google() -> Node:
@@ -113,7 +113,19 @@ func run() -> void:
 	var started: Dictionary = await session.request("/battles", HTTPClient.METHOD_POST, {"request_id":session.uuid()})
 	expect(started.ok, "Google account can start an owned battle")
 	var battle_id: String = started.data.id
-	hub.get_node("SettingsButton").pressed.emit()
+	var settings: Control = hub.get_node("SettingsButton")
+	click.position = settings.get_global_transform_with_canvas() * (settings.size / 2)
+	var motion := InputEventMouseMotion.new()
+	motion.position = click.position
+	root.push_input(motion, true)
+	root.push_input(click, true)
+	click = click.duplicate()
+	click.pressed = false
+	root.push_input(click, true)
+	expect(is_instance_valid(hub.account_dialog) and hub.account_dialog.visible, "Clicking Settings opens the account dialog")
+	if not is_instance_valid(hub.account_dialog):
+		quit(1)
+		return
 	hub.account_dialog.confirmed.emit()
 	await scene_changed
 	expect(current_scene.scene_file_path.ends_with("/titleScreenNew.tscn") and session.token.is_empty(), "Team sign-out returns to team login")
