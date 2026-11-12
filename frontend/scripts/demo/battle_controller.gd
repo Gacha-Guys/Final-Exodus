@@ -115,7 +115,7 @@ func show_state(data: Variant) -> void:
 		party_bars[index].value = float(unit.hp)
 		unit_labels[index].text = "%s\nHP %d/%d · ATK %d" % [unit.name, int(unit.hp), int(unit.max_hp), int(unit.attack)]
 	log_label.text = "\n".join(state.log)
-	status_label.text = "Saved to the server." if state.status == "active" else "Encounter saved. Return to the hub to view your progress."
+	status_label.text = "Saved to the server." if state.status == "active" else "Encounter saved."
 
 func load_saved() -> void:
 	set_busy(true)

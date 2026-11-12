@@ -12,7 +12,7 @@ func _ready() -> void:
 
 func _on_currency_changed() -> void:
 	%Currency.val = PlayerData.paid_currency
-	get_node(RANK_PATH).text = "Rank\n%d" % int(GameSession.account.level) if not GameSession.account.is_empty() else "Rank\nâ€”"
+	get_node(RANK_PATH).text = "Rank\n%d" % int(GameSession.account.level) if not GameSession.account.is_empty() else "Rank\n—"
 
 func enter_battle() -> void:
 	if GameSession.token.is_empty():

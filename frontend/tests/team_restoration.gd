@@ -82,6 +82,7 @@ func run() -> void:
 	title._start_input(start_click())
 	var hub: Node = await wait_scene("hub.tscn")
 	expect(session.token.is_empty() and legacy.user_id == 0, "Team Start still permits a guest preview without an account")
+	expect(hub.get_node(hub.RANK_PATH).text == "Rank\n\u2014", "Guest rank shows a dash")
 	expect(hub.get_node("StoryButton").visible and not hub.has_method("build_encounter_panel"), "Guest hub retains Story without injected combat")
 	click_button(hub.get_node("BattleButton"))
 	title = await wait_scene("titleScreenNew.tscn")
