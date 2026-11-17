@@ -85,7 +85,7 @@ func run() -> void:
 		await create_timer(0.02).timeout
 		if google.registration_ready:
 			break
-	expect(google.registration_ready and google.dob_input.visible, "New Google user is asked for real DOB")
+	expect(google.registration_ready and google.dob_input.visible and google.dob_input.placeholder_text.contains("optional"), "New Google user sees that birth date is optional")
 	if DisplayServer.get_name() != "headless":
 		await RenderingServer.frame_post_draw
 		root.get_texture().get_image().save_png(artifact_path("google-registration-simulated.png"))
@@ -94,13 +94,13 @@ func run() -> void:
 	google.dob_input.text = "2999-01-01"
 	await google.complete_registration()
 	expect(google.status.text.contains("Check") and session.token.is_empty(), "Invalid DOB cannot finish Google registration")
-	google.dob_input.text = "2000-01-01"
+	google.dob_input.text = "   "
 	await google.complete_registration()
 	for step in range(100):
 		if not is_instance_valid(login):
 			break
 		await create_timer(0.02).timeout
-	expect(current_scene == title and not is_instance_valid(login), "F5 Google login closes the popup and waits for Start")
+	expect(current_scene == title and not is_instance_valid(login), "F5 Google registration accepts a blank birth date and closes the popup")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
