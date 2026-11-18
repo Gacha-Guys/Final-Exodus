@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://cp1e03okdpmpi"]
+
+[ext_resource type="Texture2D" uid="uid://cp7a16wdr3in5" path="res://assets/inner_gold.png" id="1_cpk4b"]
+[ext_resource type="Texture2D" uid="uid://btov0u4o1qcmh" path="res://assets/xpdeco.png" id="2_wgkrr"]
+
+[node name="Logo" type="Control" unique_id=1340003969]
+layout_mode = 3
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1149517020]
+layout_mode = 0
+offset_left = -54.0
+offset_right = 56.0
+offset_bottom = 110.0
+texture = ExtResource("1_cpk4b")
+expand_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="." unique_id=1780409727]
+layout_mode = 0
+offset_left = -140.0
+offset_top = -24.0
+offset_right = 141.0
+offset_bottom = 96.0
+texture = ExtResource("2_wgkrr")
+expand_mode = 1

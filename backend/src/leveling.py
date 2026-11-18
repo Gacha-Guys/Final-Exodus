@@ -3,7 +3,7 @@ Leveling System
 Uses User and Unit struct
 """
 
-from lib.struct import User
+from lib.struct import User, Unit
 from enum import Enum
 
 # The max possible level a user can have

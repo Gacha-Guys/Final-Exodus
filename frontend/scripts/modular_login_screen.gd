@@ -24,7 +24,9 @@ func _ready() -> void:
 
 func success() -> void:
 	print("success")
-	PlayerData.getCurrency(PlayerData.user_id)
+	PlayerData.get_currency()
+	PlayerData.get_gamepass()
+	PlayerData.get_level()
 	queue_free()
 	
 func fail(message: String) -> void:

@@ -101,6 +101,48 @@ def _get_currency_data(u_id: int):
         cursor.close()
         connection.close()
 
+@app.get("/gamepass")
+def _get_gamepass_data(u_id: int):
+    #bool to store if you have the battle pass
+    has_gamepass = False
+
+    connection = connect()
+    cursor = connection.cursor(DictCursor)
+
+    try:
+        cursor.execute("SELECT Users.gamepass FROM Users WHERE id = %s", (u_id,))
+        row = cursor.fetchone()
+
+        if not row:
+            raise HTTPException(401, "Incorrect ID")
+
+        has_gamepass = bool(row["gamepass"])
+        return {"gamepass" : has_gamepass}
+        
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.get("/level")
+def _get_level_data(u_id: int):
+    level = 0
+
+    connection = connect()
+    cursor = connection.cursor(DictCursor)
+
+    try:
+        cursor.execute("SELECT level FROM Users WHERE id = %s", (u_id,))
+        row = cursor.fetchone()
+
+        if not row:
+            raise HTTPException(401, "Incorrect ID")
+
+        level = int(row["level"])
+        return {"level": level}
+
+    finally:
+        cursor.close()
+        connection.close()
 
 @app.post("/currency/update")
 def _update_currency(info: dict):
@@ -126,6 +168,24 @@ def _update_currency(info: dict):
     finally:
         cursor.close()
         connection.close()
+
+@app.post("/gamepass/update")
+def _update_gamepass(info: dict):
+    u_id = int(info.get("u_id", ""))
+    gamepass = bool(info.get("gamepass", ""))
+
+    connection = connect()
+    cursor = connection.cursor(DictCursor)
+
+    try:
+        cursor.execute("UPDATE Users SET gamepass = %s WHERE id = %s", (gamepass, u_id))
+        connection.commit()
+        return {"gamepass" : gamepass}
+
+    finally:
+        cursor.close()
+        connection.close()
+
 
 # Get account inventory if needed?
 @app.get("/account/inventory")

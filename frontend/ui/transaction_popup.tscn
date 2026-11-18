@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://1t1ktw5011fs"]
+
+[ext_resource type="PackedScene" uid="uid://cp1e03okdpmpi" path="res://ui/logo.tscn" id="1_gx273"]
+[ext_resource type="Script" uid="uid://dwdjok08i8j46" path="res://ui/scripts/transaction_popup.gd" id="1_rsgfy"]
+[ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="2_bbpr0"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_o3j41"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=195170717]
+script = ExtResource("1_rsgfy")
+
+[node name="TransactionPopUp" type="Control" parent="." unique_id=123185484]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Container" type="CenterContainer" parent="TransactionPopUp" unique_id=176236987]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="TransactionPopUp/Container" unique_id=18929856]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="TransactionPopUp/Container/Panel" unique_id=2136484699]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="VBox" type="VBoxContainer" parent="TransactionPopUp/Container/Panel/Margin" unique_id=1431495044]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_constants/separation = 17
+
+[node name="Congrats" type="Label" parent="TransactionPopUp/Container/Panel/Margin/VBox" unique_id=1471903779]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_o3j41")
+theme_override_font_sizes/font_size = 32
+text = "Congratulations!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CustomMsg" type="Label" parent="TransactionPopUp/Container/Panel/Margin/VBox" unique_id=1971662308]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_o3j41")
+theme_override_font_sizes/font_size = 24
+text = "You Purchased A..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Gems" type="TextureRect" parent="TransactionPopUp/Container/Panel/Margin/VBox" unique_id=1192379582]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(50, 100)
+custom_maximum_size = Vector2(50, -1)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("2_bbpr0")
+expand_mode = 1
+
+[node name="Logo" parent="TransactionPopUp/Container/Panel/Margin/VBox" unique_id=1340003969 instance=ExtResource("1_gx273")]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Placeholder" type="TextureRect" parent="TransactionPopUp/Container/Panel/Margin/VBox" unique_id=725455833]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="ThankYou" type="Label" parent="TransactionPopUp/Container/Panel/Margin/VBox" unique_id=1874515097]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_o3j41")
+theme_override_font_sizes/font_size = 20
+text = "We thank you greatly for your support!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="TransactionPopUp/Container/Panel" unique_id=597944322]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "X"
