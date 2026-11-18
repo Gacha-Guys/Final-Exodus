@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://cc0phv7vkw0ly"]
+
+[ext_resource type="FontFile" uid="uid://eugmrge5xpgf" path="res://assets/VarelaRound-Regular.ttf" id="1_1octt"]
+[ext_resource type="Texture2D" uid="uid://cq0urxiugsuc5" path="res://assets/dark_background.svg" id="1_md1pp"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_aqapl"]
+font = ExtResource("1_1octt")
+font_size = 32
+
+[node name="Control" type="Control" unique_id=1273580920]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=328300899]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -62.0
+offset_right = 62.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_md1pp")
+
+[node name="Label" type="Label" parent="." unique_id=2054869838]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -186.5
+offset_top = -153.0
+offset_right = 186.5
+offset_bottom = -113.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "story dialogue goes ehre"
+label_settings = SubResource("LabelSettings_aqapl")
