@@ -63,7 +63,7 @@ def signup(credentials: dict):
         else:
             cursor.execute("INSERT INTO Users(name, password, email) VALUES(%s, %s, %s)", (name, password, email,))
             connection.commit()
-            cursor.execute("SELECT id FROM users WHERE name = %s AND password = %s", (name, password,))
+            cursor.execute("SELECT id FROM Users WHERE name = %s AND password = %s", (name, password,))
             return cursor.fetchone()
 
     finally:
