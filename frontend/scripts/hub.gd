@@ -29,13 +29,15 @@ func sign_out() -> void:
 	if account_dialog.get_ok_button().disabled:
 		return
 	account_dialog.get_ok_button().disabled = true
+	var session_generation := GameSession.generation
 	var result: Dictionary = await GameSession.request("/sessions/current", HTTPClient.METHOD_DELETE)
-	if result.ok:
-		GameSession.clear()
-		get_tree().change_scene_to_file("res://scenes/titleScreenNew.tscn")
-	else:
-		account_dialog.dialog_text = result.error
-		account_dialog.get_ok_button().disabled = false
+	# A 401 already clears and redirects. Leave any replacement session alone.
+	if session_generation != GameSession.generation:
+		return
+	GameSession.clear()
+	if not result.ok:
+		GameSession.notice = "Signed out on this device. Server sign-out could not be confirmed."
+	get_tree().change_scene_to_file("res://scenes/titleScreenNew.tscn")
 
 func _on_currency_changed() -> void:
 	%Currency.val = PlayerData.paid_currency

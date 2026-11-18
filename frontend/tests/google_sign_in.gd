@@ -136,9 +136,33 @@ func run() -> void:
 	await callback(google)
 	hub = await wait_hub()
 	expect(int(session.account.id) == account_id and session.battle.id == battle_id, "Returning Google user resumes the same account and battle")
+	var previous_token: String = session.token
+	var previous_account: Dictionary = session.account.duplicate()
+	var previous_battle: Dictionary = session.battle.duplicate()
 	await hub.logout()
 	await create_timer(0.1).timeout
 	expect(session.token.is_empty() and session.account.is_empty(), "Google logout clears the client")
+
+	change_scene_to_file("res://scenes/hub.tscn")
+	await scene_changed
+	hub = current_scene
+	var connected_origin: String = session.api_origin
+	session.api_origin = "http://127.0.0.1:1"
+	session.token = previous_token
+	session.account = previous_account
+	session.battle = previous_battle
+	hub.open_account_settings()
+	await hub.sign_out()
+	for step in range(50):
+		if is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("/titleScreenNew.tscn"):
+			break
+		await create_timer(0.02).timeout
+	session.api_origin = connected_origin
+	expect(session.token.is_empty() and session.account.is_empty() and session.battle.is_empty(), "Offline sign-out clears the local token, account and battle")
+	var returned_to_title := is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("/titleScreenNew.tscn")
+	expect(returned_to_title, "Offline sign-out returns to the title")
+	if returned_to_title:
+		expect(current_scene.popup.message.text.contains("could not be confirmed"), "Offline sign-out reports unconfirmed server revocation")
 	var report := FileAccess.open(artifact_path("google-ui-simulated-result.json"), FileAccess.WRITE)
 	report.store_string(JSON.stringify({"provider": "simulated", "checks": checks, "failures": failures}, "  "))
 	report.close()

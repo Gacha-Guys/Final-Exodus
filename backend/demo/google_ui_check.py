@@ -1,4 +1,5 @@
 """Rehearse Google game UI with a simulated provider, never a real Google account."""
+import argparse
 import os
 from pathlib import Path
 import subprocess
@@ -11,14 +12,44 @@ from dotenv import load_dotenv
 import httpx
 
 BACKEND = Path(__file__).resolve().parents[1]
-load_dotenv(BACKEND / '.env.demo', override=True)
 sys.path.insert(0, str(BACKEND))
-from src.local_test_target import require_local_test_database
-require_local_test_database()
 from src.demo_store import transaction
+from src.local_test_target import require_local_test_database
+
+GODOT_ENV_KEYS = (
+    'HOME', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA', 'SYSTEMROOT', 'WINDIR',
+    'TEMP', 'TMP', 'TMPDIR', 'PATH', 'LANG', 'LC_ALL', 'DISPLAY', 'WAYLAND_DISPLAY',
+    'XAUTHORITY', 'XDG_RUNTIME_DIR', 'XDG_DATA_HOME', 'XDG_CONFIG_HOME',
+    'XDG_CACHE_HOME', 'FINAL_EXODUS_TEST_ARTIFACT_DIR',
+)
+TEST_ORIGIN = 'http://127.0.0.1:8009'
+
+
+def configure_test_database():
+    load_dotenv(BACKEND / '.env.demo', override=True)
+    require_local_test_database()
+
+
+def godot_environment():
+    environment = {key: os.environ[key] for key in GODOT_ENV_KEYS if key in os.environ}
+    environment['FINAL_EXODUS_API_ORIGIN'] = TEST_ORIGIN
+    return environment
+
+
+def godot_executable(parser, path):
+    try:
+        executable = path.resolve(strict=True)
+    except (OSError, RuntimeError):
+        parser.error(f'--godot path could not be resolved: {path}')
+    if not executable.is_file() or not os.access(executable, os.X_OK):
+        parser.error(f'--godot must point to an executable file: {executable}')
+    if os.name == 'nt' and executable.suffix.lower() != '.exe':
+        parser.error(f'--godot must point to a .exe file on Windows: {executable}')
+    return executable
 
 
 def serve():
+    configure_test_database()
     import uvicorn
     from src import main as demo, demo_google
     os.environ['FINAL_EXODUS_GOOGLE_CLIENT_ID'] = 'simulated.apps.googleusercontent.com'
@@ -32,13 +63,16 @@ def serve():
 
 
 def main():
-    parser = __import__('argparse').ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--godot', required=True, type=Path)
     parser.add_argument('--headless', action='store_true', help='Run without opening the game window')
     args = parser.parse_args()
-    environment = os.environ | {'FINAL_EXODUS_TEST_EMAIL':f'google-ui-{uuid4().hex}@example.com',
-                                 'FINAL_EXODUS_TEST_SUBJECT':uuid4().hex,
-                                 'FINAL_EXODUS_API_ORIGIN':'http://127.0.0.1:8009'}
+    godot = godot_executable(parser, args.godot)
+    configure_test_database()
+    environment = os.environ | {
+        'FINAL_EXODUS_TEST_EMAIL': f'google-ui-{uuid4().hex}@example.com',
+        'FINAL_EXODUS_TEST_SUBJECT': uuid4().hex,
+    }
     process = None
     try:
         with tempfile.TemporaryFile() as log:
@@ -47,7 +81,7 @@ def main():
                 if process.poll() is not None:
                     raise RuntimeError('Simulated test API did not start')
                 try:
-                    if httpx.get('http://127.0.0.1:8009/health',timeout=0.5).status_code == 200:
+                    if httpx.get(TEST_ORIGIN + '/health', timeout=0.5, trust_env=False).status_code == 200:
                         break
                 except httpx.HTTPError:
                     pass
@@ -55,8 +89,11 @@ def main():
             else:
                 raise RuntimeError('Simulated test API not ready')
             display_args = ['--headless'] if args.headless else []
-            subprocess.run([str(args.godot), *display_args, '--path',str(BACKEND.parent/'frontend'),
-                            '--script','res://tests/google_sign_in.gd'],env=environment,check=True,timeout=45)
+            subprocess.run(
+                [str(godot), *display_args, '--path', str(BACKEND.parent / 'frontend'),
+                 '--script', 'res://tests/google_sign_in.gd'],
+                env=godot_environment(), check=True, timeout=45, shell=False,
+            )
     finally:
         if process and process.poll() is None:
             process.terminate(); process.wait(timeout=5)

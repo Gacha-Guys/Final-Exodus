@@ -146,6 +146,7 @@ def callback(state: str = Query(min_length=40, max_length=128),
         if not flow or flow.status != "pending":
             raise HTTPException(400, "Google sign-in expired or already used. Start again.")
         flow.status = "exchanging"
+    identity = None
     message = ""
     if error == "access_denied":
         message = "Google sign-in was declined. Start again when you're ready."
@@ -159,10 +160,10 @@ def callback(state: str = Query(min_length=40, max_length=128),
         except (GoogleAuthError, ValueError, KeyError, TypeError):
             message = "The game server could not verify your Google identity. Check the server clock and try again."
     with lock:
-        if message:
-            flow.status, flow.error = "failed", message
-        else:
+        if identity is not None:
             flow.identity, flow.status = identity, "verified"
+        else:
+            flow.status, flow.error = "failed", message
     # Do not echo callback parameters, provider errors, credentials or tokens into HTML.
     instruction = message or "You can close this tab and continue in the game."
     return HTMLResponse("<!doctype html><title>Final Exodus</title><h1>Return to Final Exodus</h1>"
