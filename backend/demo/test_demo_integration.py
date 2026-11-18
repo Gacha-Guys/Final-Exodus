@@ -231,3 +231,29 @@ def test_missing_balance_is_an_error_not_a_successful_zero(isolated_test_account
     with transaction() as cursor:
         cursor.execute("DELETE FROM Currency WHERE u_id=%s AND Type='paid'", (account['id'],))
     assert client.get('/me', headers=headers).status_code == 503
+
+
+def test_squad_round_timing_replay_and_resumption(isolated_test_accounts):
+    client, headers, _ = signed_in(isolated_test_accounts)
+    battle = start(client, headers)
+    path = f"/battles/{battle['id']}/rounds"
+    taps = [dict(actor=1, at_ms=0), dict(actor=0, at_ms=250), dict(actor=2, at_ms=400)]
+    body = dict(request_id=str(uuid4()), version=0, taps=taps)
+    for invalid in ([], taps + [taps[0]], [taps[1]], [taps[0], taps[0]],
+                    [taps[0], taps[2], taps[1]], [taps[0], dict(actor=2, at_ms=901)]):
+        assert client.post(path, headers=headers, json=body | {"taps": invalid}).status_code == 422
+    reply = client.post(path, headers=headers, json=body)
+    assert reply.status_code == 200, reply.text
+    state = reply.json()
+    assert state["version"] == 1 and state["enemy"]["hp"] == 36
+    assert [hit["combo"] for hit in state["last_round"]["hits"]] == [False, True, True]
+    assert [unit["hp"] for unit in state["party"]] == [100, 92, 100]
+    assert client.post(path, headers=headers, json=body).json() == state
+    assert client.get("/battles/current", headers=headers).json() == state
+    assert client.post(path, headers=headers, json=body | {"taps": taps[:1]}).status_code == 409
+    assert client.post(path.replace("/rounds", "/actions"), headers=headers,
+                       json=dict(request_id=body["request_id"], actor=1, version=0)).status_code == 409
+    assert client.post(path, headers=headers, json=body | {"request_id": str(uuid4())}).status_code == 409
+    finish = client.post(path, headers=headers, json=body | {"version": 1, "request_id": str(uuid4())}).json()
+    assert finish["status"] == "won" and finish["last_round"]["counter"] is None
+    assert sum(hit["damage"] for hit in finish["last_round"]["hits"]) == 36

@@ -3,6 +3,8 @@ extends Control
 const RANK_PATH := "MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer/TextureProgressBar2/Label"
 
 func _ready() -> void:
+	$BattleButton.show()
+	$BattleButton.pressed.connect(enter_battle)
 	PlayerData.currency_success.connect(_on_currency_changed)
 	_on_currency_changed()
 	if not GameSession.token.is_empty():
@@ -11,3 +13,10 @@ func _ready() -> void:
 func _on_currency_changed() -> void:
 	%Currency.val = PlayerData.paid_currency
 	get_node(RANK_PATH).text = "Rank\n%d" % int(GameSession.account.level) if not GameSession.account.is_empty() else "Rank\n—"
+
+func enter_battle() -> void:
+	if GameSession.token.is_empty():
+		GameSession.notice = "Log in to start or resume a battle."
+		get_tree().change_scene_to_file("res://scenes/titleScreenNew.tscn")
+		return
+	get_tree().change_scene_to_file("res://scenes/team_battle.tscn")
