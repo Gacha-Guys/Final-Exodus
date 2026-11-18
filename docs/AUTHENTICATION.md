@@ -52,7 +52,7 @@ Google's [server flow setup](https://developers.google.com/identity/protocols/oa
 ```sh
 FINAL_EXODUS_RUN_DB_TESTS=1 FINAL_EXODUS_TEST_ENV_FILE="$PWD/backend/.env.demo" backend/.venv/bin/python -m pytest backend -q
 FINAL_EXODUS_TEST_ARTIFACT_DIR=/absolute/external/path backend/.venv/bin/python backend/demo/restart_check.py
-FINAL_EXODUS_TEST_ARTIFACT_DIR=/absolute/external/path backend/.venv/bin/python backend/demo/google_ui_check.py --godot /path/to/Godot
+backend/.venv/bin/python backend/demo/google_ui_check.py
 ```
 
-The last command starts a separate loopback test API on port 8009 with an explicitly simulated Google provider, drives the real game controller and local database, and removes its test account. It never opens Google or proves a real Google login. Test-only provider substitution exists only in `backend/demo/google_ui_check.py`, not the application entrypoint. The cryptographic tests separately exercise the actual Google verification library with signed test certificates.
+The last command starts a test API on port 8009 with a simulated Google provider. From a second terminal, run the Godot walkthrough in [the testing guide](TESTING.md). Stop the test API with Ctrl+C afterward to remove its synthetic account. The API reads the isolated database configuration itself, so Godot only needs the loopback API origin and optional artifact directory. This walkthrough uses a simulated provider. The cryptographic tests exercise the Google verification library with signed test certificates.

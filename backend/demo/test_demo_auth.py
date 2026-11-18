@@ -117,6 +117,34 @@ def test_google_unconfigured_and_state_replay(monkeypatch):
     assert poll.status_code == 400 and 'declined' in poll.json()['detail']
 
 
+@pytest.mark.parametrize(
+    ('callback_params', 'failure', 'message'),
+    [
+        ({}, None, 'did not return a sign-in code'),
+        ({'error': 'access_denied'}, None, 'declined'),
+        ({'code': 'fixture-code'}, httpx.ConnectError('fixture provider failure'), 'could not exchange'),
+        ({'code': 'fixture-code'}, ValueError('fixture verification failure'), 'could not verify'),
+    ],
+)
+def test_google_callback_failure_does_not_verify_flow(monkeypatch, callback_params, failure, message):
+    client = TestClient(demo.app)
+    key = begin(client)
+
+    def reject_identity(code, flow):
+        assert failure is not None, 'Provider verification must be skipped without a code'
+        raise failure
+
+    monkeypatch.setattr(google, 'verified_identity', reject_identity)
+    response = client.get('/auth/google/callback', params=callback_params | {'state': key['flow_id']})
+    assert response.status_code == 200
+    assert message in response.text
+    assert 'fixture' not in response.text
+    flow = google.flows[key['flow_id']]
+    assert flow.status == 'failed' and flow.identity is None
+    poll = client.post('/auth/google/poll', json=key)
+    assert poll.status_code == 400 and message in poll.json()['detail']
+
+
 def test_google_registration_returning_user_logout_and_no_password(isolated_test_accounts, monkeypatch):
     client = TestClient(demo.app)
     who = identity(isolated_test_accounts)

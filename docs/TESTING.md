@@ -18,12 +18,25 @@ Run local setup first. From the checkout root:
 ```sh
 FINAL_EXODUS_RUN_DB_TESTS=1 FINAL_EXODUS_TEST_ENV_FILE="$PWD/backend/.env.demo" backend/.venv/bin/python -m pytest backend -q
 backend/.venv/bin/python backend/demo/restart_check.py
-backend/.venv/bin/python backend/demo/google_ui_check.py --godot /path/to/Godot
+backend/.venv/bin/python backend/demo/google_ui_check.py
 ```
 
 On Windows set the two environment variables before running the Python command. Opt-in suites reject remote hosts and any database other than the isolated `final_exodus_tyler_demo`. They cover actual hashing, duplicate username/email rejection, concurrent API identity writes, optional DOB, guarded local currency updates, rollback, session isolation/revocation, forged JWTs, saved combat and simulated Google identities. They clean up their synthetic identities. Never point their cleanup at Aiven.
 
-The restart driver uses a separate API process on 8008. The Google driver uses 8009 with an explicitly simulated provider and no real consent; cryptographic tests independently exercise signature verification. `--no-access-log` keeps provider callback query parameters out of logs.
+The restart driver uses a separate API process on 8008. The Google test API on 8009 simulates the provider and disables access logging. Once it is listening, run the walkthrough from a second terminal on macOS or Linux. Omit `--headless` for screenshots.
+
+```sh
+FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8009 /path/to/Godot --headless --path frontend --script res://tests/google_sign_in.gd
+```
+
+On Windows PowerShell, use the installed Godot executable and set the same loopback origin.
+
+```powershell
+$env:FINAL_EXODUS_API_ORIGIN = 'http://127.0.0.1:8009'
+& 'C:\path\to\Godot.exe' --headless --path frontend --script res://tests/google_sign_in.gd
+```
+
+Use a terminal without backend credentials loaded for the Godot command. Stop the test API with Ctrl+C after the walkthrough so it can remove the synthetic account. Cryptographic tests independently exercise signature verification.
 
 ## Godot 4.7.2
 
