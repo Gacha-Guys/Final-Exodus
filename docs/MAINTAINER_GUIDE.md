@@ -8,14 +8,14 @@ Use Godot 4.7.2 Standard and open [frontend/project.godot](../frontend/project.g
 | --- | --- |
 | Title, login, or signup layout | [Account scenes](../frontend/scenes/account/). The title scene opens the login and signup popups. Edit the matching `.tscn` for layout or the adjacent `.gd` for behavior. |
 | Username login or Google button visibility | [modular_login_screen.gd](../frontend/scenes/account/modular_login_screen.gd). Both sign-in methods ultimately call `accept_session()`. Google visibility comes from `GET /auth/google/status`. |
-| Google browser flow | [google_sign_in.gd](../frontend/scenes/account/google_sign_in.gd) starts, polls, and cancels the flow. Edit the layout in [google_sign_in_dialog.tscn](../frontend/scenes/account/google_sign_in_dialog.tscn). [demo_google.py](../backend/src/demo_google.py) handles the callback and account linking. |
+| Google browser flow | [google_sign_in.gd](../frontend/scenes/account/google_sign_in.gd) starts, polls, and cancels the flow. Edit the layout in [google_sign_in_dialog.tscn](../frontend/scenes/account/google_sign_in_dialog.tscn). [google_auth.py](../backend/src/google_auth.py) handles the callback and account linking. |
 | Hub navigation, username changes, and sign-out | [hub.gd](../frontend/scenes/hub/hub.gd). `enter_battle()` opens the battle scene for signed-in users. `save_username()` updates the account through `PATCH /me`. `sign_out()` revokes the session and returns to the title. |
 | Shop or reusable HUD controls | [Shop scene and script](../frontend/scenes/shop/) and [shared UI scenes](../frontend/ui/). Check the hub and shop when changing a shared component. |
 | Battle controls, labels, or taps | [battle_controller.gd](../frontend/scenes/battle/battle_controller.gd). Edit the fixed controls in [team_battle.tscn](../frontend/scenes/battle/team_battle.tscn). The controller handles tap collection, round submission, and retry. |
 | Portraits, hit effects, or motion | [battlefield.gd](../frontend/scenes/battle/battlefield.gd). `play_round()` animates the result returned by the server. |
-| Damage, turn rules, or saved encounter | [demo_combat.py](../backend/src/demo_combat.py). `advance()` resolves the round and `save_action()` persists it. Clients send taps, a request ID, and the expected version. |
+| Damage, turn rules, or saved encounter | [battle_routes.py](../backend/src/battle_routes.py). `advance()` resolves the round and `save_action()` persists it. Clients send taps, a request ID, and the expected version. |
 | HTTP, session state, or balances | [GameSession](../frontend/autoload/game_session.gd) sends requests and owns the in-memory session. [PlayerData](../frontend/autoload/player_data.gd) adapts the account data for the hub and shop HUD. |
-| API routes or storage | [Server.py](../backend/Server.py) launches FastAPI. [demo_accounts.py](../backend/src/demo_accounts.py) handles profiles and sessions, and [demo_store.py](../backend/src/demo_store.py) provides database transactions. [API contract](DEMO_API.md). |
+| API routes or storage | [Server.py](../backend/Server.py) launches FastAPI. [account_routes.py](../backend/src/account_routes.py) handles profiles and sessions, and [game_store.py](../backend/src/game_store.py) provides database transactions. [API contract](DEMO_API.md). |
 
 ## Trace the normal game flow
 

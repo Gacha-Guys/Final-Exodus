@@ -191,33 +191,15 @@ func run() -> void:
 	expect(shop.get_node("GridContainer").get_child_count() == 5, "Shop has Riley's original five offers")
 	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer2/Title").text.contains("Gamepass"), "Fifth offer remains gamepass")
 	expect(shop.get_node(shop.RANK_PATH).text == "Rank\n1", "Shop rank agrees with the saved account")
-	await shop._on_currency_offer_pressed()
-	expect(legacy.paid_currency == 50 and shop.get_node("%Currency").val == 50, "Mihai's +50 local prototype persists and updates the HUD")
-	var expected_balance := 50
-	for index in range(2, 5):
-		shop.get_node("%%CurrencyButton%d" % index).pressed.emit()
-		for step in range(100):
-			await create_timer(0.02).timeout
-			if not shop.pending:
-				break
-		expected_balance += [200, 500, 999][index - 2]
-		expect(legacy.paid_currency == expected_balance and not shop.pending, "Offer %d preserves Mihai's currency amount" % index)
-	await legacy.update_currency(-1699, "paid")
-	expect(legacy.paid_currency == 50, "Prototype currency test restores its known starting balance")
-	var forbidden: Dictionary = await session.request("/currency/update", HTTPClient.METHOD_POST, {"u_id": legacy.user_id + 1, "amount": 50, "type": "paid"})
-	expect(forbidden.status == 403, "Prototype cannot change another player's currency")
-	await legacy.update_currency(-20, "paid")
-	expect(legacy.paid_currency == 30, "Team's currency subtraction remains functional")
-	await legacy.update_currency(-31, "paid")
-	expect(legacy.paid_currency == 30 and is_instance_valid(shop.message), "Insufficient currency preserves balance and reports failure")
-	shop.message.hide()
+	expect(not shop.get_node("GridContainer").visible and shop.get_node("PurchaseStatus").visible, "Shop shows purchases are unavailable without a popup")
+	expect(shop.get_node("%Currency").val == 0, "Shop displays the saved balance")
 	await screenshot("team-shop")
 	shop.get_node("HomeButton")._gui_input(release)
 	hub = await wait_scene("hub.tscn")
-	expect(hub.get_node("%Currency").val == 30, "Home navigation retains the saved balance")
+	expect(hub.get_node("%Currency").val == 0, "Home navigation retains the saved balance")
 	# Reload through the API, proving the display is not only a local counter.
 	var fetched: Dictionary = await session.refresh_account()
-	expect(fetched.ok and int(fetched.data.paid_currency) == 30, "Currency balance is saved on the server")
+	expect(fetched.ok and int(fetched.data.paid_currency) == 0, "Currency balance is saved on the server")
 	var result: Dictionary = await session.request("/sessions/current", HTTPClient.METHOD_DELETE)
 	expect(result.ok, "Authenticated logout revokes the session")
 	click_button(hub.get_node("BattleButton"))

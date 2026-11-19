@@ -5,9 +5,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import Field, model_validator
-from .demo_accounts import Body, authenticate
-from .demo_tokens import authorization_header
-from .demo_store import transaction
+from .account_routes import Body, authenticate
+from .session_tokens import authorization_header
+from .game_store import transaction
 
 router = APIRouter()
 

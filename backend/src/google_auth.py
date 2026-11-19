@@ -1,4 +1,4 @@
-"""Google OpenID Connect through the system browser; isolated local demo only."""
+"""Google OpenID Connect through the system browser."""
 from dataclasses import dataclass
 from datetime import date
 import base64
@@ -17,9 +17,9 @@ from google.oauth2 import id_token
 import httpx
 from pydantic import EmailStr, Field, SecretStr, TypeAdapter, field_validator
 
-from .demo_accounts import Body, Name, Registration, require_available_name
-from .demo_store import transaction
-from .demo_tokens import issue_session
+from .account_routes import Body, Name, Registration, require_available_name
+from .game_store import transaction
+from .session_tokens import issue_session
 
 router = APIRouter(prefix="/auth/google", tags=["Google sign-in"])
 AUTHORIZATION = "https://accounts.google.com/o/oauth2/v2/auth"

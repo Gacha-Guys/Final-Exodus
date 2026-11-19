@@ -2,6 +2,7 @@
 
 ## 0.0.0.4 — 2026-10-26
 
+- Retire the local gem purchase prototype. The shop displays rank and balance with purchases unavailable.
 - Integrate the preserved team title, account popups, hub, four gem offers plus gamepass and gacha prototype with authenticated profiles; keep saved fixture combat in separate optional demo scenes.
 - Authenticate password logins by username (`Users.name`); keep email for registration and clarify username changes in Settings.
 - Use one supported API and session client, with Argon2/JWT authentication and secure compatibility for the team's login/signup/currency routes; keep the guarded isolated currency prototype and refuse shared client-directed grants.

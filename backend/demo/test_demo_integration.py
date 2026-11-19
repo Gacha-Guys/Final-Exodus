@@ -24,8 +24,8 @@ if os.getenv('FINAL_EXODUS_TEST_ENV_FILE'):
 if (os.getenv('FINAL_EXODUS_DB_HOST') not in ('127.0.0.1', 'localhost')
         or os.getenv('FINAL_EXODUS_DB') != 'final_exodus_tyler_demo'):
     raise RuntimeError('Database tests require the isolated loopback final_exodus_tyler_demo database')
-from src import demo, demo_accounts
-from src.demo_store import transaction
+from src import account_routes, main
+from src.game_store import transaction
 from src.rate_limit import RegistrationLimiter
 
 PASSWORD = 'LocalDemoOnly!2026'
@@ -33,7 +33,7 @@ PASSWORD = 'LocalDemoOnly!2026'
 
 @pytest.fixture(autouse=True)
 def isolated_test_accounts(monkeypatch):
-    monkeypatch.setattr(demo, 'limiter', RegistrationLimiter(limit=200))
+    monkeypatch.setattr(main, 'limiter', RegistrationLimiter(limit=200))
     created = []
     yield created
     if not created:
@@ -44,7 +44,7 @@ def isolated_test_accounts(monkeypatch):
 
 
 def register(created, client=None):
-    client = client or TestClient(demo.app)
+    client = client or TestClient(main.app)
     email = f'demo-{uuid4().hex}@example.com'
     created.append(email)
     body = dict(email=email, display_name='Demo-' + uuid4().hex[:12], password=PASSWORD, dob='2000-01-01')
@@ -74,7 +74,7 @@ def test_registration_balances_hash_duplicate_and_safe_validation(isolated_test_
     with transaction() as cursor:
         cursor.execute('SELECT password FROM Users WHERE id=%s', (account['id'],))
         stored = cursor.fetchone()['password']
-        assert stored != PASSWORD and demo_accounts.password_hash.verify(PASSWORD, stored)
+        assert stored != PASSWORD and account_routes.password_hash.verify(PASSWORD, stored)
         cursor.execute('SELECT COUNT(*) AS n FROM Currency WHERE u_id=%s', (account['id'],))
         assert cursor.fetchone()['n'] == 2
     assert client.post('/accounts', json=body).status_code == 409
@@ -87,8 +87,8 @@ def test_registration_balances_hash_duplicate_and_safe_validation(isolated_test_
 def test_registration_rollback(isolated_test_accounts, monkeypatch):
     email = f'demo-{uuid4().hex}@example.com'; isolated_test_accounts.append(email)
     def fail(*args): raise HTTPException(503, 'Simulated read failure')
-    monkeypatch.setattr(demo_accounts, 'profile', fail)
-    result = TestClient(demo.app).post('/accounts', json=dict(email=email, display_name='Rollback', password=PASSWORD, dob='2000-01-01'))
+    monkeypatch.setattr(account_routes, 'profile', fail)
+    result = TestClient(main.app).post('/accounts', json=dict(email=email, display_name='Rollback', password=PASSWORD, dob='2000-01-01'))
     assert result.status_code == 503
     with transaction() as cursor:
         cursor.execute('SELECT id FROM Users WHERE email=%s', (email,))
@@ -99,7 +99,7 @@ def test_concurrent_registration_creates_one_account(isolated_test_accounts):
     email = f'demo-{uuid4().hex}@example.com'; isolated_test_accounts.append(email)
     body = dict(email=email, display_name='Concurrent', password=PASSWORD, dob='2000-01-01')
     with ThreadPoolExecutor(2) as pool:
-        codes = list(pool.map(lambda _: TestClient(demo.app).post('/accounts', json=body).status_code, range(2)))
+        codes = list(pool.map(lambda _: TestClient(main.app).post('/accounts', json=body).status_code, range(2)))
     assert sorted(codes) == [201, 409]
 
 
@@ -125,7 +125,7 @@ def test_wrong_password_expired_session_and_rate_limit(isolated_test_accounts, m
         cursor.execute('UPDATE DemoSessions SET expires_at=%s WHERE u_id=%s', (datetime.now()-timedelta(days=1), account['id']))
     assert client.get('/me', headers=headers).status_code == 401
     assert client.post('/sessions', json={'name':account['display_name'], 'password':'wrong-password'}).status_code == 401
-    monkeypatch.setattr(demo, 'limiter', RegistrationLimiter(limit=1))
+    monkeypatch.setattr(main, 'limiter', RegistrationLimiter(limit=1))
     assert client.post('/sessions', json={'name':account['display_name'], 'password':'wrong-password'}).status_code == 401
     assert client.post('/sessions', json={'name':account['display_name'], 'password':'wrong-password'}).status_code == 429
 
@@ -168,13 +168,13 @@ def test_action_retry_stale_version_and_complete_battle(isolated_test_accounts):
 def test_concurrent_start_and_duplicate_attack(isolated_test_accounts):
     client, headers, _ = signed_in(isolated_test_accounts)
     with ThreadPoolExecutor(2) as pool:
-        states = list(pool.map(lambda _: start(TestClient(demo.app),headers), range(2)))
+        states = list(pool.map(lambda _: start(TestClient(main.app),headers), range(2)))
     assert states[0]['id'] == states[1]['id']
     state = states[0]
     body = dict(request_id=str(uuid4()), actor=0, version=0)
     path = f"/battles/{state['id']}/actions"
     with ThreadPoolExecutor(2) as pool:
-        responses = list(pool.map(lambda _: TestClient(demo.app).post(path,headers=headers,json=body), range(2)))
+        responses = list(pool.map(lambda _: TestClient(main.app).post(path,headers=headers,json=body), range(2)))
     assert all(r.status_code == 200 for r in responses)
     assert responses[0].json() == responses[1].json()
     assert client.get('/battles/current',headers=headers).json()['version'] == 1
@@ -182,16 +182,16 @@ def test_concurrent_start_and_duplicate_attack(isolated_test_accounts):
 
 def test_concurrent_different_actions_do_not_double_advance(isolated_test_accounts):
     _, headers, _ = signed_in(isolated_test_accounts)
-    state = start(TestClient(demo.app),headers)
+    state = start(TestClient(main.app),headers)
     def act(actor):
-        return TestClient(demo.app).post(f"/battles/{state['id']}/actions",headers=headers,json=dict(request_id=str(uuid4()),actor=actor,version=0))
+        return TestClient(main.app).post(f"/battles/{state['id']}/actions",headers=headers,json=dict(request_id=str(uuid4()),actor=actor,version=0))
     with ThreadPoolExecutor(2) as pool:
         results = list(pool.map(act,range(2)))
     assert sorted(r.status_code for r in results) == [200,409]
 
 
 def test_remote_database_guard_and_database_outage(monkeypatch):
-    client=TestClient(demo.app)
+    client=TestClient(main.app)
     monkeypatch.setenv('FINAL_EXODUS_DB_HOST','remote.example.com')
     assert client.get('/health').status_code == 503
     monkeypatch.setenv('FINAL_EXODUS_DB_HOST','127.0.0.1')
@@ -203,7 +203,7 @@ def test_remote_database_guard_and_database_outage(monkeypatch):
 def test_action_and_retry_record_roll_back_together(isolated_test_accounts, monkeypatch):
     from contextlib import contextmanager
     import pymysql
-    from src import demo_combat
+    from src import battle_routes
     client, headers, _ = signed_in(isolated_test_accounts)
     saved = start(client, headers)
     body = dict(request_id=str(uuid4()), actor=0, version=0)
@@ -218,10 +218,10 @@ def test_action_and_retry_record_roll_back_together(isolated_test_accounts, monk
                 return execute(sql, args)
             cursor.execute = interrupted
             yield cursor
-    monkeypatch.setattr(demo_combat, 'transaction', fail_journal)
+    monkeypatch.setattr(battle_routes, 'transaction', fail_journal)
     assert client.post(path, headers=headers, json=body).status_code == 503
     assert client.get('/battles/current', headers=headers).json() == saved
-    monkeypatch.setattr(demo_combat, 'transaction', transaction)
+    monkeypatch.setattr(battle_routes, 'transaction', transaction)
     response = client.post(path, headers=headers, json=body)
     assert response.status_code == 200 and response.json()['version'] == 1
 

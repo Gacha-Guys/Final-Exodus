@@ -28,8 +28,6 @@ func run() -> void:
 	# Invalid origin fails before transport, so these scene checks never access a server.
 	var origin: String = session.api_origin
 	session.api_origin = "invalid-for-offline-check"
-	await legacy.update_currency(50, "paid")
-	expect(currency_errors == 2 and legacy.paid_currency == 11, "Failed currency requests preserve the balance")
 	var hub: Node = load("res://scenes/hub/hub.tscn").instantiate()
 	root.add_child(hub)
 	await process_frame
@@ -48,15 +46,9 @@ func run() -> void:
 	root.add_child(shop)
 	await process_frame
 	expect(not shop.has_method("open_battle"), "Team shop has no injected demo UI")
+	expect(not shop.get_node("GridContainer").visible and shop.get_node("PurchaseStatus").visible, "Shop shows purchases are unavailable")
 	expect(shop.get_node("GridContainer").get_child_count() == 5, "Riley's four gem offers and gamepass remain five offers")
-	for index in range(1, 6):
-		var offer: Button = shop.get_node("GridContainer/CurrencyButton%d" % index)
-		expect(shop.get_rect().encloses(offer.get_global_rect()), "Offer %d stays inside the viewport" % index)
 	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer2/Title").text.contains("Gamepass"), "Gamepass remains Riley's fifth offer")
-	for index in range(4):
-		expect(shop.get_node("%%CurrencyButton%d" % (index + 1)).pressed.is_connected(Callable(shop, "_on_currency_offer_pressed").bind([50, 200, 500, 999][index])), "Mihai's currency offer %d stays connected" % (index + 1))
-	await shop._on_currency_offer_pressed()
-	expect(shop.message.dialog_text.contains("valid") and legacy.paid_currency == 11, "Failed offer shows feedback and preserves balance")
 	shop._on_currency_changed()
 	expect(shop.get_node("%Currency").val == 11, "Team shop receives the paid-currency signal")
 	session.clear()
