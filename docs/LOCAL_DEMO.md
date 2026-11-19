@@ -27,7 +27,7 @@ The normal title/hub/Story navigation and shop retain the team’s presentation:
 
 ## Optional three-to-four-minute combat walkthrough
 
-Open `frontend/scenes/demo_title.tscn` and press **F6**. This separate scene opts into fixture combat, Settings/logout and the Google button. It does not replace the F5 team hub or Story/navigation. Shop/Home returns to the normal team hub; rerun the optional scene to return to its combat controls. For Google, use the explicit port 8007 setup in [AUTHENTICATION.md](AUTHENTICATION.md).
+Open `frontend/scenes/demo_title.tscn` and press **F6**. This separate scene opts into fixture combat, Settings/logout and the Google button. It does not replace the F5 team hub or Story/navigation. Shop/Home returns to the normal team hub; rerun the optional scene to return to its combat controls. For Google on either title screen, register the matching loopback callback as described in [AUTHENTICATION.md](AUTHENTICATION.md).
 
 | Time | Action |
 | --- | --- |
@@ -44,4 +44,4 @@ No currency/XP payouts are granted by this encounter. The three characters are f
 
 See TESTING.md for full commands. The ordinary pytest command retains historical tests plus gacha/leveling/auth/storage regressions. Real database suites require explicit opt-in and reject shared targets. API restart and native Godot UI checks exercise the real disposable local MySQL database. Preserve historical evidence by selecting an external `FINAL_EXODUS_TEST_ARTIFACT_DIR` for UI output.
 
-Optional Google sign-in requires private local provider configuration; simulated provider checks do not prove a live Google consent flow. The current callback is loopback port 8007, and flow state/rate limiting are single-process. Do not expose a public multi-worker API without the corresponding deployment changes. See AUTHENTICATION.md.
+Optional Google sign-in requires private local provider configuration; simulated provider checks do not prove a live Google consent flow. The callback uses the local API listener port, and flow state/rate limiting are single-process. Do not expose a public multi-worker API without the corresponding deployment changes. See AUTHENTICATION.md.

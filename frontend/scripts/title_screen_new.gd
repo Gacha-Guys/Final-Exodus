@@ -9,7 +9,7 @@ func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		$AudioStreamPlayer2D.play()
 	$Start.gui_input.connect(_start_input)
-	$Account.pressed.connect(_pop_login)
+	$Account.pressed.connect(_on_account_pressed)
 	_pop_login()
 
 func replace_popup(scene: PackedScene) -> CanvasLayer:
@@ -20,6 +20,10 @@ func replace_popup(scene: PackedScene) -> CanvasLayer:
 		popup.enable_google = demo_mode
 	add_child(popup)
 	return popup
+
+func _on_account_pressed() -> void:
+	if not is_instance_valid(popup) or not popup.pending:
+		_pop_login()
 
 func _pop_login() -> void:
 	var login_popup := replace_popup(LOGIN_SCREEN)
@@ -33,6 +37,8 @@ func _pop_signup() -> void:
 
 func _start_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if is_instance_valid(popup) and popup.pending:
+			return
 		if demo_mode and GameSession.token.is_empty():
 			_pop_login()
 		else:

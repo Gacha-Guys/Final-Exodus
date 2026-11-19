@@ -29,7 +29,7 @@ func _ready() -> void:
 	name_input.max_length = 64
 	content.add_child(name_input)
 	dob_input = LineEdit.new()
-	dob_input.placeholder_text = "Birth date (YYYY-MM-DD)"
+	dob_input.placeholder_text = "Birth date (optional, YYYY-MM-DD)"
 	content.add_child(dob_input)
 	dialog.canceled.connect(cancel)
 	dialog.confirmed.connect(complete_registration)
@@ -107,7 +107,9 @@ func complete_registration() -> void:
 	dialog.get_ok_button().disabled = true
 	var body := flow.duplicate()
 	body["display_name"] = name_input.text.strip_edges()
-	body["dob"] = dob_input.text.strip_edges()
+	var birth_date := dob_input.text.strip_edges()
+	if not birth_date.is_empty():
+		body["dob"] = birth_date
 	var result: Dictionary = await GameSession.request("/auth/google/register", HTTPClient.METHOD_POST, body, false)
 	if not running:
 		return
@@ -133,6 +135,7 @@ func show_error(text: String) -> void:
 
 func cancel() -> void:
 	running = false
+	dialog.hide()
 	if not flow.is_empty():
 		await GameSession.request("/auth/google/cancel", HTTPClient.METHOD_POST, flow, false)
 	flow = {}

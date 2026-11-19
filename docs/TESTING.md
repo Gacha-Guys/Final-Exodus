@@ -18,12 +18,25 @@ Run local setup first. From the checkout root:
 ```sh
 FINAL_EXODUS_RUN_DB_TESTS=1 FINAL_EXODUS_TEST_ENV_FILE="$PWD/backend/.env.demo" backend/.venv/bin/python -m pytest backend -q
 backend/.venv/bin/python backend/demo/restart_check.py
-backend/.venv/bin/python backend/demo/google_ui_check.py --godot /path/to/Godot
+backend/.venv/bin/python backend/demo/google_ui_check.py
 ```
 
 On Windows set the two environment variables before running the Python command. Opt-in suites reject remote hosts and any database other than the isolated `final_exodus_tyler_demo`. They cover actual hashing, duplicate username/email rejection, concurrent API identity writes, optional DOB, guarded local currency updates, rollback, session isolation/revocation, forged JWTs, saved combat and simulated Google identities. They clean up their synthetic identities. Never point their cleanup at Aiven.
 
-The restart driver uses a separate API process on 8008. The Google driver uses 8009 with an explicitly simulated provider and no real consent; cryptographic tests independently exercise signature verification. `--no-access-log` keeps provider callback query parameters out of logs.
+The restart driver uses a separate API process on 8008. The Google test API on 8009 simulates the provider and disables access logging. Once it is listening, run the walkthrough from a second terminal on macOS or Linux. Omit `--headless` for screenshots.
+
+```sh
+FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8009 /path/to/Godot --headless --path frontend --script res://tests/google_sign_in.gd
+```
+
+On Windows PowerShell, use the installed Godot executable and set the same loopback origin.
+
+```powershell
+$env:FINAL_EXODUS_API_ORIGIN = 'http://127.0.0.1:8009'
+& 'C:\path\to\Godot.exe' --headless --path frontend --script res://tests/google_sign_in.gd
+```
+
+Use a terminal without backend credentials loaded for the Godot command. Stop the test API with Ctrl+C after the walkthrough so it can remove the synthetic account. Cryptographic tests independently exercise signature verification.
 
 ## Godot 4.7.2
 
@@ -36,7 +49,7 @@ FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8000 Godot --headless --path frontend -
 FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8000 Godot --headless --path frontend --script res://tests/connected_demo.gd -- --small
 ```
 
-Start the API first, for example `Server.py --env-file .env.demo` on default port 8000. The team-restoration driver covers the normal F5 flow: hidden DOB/Google, three-field signup, duplicate username rejection, successful login remaining on title until Start, guest preview, preserved hub navigation, four gem offers/gamepass, and the four guarded local gem prototypes. The connected-demo driver deliberately starts the separate optional scene and covers fixture combat. Let `--import` finish and quit by itself; adding `--quit` can exit before a fresh clone finishes importing assets. Inspect import output for script errors even when the process exits 0. Run native UI drivers sequentially and inspect screenshots at both sizes. Restart the isolated local test API between walkthrough drivers, or wait at least 60 seconds: their combined signup/login attempts can exceed the 20-attempt authentication limit even when run sequentially. Keep the limiter enabled; do not run concurrent walkthroughs against one test API. `FINAL_EXODUS_TEST_ARTIFACT_DIR=/absolute/external/path` writes UI JSON/images outside historical checked-in evidence. UI runs create synthetic accounts in the selected development database; cleanup is deliberate.
+Start the API first, for example `Server.py --env-file .env.demo` on default port 8000. The team-restoration driver covers the normal F5 flow: hidden DOB and the password-only fallback when Google is unconfigured, three-field signup, duplicate username rejection, successful login remaining on title until Start, guest preview, preserved hub navigation, four gem offers/gamepass, and the four guarded local gem prototypes. The connected-demo driver deliberately starts the separate optional scene and covers fixture combat. Let `--import` finish and quit by itself; adding `--quit` can exit before a fresh clone finishes importing assets. Inspect import output for script errors even when the process exits 0. Run native UI drivers sequentially and inspect screenshots at both sizes. Restart the isolated local test API between walkthrough drivers, or wait at least 60 seconds: their combined signup/login attempts can exceed the 20-attempt authentication limit even when run sequentially. Keep the limiter enabled; do not run concurrent walkthroughs against one test API. `FINAL_EXODUS_TEST_ARTIFACT_DIR=/absolute/external/path` writes UI JSON/images outside historical checked-in evidence. UI runs create synthetic accounts in the selected development database; cleanup is deliberate.
 
 ## Shared migration and smoke checks
 

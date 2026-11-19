@@ -13,6 +13,7 @@ All request bodies reject extra fields. Errors use `detail`; validation errors r
 | POST /sessions | name (username), password | access_token, token_type, expires_in |
 | POST /login | name (username), password | Same JWT session plus id; ambiguous names rejected |
 | POST /signup | name, email, password, optional dob | Same validation/result as /accounts |
+| GET /auth/google/status | None | Whether Google credentials are configured; does not start a sign-in or validate with Google |
 | POST /auth/google/start | None | Browser authorization URL, flow_id, poll_secret, expires_in |
 | GET /auth/google/callback | Google code/state (browser only) | Fixed return-to-game page; never returns JWT in URL/HTML |
 | POST /auth/google/poll | flow_id, poll_secret | pending, registration_required with suggested display_name, or authenticated with JWT |
