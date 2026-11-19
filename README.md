@@ -35,7 +35,7 @@ For Google login on F5, follow the [local callback setup](docs/AUTHENTICATION.md
 - Authenticated profiles and protected own-account currency reads. The hub’s Settings dialog lets players change their username or sign out.
 - Argon2 password verifiers and revocable 15-minute JWTs. Optional Google sign-in has separate local configuration.
 
-The shop displays the saved rank and balance and marks purchases unavailable. Combat uses a fixed three-character party; owned-roster selection, reward payouts, authenticated summons/pity and payments are not implemented by this integration. Existing unsupported password formats need owner-verified resets; migration preserves their rows.
+The shop displays the saved rank, balance, and original offer cards. Purchases are unavailable. Summon and Units stay visible in the menu until their pages are ready. Combat uses a fixed three-character party; owned-roster selection, reward payouts, authenticated summons/pity and payments are not implemented by this integration. Existing unsupported password formats need owner-verified resets; migration preserves their rows.
 
 ## Project layout and verification
 

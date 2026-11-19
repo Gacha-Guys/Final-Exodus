@@ -167,8 +167,9 @@ offset_right = 243.0
 offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("10_lcd1r")
+tooltip_text = "Summon is not available yet."
 text = "Summon"
-target_scene = "uid://c0w8741a4hxll"
+unavailable = true
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1799365879]
 layout_mode = 1
@@ -291,8 +292,9 @@ offset_right = 3.0
 offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("10_lcd1r")
+tooltip_text = "Units is not available yet."
 text = "Units"
-target_scene = "uid://c0w8741a4hxll"
+unavailable = true
 
 [node name="TextureButton" type="TextureButton" parent="." unique_id=43229150]
 layout_mode = 0
@@ -328,4 +330,4 @@ offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("10_lcd1r")
 text = "Shop"
-target_scene = "uid://8r65ldhtel6f"
+target_scene = "res://scenes/shop/shop.tscn"

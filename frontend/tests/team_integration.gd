@@ -46,7 +46,7 @@ func run() -> void:
 	root.add_child(shop)
 	await process_frame
 	expect(not shop.has_method("open_battle"), "Team shop has no injected demo UI")
-	expect(not shop.get_node("GridContainer").visible and shop.get_node("PurchaseStatus").visible, "Shop shows purchases are unavailable")
+	expect(shop.get_node("GridContainer").visible and shop.get_node("PurchaseStatus").visible, "Shop shows its catalog and purchase status")
 	expect(shop.get_node("GridContainer").get_child_count() == 5, "Riley's four gem offers and gamepass remain five offers")
 	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer2/Title").text.contains("Gamepass"), "Gamepass remains Riley's fifth offer")
 	shop._on_currency_changed()

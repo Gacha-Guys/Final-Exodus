@@ -18,6 +18,15 @@ func expect(condition: bool, description: String) -> void:
 		failures += 1
 		push_error(description)
 
+func check_unavailable_tabs(page: Node) -> void:
+	for name in ["UnitsButton", "SummonButton"]:
+		var tab: NavMenuButton = page.get_node(name)
+		expect(tab.is_visible_in_tree() and tab.unavailable and tab.target_scene.is_empty(), "%s is visible without a placeholder destination" % name)
+		var release := start_click()
+		release.pressed = false
+		tab._gui_input(release)
+		expect(current_scene == page, "%s keeps the player on the current page" % name)
+
 func wait_scene(suffix: String) -> Node:
 	for step in range(200):
 		await create_timer(0.02).timeout
@@ -126,8 +135,7 @@ func run() -> void:
 	await create_timer(0.2).timeout
 	expect(hub.get_node("StoryButton").visible and not hub.has_method("open_battle"), "Authenticated hub keeps team controls and no demo overlay")
 	expect(hub.get_node(hub.RANK_PATH).text == "Rank\n1", "Hub rank uses the saved account instead of the layout placeholder")
-	for name in ["UnitsButton", "SummonButton"]:
-		expect(not hub.get_node(name).target_scene.is_empty(), "Team %s destination is retained" % name)
+	check_unavailable_tabs(hub)
 	await screenshot("team-hub")
 	hub.open_account_settings()
 	var renamed_username := username + "Renamed"
@@ -197,7 +205,10 @@ func run() -> void:
 	expect(shop.get_node("GridContainer").get_child_count() == 5, "Shop has Riley's original five offers")
 	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer2/Title").text.contains("Gamepass"), "Fifth offer remains gamepass")
 	expect(shop.get_node(shop.RANK_PATH).text == "Rank\n1", "Shop rank agrees with the saved account")
-	expect(not shop.get_node("GridContainer").visible and shop.get_node("PurchaseStatus").visible, "Shop shows purchases are unavailable without a popup")
+	expect(shop.get_node("PurchaseStatus").is_visible_in_tree(), "Shop explains purchases are unavailable")
+	for card: Button in shop.get_node("GridContainer").get_children():
+		expect(card.is_visible_in_tree() and card.disabled, "%s artwork is visible and cannot buy gems" % card.name)
+	check_unavailable_tabs(shop)
 	expect(shop.get_node("%Currency").val == 0, "Shop displays the saved balance")
 	await screenshot("team-shop")
 	shop.get_node("HomeButton")._gui_input(release)

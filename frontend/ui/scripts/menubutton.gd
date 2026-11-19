@@ -15,6 +15,7 @@ extends Control
 			$Label.text = text
 			
 @export_file("*.tscn") var target_scene: String
+@export var unavailable := false
 
 var _is_current_page := false
 
@@ -26,7 +27,12 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): # if in the editor  then don't do what we're about to do
 		return
 	
-	# get the current page and see if target_scene is non-existent or if the current page doesn't exist or if the current page does equal the target page
+	if unavailable:
+		$TextureRect.modulate.a = 0.55
+		$Label.modulate.a = 0.55
+		return
+
+	# A tab without a destination represents the page already on screen.
 	var current := get_tree().current_scene
 	_is_current_page = target_scene == "" or (current and current.scene_file_path == target_scene)
 	
@@ -38,7 +44,7 @@ func _ready() -> void:
 
 	
 func _gui_input(event: InputEvent) -> void:
-	if _is_current_page: # don't handle any input if we are on the page it points or there is no destination
+	if unavailable or _is_current_page:
 		return
 		
 	if event is InputEventMouseButton and target_scene:

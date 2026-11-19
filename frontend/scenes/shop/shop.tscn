@@ -84,7 +84,7 @@ offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("3_pqync")
 text = "Home"
-target_scene = "uid://klxyuv0db4c3"
+target_scene = "res://scenes/hub/hub.tscn"
 
 [node name="SummonButton" parent="." unique_id=938921911 instance=ExtResource("2_5u241")]
 custom_minimum_size = Vector2(120, 120)
@@ -99,8 +99,9 @@ offset_right = 243.0
 offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("3_pqync")
+tooltip_text = "Summon is not available yet."
 text = "Summon"
-target_scene = "uid://c0w8741a4hxll"
+unavailable = true
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1649666065]
 layout_mode = 1
@@ -223,8 +224,9 @@ offset_right = 3.0
 offset_bottom = 0.0
 grow_vertical = 0
 icon_texture = ExtResource("3_pqync")
+tooltip_text = "Units is not available yet."
 text = "Units"
-target_scene = "uid://c0w8741a4hxll"
+unavailable = true
 
 [node name="Currency" parent="." unique_id=1459214309 instance=ExtResource("12_ouqob")]
 unique_name_in_owner = true
@@ -252,21 +254,21 @@ text = "Shop"
 
 [node name="PurchaseStatus" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 1.0
 offset_left = -240.0
+offset_top = -177.0
 offset_right = 240.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 28
+offset_bottom = -132.0
+theme_override_font_sizes/font_size = 24
 text = "Purchases unavailable"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="GridContainer" type="GridContainer" parent="." unique_id=1675962020]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -281,6 +283,8 @@ theme_override_constants/v_separation = 17
 unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
+disabled = true
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
@@ -327,6 +331,8 @@ text = "$1.99"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
+disabled = true
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
@@ -384,6 +390,8 @@ text = "$2.99"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
+disabled = true
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
@@ -459,6 +467,8 @@ text = "$5.99"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
+disabled = true
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
@@ -546,6 +556,8 @@ text = "$9.99"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 150)
 layout_mode = 2
+disabled = true
+theme_override_styles/disabled = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/normal = SubResource("StyleBoxTexture_gobkm")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_3lynd")
 theme_override_styles/hover = SubResource("StyleBoxTexture_j14q8")
