@@ -3,6 +3,8 @@ extends Node
 signal session_ready(data: Dictionary)
 signal finished
 
+const SignInDialog := preload("res://scenes/account/google_sign_in_dialog.tscn")
+
 var flow: Dictionary = {}
 var running := false
 var registration_ready := false
@@ -12,25 +14,11 @@ var name_input: LineEdit
 var dob_input: LineEdit
 
 func _ready() -> void:
-	dialog = ConfirmationDialog.new()
-	dialog.title = "Continue with Google"
-	dialog.cancel_button_text = "Cancel"
-	dialog.ok_button_text = "Create account"
-	dialog.dialog_hide_on_ok = false
+	dialog = SignInDialog.instantiate()
 	add_child(dialog)
-	var content := VBoxContainer.new()
-	dialog.add_child(content)
-	status = Label.new()
-	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	status.custom_minimum_size.x = 280
-	content.add_child(status)
-	name_input = LineEdit.new()
-	name_input.placeholder_text = "Username"
-	name_input.max_length = 64
-	content.add_child(name_input)
-	dob_input = LineEdit.new()
-	dob_input.placeholder_text = "Birth date (YYYY-MM-DD)"
-	content.add_child(dob_input)
+	status = dialog.get_node("Content/Status")
+	name_input = dialog.get_node("Content/Username")
+	dob_input = dialog.get_node("Content/BirthDate")
 	dialog.canceled.connect(cancel)
 	dialog.confirmed.connect(complete_registration)
 
@@ -42,19 +30,26 @@ func begin() -> void:
 	dialog.get_ok_button().hide()
 	status.text = "Opening Google sign-in in your browser…"
 	dialog.popup_centered(Vector2i(320, 220))
+	if await start_browser_sign_in():
+		await poll_for_result()
+
+func start_browser_sign_in() -> bool:
 	var result: Dictionary = await GameSession.request("/auth/google/start", HTTPClient.METHOD_POST, {}, false)
 	if not running:
 		if result.ok and valid_start(result.data):
 			await GameSession.request("/auth/google/cancel", HTTPClient.METHOD_POST, key_for(result.data), false)
-		return
+		return false
 	if not result.ok or not valid_start(result.data):
 		show_error(result.get("error", "Unexpected Google sign-in response."))
-		return
+		return false
 	flow = key_for(result.data)
 	if open_browser(result.data.authorization_url) != OK:
 		show_error("Could not open the browser. Cancel and try again.")
-		return
+		return false
 	status.text = "Finish signing in with Google in your browser."
+	return true
+
+func poll_for_result() -> void:
 	var started := Time.get_ticks_msec()
 	while running and Time.get_ticks_msec() - started < 300000:
 		await get_tree().create_timer(1.0).timeout
@@ -74,12 +69,7 @@ func begin() -> void:
 				accept_session(poll.data)
 				return
 			"registration_required":
-				registration_ready = true
-				status.text = "Google verified your identity. Enter your details to create your game account."
-				name_input.text = str(poll.data.get("display_name", "Player"))
-				name_input.show()
-				dob_input.show()
-				dialog.get_ok_button().show()
+				show_registration_form(str(poll.data.get("display_name", "Player")))
 				return
 			"pending":
 				pass
@@ -88,6 +78,14 @@ func begin() -> void:
 				return
 	if running:
 		show_error("Google sign-in expired. Cancel and try again.")
+
+func show_registration_form(display_name: String) -> void:
+	registration_ready = true
+	status.text = "Google verified your identity. Enter your details to create your game account."
+	name_input.text = display_name
+	name_input.show()
+	dob_input.show()
+	dialog.get_ok_button().show()
 
 func open_browser(url: String) -> Error:
 	return OS.shell_open(url)
@@ -107,7 +105,9 @@ func complete_registration() -> void:
 	dialog.get_ok_button().disabled = true
 	var body := flow.duplicate()
 	body["display_name"] = name_input.text.strip_edges()
-	body["dob"] = dob_input.text.strip_edges()
+	var birth_date := dob_input.text.strip_edges()
+	if not birth_date.is_empty():
+		body["dob"] = birth_date
 	var result: Dictionary = await GameSession.request("/auth/google/register", HTTPClient.METHOD_POST, body, false)
 	if not running:
 		return
@@ -133,6 +133,7 @@ func show_error(text: String) -> void:
 
 func cancel() -> void:
 	running = false
+	dialog.hide()
 	if not flow.is_empty():
 		await GameSession.request("/auth/google/cancel", HTTPClient.METHOD_POST, flow, false)
 	flow = {}

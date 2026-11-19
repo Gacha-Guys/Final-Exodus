@@ -30,7 +30,7 @@ func run() -> void:
 	session.api_origin = "invalid-for-offline-check"
 	await legacy.update_currency(50, "paid")
 	expect(currency_errors == 2 and legacy.paid_currency == 11, "Failed currency requests preserve the balance")
-	var hub: Node = load("res://scenes/hub.tscn").instantiate()
+	var hub: Node = load("res://scenes/hub/hub.tscn").instantiate()
 	root.add_child(hub)
 	await process_frame
 	expect(not hub.has_method("open_battle") and hub.has_method("_on_currency_changed"), "Team hub has no injected combat controller")
@@ -44,7 +44,7 @@ func run() -> void:
 	expect(hub.get_node("%Currency").val == 11, "Team hub keeps the numeric currency contract")
 	hub.queue_free()
 	await process_frame
-	var shop: Node = load("res://scenes/shop.tscn").instantiate()
+	var shop: Node = load("res://scenes/shop/shop.tscn").instantiate()
 	root.add_child(shop)
 	await process_frame
 	expect(not shop.has_method("open_battle"), "Team shop has no injected demo UI")

@@ -146,6 +146,7 @@ def save_action(battle_id, body, authorization):
         cursor.execute("SELECT actor,version,response FROM DemoActions WHERE battle_id=%s AND request_id=%s FOR UPDATE",
                        (str(battle_id), str(body.request_id)))
         retry = cursor.fetchone()
+        # A completed request has an older version. Replay it before checking the current version.
         if retry:
             saved = json.loads(retry["response"])
             saved_taps = saved.get("last_round", {}).get("taps")

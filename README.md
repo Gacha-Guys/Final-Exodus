@@ -25,19 +25,21 @@ For an **optional isolated local prototype**, install Docker and follow [LOCAL_D
 
 This creates a separate MySQL 8.4 instance on loopback port 3308 with private ignored credentials; it does not replace the team’s shared Aiven configuration.
 
+For Google login on F5, follow the [local callback setup](docs/AUTHENTICATION.md). Press Start after login; choose Settings in the hub to sign out.
+
 ## What's connected
 
 - Riley’s title/account popups, Story/navigation and four gem offers plus gamepass; Jason’s hub and shared model/leveling work.
 - Mihai’s Users/Currency model and trigger, username login and duplicate-username signup protection, and preserved gacha prototype. The four gem buttons keep their 50/200/500/999 paid-currency prototypes in the guarded isolated local setup.
 - The normal hub’s **Battle** button starts or resumes the saved Gate Sentinel encounter. Tap up to three ally portraits per round. Try Rowan first and Vale about 0.4 seconds later to land a combo. The server saves each squad round and the surviving Sentinel counters once. Story is independent; this fight does not award loot or unlock story progression.
-- Authenticated profiles and protected own-account currency reads. The optional demo hub retains its account settings and saved-battle overview.
+- Authenticated profiles and protected own-account currency reads. The hub’s Settings menu signs the player out.
 - Argon2 password verifiers and revocable 15-minute JWTs. Optional Google sign-in has separate local configuration.
 
-Shared storage refuses client-requested currency grants; the local prototype does not make a real purchase. Open `frontend/scenes/demo_title.tscn` and press **F6** for the separate optional combat/Google demo; F5 retains the team title/hub flow with a separate Battle button. Combat uses a fixed three-character party; owned-roster selection, reward payouts, authenticated summons/pity and payments are not implemented by this integration. Existing unsupported password formats need owner-verified resets; migration preserves their rows.
+Shared storage refuses client-requested currency grants; the local prototype does not make a real purchase. Combat uses a fixed three-character party; owned-roster selection, reward payouts, authenticated summons/pity and payments are not implemented by this integration. Existing unsupported password formats need owner-verified resets; migration preserves their rows.
 
 ## Project layout and verification
 
-- `frontend/`: Godot scenes, assets, scripts and UI regression drivers.
+- `frontend/`: Godot scenes, assets, scripts and UI regression drivers. See the [maintainer guide](docs/MAINTAINER_GUIDE.md) for where to make changes and how to trace the title-to-battle flow.
 - `backend/`: supported `src.main:app`, setup/migration tools, preserved tests and new gacha/leveling/auth regressions.
 - `docs/`: [setup](docs/SETUP.md), [walkthrough](docs/LOCAL_DEMO.md), [API contract](docs/DEMO_API.md), [authentication](docs/AUTHENTICATION.md), [testing](docs/TESTING.md), and [shared storage](docs/SHARED_STORAGE.md).
 

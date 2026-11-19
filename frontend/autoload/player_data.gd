@@ -30,6 +30,7 @@ func getCurrency(id: int) -> void:
 	if not result.ok:
 		currency_fail.emit(result.error)
 
+# Older teammate scenes still call these account methods after merging frontend changes.
 func login(name: String, password: String) -> void:
 	var result: Dictionary = await GameSession.request("/login", HTTPClient.METHOD_POST, {"name": name, "password": password}, false)
 	password = ""

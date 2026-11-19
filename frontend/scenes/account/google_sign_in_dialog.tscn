@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[node name="GoogleSignInDialog" type="ConfirmationDialog"]
+title = "Continue with Google"
+initial_position = 2
+size = Vector2i(320, 220)
+ok_button_text = "Create account"
+dialog_hide_on_ok = false
+
+[node name="Content" type="VBoxContainer" parent="."]
+
+[node name="Status" type="Label" parent="Content"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="Username" type="LineEdit" parent="Content"]
+layout_mode = 2
+placeholder_text = "Username"
+max_length = 64
+
+[node name="BirthDate" type="LineEdit" parent="Content"]
+layout_mode = 2
+placeholder_text = "Birth date (optional, YYYY-MM-DD)"

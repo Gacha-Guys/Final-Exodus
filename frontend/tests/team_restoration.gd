@@ -71,12 +71,12 @@ func run() -> void:
 	root.size = Vector2i(390, 744) if small else Vector2i(480, 854)
 	session = root.get_node("GameSession")
 	var legacy: Node = root.get_node("PlayerData")
-	var title: Node = load("res://scenes/titleScreenNew.tscn").instantiate()
+	var title: Node = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
 	root.add_child(title)
 	current_scene = title
 	await process_frame
-	expect(not title.demo_mode, "Default title is the team's flow")
-	expect(not title.popup.get_node("%GoogleButton").visible, "Optional Google demo does not change the default team login")
+	var availability: Dictionary = await session.request("/auth/google/status", HTTPClient.METHOD_GET, {}, false)
+	expect(availability.ok and title.popup.get_node("%GoogleButton").visible == availability.data.enabled, "Team login follows the local provider configuration")
 	title.popup.queue_free()
 	await process_frame
 	title._start_input(start_click())
@@ -85,7 +85,7 @@ func run() -> void:
 	expect(hub.get_node(hub.RANK_PATH).text == "Rank\n\u2014", "Guest rank shows a dash")
 	expect(hub.get_node("StoryButton").visible and not hub.has_method("build_encounter_panel"), "Guest hub retains Story without injected combat")
 	click_button(hub.get_node("BattleButton"))
-	title = await wait_scene("titleScreenNew.tscn")
+	title = await wait_scene("title_screen.tscn")
 	expect(title.popup.message.text.contains("Log in"), "Guest battle entry explains the sign-in requirement")
 	title._pop_signup()
 	await process_frame
@@ -194,7 +194,7 @@ func run() -> void:
 	var result: Dictionary = await session.request("/sessions/current", HTTPClient.METHOD_DELETE)
 	expect(result.ok, "Authenticated logout revokes the session")
 	click_button(hub.get_node("BattleButton"))
-	title = await wait_scene("/titleScreenNew.tscn")
+	title = await wait_scene("/title_screen.tscn")
 	expect(title.popup.message.text.contains("expired"), "Expired battle session returns to team login")
 	expect(legacy.user_id == 0 and legacy.paid_currency == 0, "Account clearing removes private HUD data")
 	print("Team restoration checks: %d passed, %d failed; test account: %s" % [checks - failures, failures, email])

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dt3ckpg0ijv5j"]
 
-[ext_resource type="Script" uid="uid://cfx28hd83kl2q" path="res://scripts/title_screen_new.gd" id="1_cupy0"]
+[ext_resource type="Script" uid="uid://cfx28hd83kl2q" path="res://scenes/account/title_screen.gd" id="1_cupy0"]
 [ext_resource type="AudioStream" uid="uid://ccwfftujpv1wi" path="res://assets/title.mp3" id="1_cwgxd"]
 [ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_cduda"]
 [ext_resource type="Texture2D" uid="uid://brjtgoky1uym7" path="res://assets/logo3.png" id="2_cupy0"]
