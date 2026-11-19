@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://cm80byf1koyrs"]
+
+[ext_resource type="Texture2D" uid="uid://jw78ok5xr2th" path="res://assets/itembutton.svg" id="1_igym1"]
+[ext_resource type="Script" uid="uid://dudptrfbtx51i" path="res://ui/scripts/itembutton.gd" id="1_sbdxc"]
+[ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="2_sbdxc"]
+[ext_resource type="LabelSettings" uid="uid://byv37bjldsska" path="res://ui/button_font.tres" id="3_cpqmd"]
+
+[node name="Itembutton" type="Control" unique_id=1040889054]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -592.0
+offset_bottom = -1152.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sbdxc")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="." unique_id=1622078938]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_igym1")
+region_rect = Rect2(0, 0, 264, 264)
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect" unique_id=1661120830]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="TextureRect" type="TextureRect" parent="NinePatchRect/MarginContainer" unique_id=969823803]
+layout_mode = 2
+texture = ExtResource("2_sbdxc")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="itemLabel" type="Label" parent="." unique_id=397567975]
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "ItemName x1"
+label_settings = ExtResource("3_cpqmd")
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 2

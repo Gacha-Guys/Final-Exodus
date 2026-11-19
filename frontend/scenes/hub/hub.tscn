@@ -120,7 +120,7 @@ theme_override_font_sizes/font_size = 36
 theme_override_styles/normal = SubResource("StyleBoxFlat_aqapl")
 text = "Story"
 
-[node name="BattleButton" type="Button" parent="."]
+[node name="BattleButton" type="Button" parent="." unique_id=1683462815]
 visible = false
 layout_mode = 0
 offset_left = 250.0
@@ -311,7 +311,6 @@ offset_left = 540.0
 offset_top = 63.0
 offset_right = -51.0
 offset_bottom = -1184.0
-val = 0
 texture = ExtResource("17_5ox4q")
 
 [node name="ShopButton" parent="." unique_id=70434992 instance=ExtResource("9_4oyfp")]
