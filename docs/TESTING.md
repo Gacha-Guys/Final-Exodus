@@ -43,7 +43,7 @@ Use a terminal without backend credentials loaded for the Godot command. Stop th
 ```sh
 Godot --headless --editor --path frontend --import
 Godot --headless --path frontend --script res://tests/team_integration.gd
-python3 frontend/tests/run_battle_conflict_check.py --godot /path/to/Godot
+Godot --headless --path frontend --script res://tests/battle_conflict_check.gd
 FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8000 Godot --headless --path frontend --script res://tests/team_restoration.gd
 FINAL_EXODUS_API_ORIGIN=http://127.0.0.1:8000 Godot --headless --path frontend --script res://tests/team_restoration.gd -- --small
 ```
