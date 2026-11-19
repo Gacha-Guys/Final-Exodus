@@ -179,10 +179,16 @@ func run() -> void:
 		battle.attack_buttons[turn % 3].pressed.emit()
 		await wait_idle(battle)
 	expect(battle.state.status == "won", "Team battle reaches server-confirmed victory")
+	var victory_line := "Victory! The gate is clear."
+	var visible_log: String = battle.log_label.text
+	expect(visible_log.ends_with(victory_line), "Battle log shows the new victory text")
+	print("Visible victory log: %s" % visible_log.get_slice("\n", visible_log.get_slice_count("\n") - 1))
+	await screenshot("team-victory")
 	click_button(battle.back_button)
 	hub = await wait_scene("/hub.tscn")
 	var saved: Dictionary = await session.request("/battles/current")
 	expect(saved.ok and saved.data.id == battle_id and saved.data.status == "won", "Victory is saved after returning to the team hub")
+	expect(saved.ok and saved.data.log.back() == victory_line, "Saved victory uses the new text")
 	# Use Riley's actual menu event, not a direct scene switch.
 	var release := start_click()
 	release.pressed = false

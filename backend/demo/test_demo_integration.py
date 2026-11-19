@@ -254,6 +254,20 @@ def test_squad_round_timing_replay_and_resumption(isolated_test_accounts):
     assert client.post(path.replace("/rounds", "/actions"), headers=headers,
                        json=dict(request_id=body["request_id"], actor=1, version=0)).status_code == 409
     assert client.post(path, headers=headers, json=body | {"request_id": str(uuid4())}).status_code == 409
-    finish = client.post(path, headers=headers, json=body | {"version": 1, "request_id": str(uuid4())}).json()
+    final_round = body | {"version": 1, "request_id": str(uuid4())}
+    finish = client.post(path, headers=headers, json=final_round).json()
     assert finish["status"] == "won" and finish["last_round"]["counter"] is None
     assert sum(hit["damage"] for hit in finish["last_round"]["hits"]) == 36
+    assert finish["log"][-1] == "Victory! The gate is clear."
+    assert client.get("/battles/current", headers=headers).json() == finish
+    assert client.post(path, headers=headers, json=final_round).json() == finish
+
+    # Simulate the original text in records created before this change.
+    legacy_state = json.dumps(finish | {"log": [*finish["log"][:-1],
+                                               "Victory! The gate is clear. No rewards in this demo."]})
+    with transaction() as cursor:
+        cursor.execute("UPDATE DemoBattles SET state=%s WHERE id=%s", (legacy_state, battle["id"]))
+        cursor.execute("UPDATE DemoActions SET response=%s WHERE battle_id=%s AND request_id=%s",
+                       (legacy_state, battle["id"], final_round["request_id"]))
+    assert client.get("/battles/current", headers=headers).json() == finish
+    assert client.post(path, headers=headers, json=final_round).json() == finish

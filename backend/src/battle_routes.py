@@ -42,6 +42,16 @@ class SquadRound(Start):
 
 WINDUP_MS = (300, 550, 150)
 COMBO_WINDOW_MS = 120
+VICTORY_LOG = "Victory! The gate is clear."
+LEGACY_VICTORY_LOG = VICTORY_LOG + " No rewards in this demo."
+
+
+def load_saved_battle(payload):
+    state = json.loads(payload)
+    # Old battle and action records contain the original victory text.
+    if state["status"] == "won":
+        state["log"] = [VICTORY_LOG if entry == LEGACY_VICTORY_LOG else entry for entry in state["log"]]
+    return state
 
 
 def initial_state(battle_id):
@@ -75,7 +85,7 @@ def advance(state, taps, *, squad):
     counter = None
     if enemy["hp"] == 0:
         state["status"] = "won"
-        state["log"].append("Victory! The gate is clear. No rewards in this demo.")
+        state["log"].append(VICTORY_LOG)
     else:
         target = taps[0].actor
         unit = party[target]
@@ -103,11 +113,11 @@ def start(body: Start, authorization: str | None = Depends(authorization_header)
         cursor.execute("SELECT state FROM DemoBattles WHERE u_id=%s AND request_id=%s FOR UPDATE", (user_id, str(body.request_id)))
         existing = cursor.fetchone()
         if existing:
-            return json.loads(existing["state"])
+            return load_saved_battle(existing["state"])
         cursor.execute("SELECT state FROM DemoBattles WHERE u_id=%s AND JSON_UNQUOTE(JSON_EXTRACT(state,'$.status'))='active' LIMIT 1 FOR UPDATE", (user_id,))
         existing = cursor.fetchone()
         if existing:
-            return json.loads(existing["state"])
+            return load_saved_battle(existing["state"])
         state = initial_state(str(uuid4()))
         cursor.execute("INSERT INTO DemoBattles(id,u_id,request_id,state) VALUES(%s,%s,%s,%s)",
                        (state["id"], user_id, str(body.request_id), json.dumps(state)))
@@ -120,7 +130,7 @@ def current(authorization: str | None = Depends(authorization_header)):
         user_id = authenticate(cursor, authorization)
         cursor.execute("SELECT state FROM DemoBattles WHERE u_id=%s ORDER BY created_at DESC,id DESC LIMIT 1", (user_id,))
         existing = cursor.fetchone()
-        return json.loads(existing["state"]) if existing else None
+        return load_saved_battle(existing["state"]) if existing else None
 
 
 @router.post("/battles/{battle_id}/actions")
@@ -148,13 +158,13 @@ def save_action(battle_id, body, authorization):
         retry = cursor.fetchone()
         # A completed request has an older version. Replay it before checking the current version.
         if retry:
-            saved = json.loads(retry["response"])
+            saved = load_saved_battle(retry["response"])
             saved_taps = saved.get("last_round", {}).get("taps")
             expected_taps = [tap.model_dump() for tap in taps] if squad else None
             if retry["actor"] != actor or retry["version"] != body.version or saved_taps != expected_taps:
                 raise HTTPException(409, "Request ID already used for another action")
             return saved
-        state = json.loads(existing["state"])
+        state = load_saved_battle(existing["state"])
         if state["version"] != body.version:
             raise HTTPException(409, "Battle changed. Reload the saved battle")
         state = advance(state, taps, squad=squad)
