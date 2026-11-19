@@ -9,7 +9,7 @@ Godot → Python/FastAPI → Aiven MySQL. The API uses the shared `src/` backend
 3. If you cannot see the project, ask Tyler to grant access under **final-exodus → Permissions → Grant permissions → Grant to users** after your organization invitation is accepted. GitHub access and Aiven access are separate.
 4. The service must say **Running**. If it is powered off, ask the project owner to start it and wait for Running before testing.
 5. Ask Tyler for the **API application's MySQL credentials**, shared privately. Your Aiven website login is not the database username/password. Do not use the database administrator account for the API.
-6. Open the service's **Overview → Connection information** to confirm the hostname, port and database. Download the project's **CA certificate** and save it outside the repository, e.g. `C:/Users/YourName/.final-exodus/ca.pem` or `/Users/yourname/.final-exodus/ca.pem`. If you cannot view/download these, ask Tyler to provide the connection details and certificate privately.
+6. Open the service's **Overview → Connection information** to confirm the hostname, port and database. Download the project's **CA certificate** and save it as `backend/certs/ca.pem` in your checkout on Windows, macOS or Linux. Create the `certs` folder if needed. If you cannot view/download these, ask Tyler to provide the connection details and certificate privately.
 
 The normal API uses the existing `Users`/`Currency` tables and the reviewed additive session/battle tables. An administrator applies the [shared migration and scoped grants](../docs/SHARED_STORAGE.md) once; teammates do not run the historical `001_accounts.sql` or local demo initializer against Aiven. Console project membership does not automatically configure database credentials on your laptop.
 
@@ -49,10 +49,11 @@ FINAL_EXODUS_DB_PASSWORD=your-private-password
 FINAL_EXODUS_DB=Final-Exodus-Database
 FINAL_EXODUS_STORAGE_PROFILE=shared-users-v1
 FINAL_EXODUS_JWT_SECRET=replace-with-your-private-random-signing-key
-FINAL_EXODUS_DB_SSL_CA="C:/Users/YourName/.final-exodus/ca.pem"
 ```
 
-On Mac, change the CA path to your actual `/Users/.../ca.pem` path. Use the provided database name if it differs from `Final-Exodus-Database`. Generate a private JWT signing key of at least 43 characters and preserve it across restarts. Put values containing `#` or spaces in quotes. Never paste the password into Godot, GitHub, screenshots, PRs or test files. `.env` is ignored by Git; `.env.example` contains placeholders only. Do not disable certificate verification to fix connection errors.
+The API automatically finds `backend/certs/ca.pem` when connecting to Aiven. Remove any old `FINAL_EXODUS_DB_SSL_CA` line to use this default. If you keep the certificate elsewhere, set the optional override to an absolute path or a path relative to `backend/`, regardless of where you launch the API.
+
+Use the provided database name if it differs from `Final-Exodus-Database`. Generate a private JWT signing key of at least 43 characters and preserve it across restarts. Put values containing `#` or spaces in quotes. Never paste the password into Godot, GitHub, screenshots, PRs or test files. `.env` is ignored by Git; `.env.example` contains placeholders only. Do not disable certificate verification to fix connection errors.
 
 ## 4. Check the database and start the API
 
@@ -110,7 +111,7 @@ The Godot API origin must match the port you started. The standard command above
 | No Aiven project visible | Accept organization invitation, then have Tyler grant project access. |
 | Hostname cannot resolve / cannot connect | Confirm the service is Running and copy the current hostname/port. |
 | Access denied | Use the API database credentials, not your Aiven website password; ask Tyler to check grants. |
-| Certificate error | Check the CA path and certificate match this project. Keep verification enabled. |
+| Certificate error | Check that `backend/certs/ca.pem` (or your explicit override) contains the current Aiven project CA. Keep verification enabled. |
 | Address already in use | Stop your older API, or choose another port and use that port in Godot too. |
 | Health works but registration fails | Run the database checker, confirm runtime grants and inspect the safe API error; health does not test every write or signing-key setting. |
 | Too many attempts | Wait at least 60 seconds. The supported API allows 20 authentication/registration attempts per IP/minute, including invalid requests. |
