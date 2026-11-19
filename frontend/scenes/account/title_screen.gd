@@ -1,8 +1,7 @@
 extends Control
 
-const LOGIN_SCREEN = preload("res://scenes/login_screen.tscn")
-const SIGNUP_SCREEN = preload("res://scenes/signup_screen.tscn")
-@export var demo_mode := false
+const LOGIN_SCREEN = preload("res://scenes/account/login_screen.tscn")
+const SIGNUP_SCREEN = preload("res://scenes/account/signup_screen.tscn")
 var popup: CanvasLayer
 
 func _ready() -> void:
@@ -16,8 +15,6 @@ func replace_popup(scene: PackedScene) -> CanvasLayer:
 	if is_instance_valid(popup):
 		popup.queue_free()
 	popup = scene.instantiate()
-	if scene == LOGIN_SCREEN:
-		popup.enable_google = demo_mode
 	add_child(popup)
 	return popup
 
@@ -28,8 +25,6 @@ func _on_account_pressed() -> void:
 func _pop_login() -> void:
 	var login_popup := replace_popup(LOGIN_SCREEN)
 	login_popup.signup_signal.connect(_pop_signup)
-	if demo_mode:
-		login_popup.logged_in.connect(func() -> void: get_tree().change_scene_to_file("res://scenes/demo_hub.tscn"))
 
 func _pop_signup() -> void:
 	var signup_popup := replace_popup(SIGNUP_SCREEN)
@@ -39,10 +34,7 @@ func _start_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if is_instance_valid(popup) and popup.pending:
 			return
-		if demo_mode and GameSession.token.is_empty():
-			_pop_login()
-		else:
-			get_tree().change_scene_to_file("res://scenes/demo_hub.tscn" if demo_mode else "res://scenes/hub.tscn")
+		get_tree().change_scene_to_file("res://scenes/hub/hub.tscn")
 
 func _exit_tree() -> void:
 	$AudioStreamPlayer2D.stop()

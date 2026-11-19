@@ -10,7 +10,7 @@ import uvicorn
 
 BACKEND = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(BACKEND))
-from src.demo_store import transaction
+from src.game_store import transaction
 from src.local_test_target import require_local_test_database
 
 
@@ -19,7 +19,7 @@ def main():
     load_dotenv(BACKEND / '.env.demo', override=True)
     require_local_test_database()
 
-    from src import main as demo, demo_google
+    from src import google_auth, main as server
 
     os.environ['FINAL_EXODUS_GOOGLE_CLIENT_ID'] = 'simulated.apps.googleusercontent.com'
     os.environ['FINAL_EXODUS_GOOGLE_CLIENT_SECRET'] = 'simulated-client-secret'
@@ -31,9 +31,9 @@ def main():
             raise ValueError('Only the simulated test code is accepted')
         return dict(subject=subject, email=email, display_name='Simulated Google Player')
 
-    demo_google.verified_identity = simulated_identity
+    google_auth.verified_identity = simulated_identity
     try:
-        uvicorn.run(demo.app, host='127.0.0.1', port=8009,
+        uvicorn.run(server.app, host='127.0.0.1', port=8009,
                     proxy_headers=False, access_log=False)
     except KeyboardInterrupt:
         pass

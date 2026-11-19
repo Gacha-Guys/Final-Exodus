@@ -3,7 +3,7 @@ from urllib.parse import parse_qs, urlsplit
 import pytest
 from fastapi.testclient import TestClient
 
-from src import demo_google
+from src import google_auth
 from src.main import app
 
 
@@ -17,7 +17,7 @@ def test_google_callback_matches_listener(monkeypatch, port):
     try:
         expected = f"http://127.0.0.1:{port}/auth/google/callback"
         assert parse_qs(urlsplit(data["authorization_url"]).query)["redirect_uri"] == [expected]
-        assert demo_google.flows[data["flow_id"]].redirect_uri == expected
+        assert google_auth.flows[data["flow_id"]].redirect_uri == expected
     finally:
         client.post("/auth/google/cancel", json={k: data[k] for k in ("flow_id", "poll_secret")})
 

@@ -59,6 +59,7 @@ func request(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary
 		return {"ok": false, "status": 0, "error": "Could not connect. Start the local API and retry."}
 	var response: Array = await http.request_completed
 	http.queue_free()
+	# A request from the previous account must not update or sign out the current account.
 	if started_generation != generation:
 		return {"ok": false, "status": 0, "error": "Account changed. Please retry."}
 	if response[0] != HTTPRequest.RESULT_SUCCESS:
@@ -82,9 +83,7 @@ func request(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary
 	if code == 401 and authenticated:
 		clear()
 		notice = "Session expired. Please log in again."
-		var current := get_tree().current_scene
-		var demo_scene := is_instance_valid(current) and current.scene_file_path in ["res://scenes/demo_hub.tscn", "res://scenes/demo_battle.tscn", "res://scenes/demo_title.tscn"]
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/demo_title.tscn" if demo_scene else "res://scenes/titleScreenNew.tscn")
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/account/title_screen.tscn")
 	return {"ok": false, "status": code, "error": message}
 
 func refresh_account() -> Dictionary:
@@ -107,23 +106,3 @@ func valid_account(data: Variant) -> bool:
 		if not number(data.get(key)):
 			return false
 	return data.id > 0
-
-func valid_battle(data: Variant) -> bool:
-	if not data is Dictionary or not data.get("id") is String or not number(data.get("version")) or not number(data.get("turn")):
-		return false
-	if not data.get("status") in ["active", "won", "lost"] or not data.get("party") is Array or data.party.size() != 3:
-		return false
-	if not data.get("log") is Array or not data.get("enemy") is Dictionary:
-		return false
-	for entry in data.log:
-		if not entry is String:
-			return false
-	var units: Array = data.party.duplicate()
-	units.append(data.enemy)
-	for unit in units:
-		if not unit is Dictionary or not unit.get("name") is String:
-			return false
-		for key in ["hp", "max_hp", "attack"]:
-			if not number(unit.get(key)):
-				return false
-	return true

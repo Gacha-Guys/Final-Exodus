@@ -21,13 +21,13 @@ For an existing local MySQL installation, use `setup_demo.py --admin-env /privat
 
 For Aiven, start `Server.py --env-file /private/aiven-game-api.env` after the additive migration and scoped credentials are verified. The app environment deliberately selects `shared-users-v1`. Database hosting and a remotely hosted HTTPS API are separate. See SHARED_STORAGE.md.
 
-## Team flow and isolated currency prototype
+## Team flow and shop
 
-The normal title/hub/Story navigation and shop retain the team’s presentation: four gem offers and a gamepass. The four gem buttons call Mihai’s 50/200/500/999 paid-currency prototypes. Local setup enables it only for the exact isolated loopback database with `FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE=1`; authenticated updates are limited to the logged-in account, reject negative balances and guard overflow. Shared storage always returns 410 for that update, even with the flag, so the prototype cannot mint shared currency. No real payment is taken.
+The shop displays the player’s saved rank and balance. Purchases are unavailable on both shared and local storage.
 
 ## Optional three-to-four-minute combat walkthrough
 
-Open `frontend/scenes/demo_title.tscn` and press **F6**. This separate scene opts into fixture combat, Settings/logout and the Google button. It does not replace the F5 team hub or Story/navigation. Shop/Home returns to the normal team hub; rerun the optional scene to return to its combat controls. For Google on either title screen, register the matching loopback callback as described in [AUTHENTICATION.md](AUTHENTICATION.md).
+Press **Run Project**. Sign in from the title, press **Start**, and choose **Battle** in the hub. Use **Settings** in the hub to sign out. For Google sign-in, register the matching loopback callback as described in [AUTHENTICATION.md](AUTHENTICATION.md).
 
 | Time | Action |
 | --- | --- |

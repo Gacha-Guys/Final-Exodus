@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr, field_validator
 from pwdlib import PasswordHash
 from pwdlib.exceptions import UnknownHashError
-from .demo_store import transaction
-from .demo_tokens import authenticate, authorization_header, issue_session, token_hash
+from .game_store import transaction
+from .session_tokens import authenticate, authorization_header, issue_session, token_hash
 
 router = APIRouter()
 password_hash = PasswordHash.recommended()

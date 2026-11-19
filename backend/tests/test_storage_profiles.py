@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from unittest.mock import MagicMock
 import pytest
 from fastapi import HTTPException
-from src import demo_store as store
+from src import game_store as store
 
 
 def connection(monkeypatch, marker):

@@ -71,11 +71,10 @@ func run() -> void:
 	root.size = Vector2i(390, 744) if small else Vector2i(480, 854)
 	session = root.get_node("GameSession")
 	var legacy: Node = root.get_node("PlayerData")
-	var title: Node = load("res://scenes/titleScreenNew.tscn").instantiate()
+	var title: Node = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
 	root.add_child(title)
 	current_scene = title
 	await process_frame
-	expect(not title.demo_mode, "Default title is the team's flow")
 	var availability: Dictionary = await session.request("/auth/google/status", HTTPClient.METHOD_GET, {}, false)
 	expect(availability.ok and title.popup.get_node("%GoogleButton").visible == availability.data.enabled, "Team login follows the local provider configuration")
 	title.popup.queue_free()
@@ -86,7 +85,7 @@ func run() -> void:
 	expect(hub.get_node(hub.RANK_PATH).text == "Rank\n\u2014", "Guest rank shows a dash")
 	expect(hub.get_node("StoryButton").visible and not hub.has_method("build_encounter_panel"), "Guest hub retains Story without injected combat")
 	click_button(hub.get_node("BattleButton"))
-	title = await wait_scene("titleScreenNew.tscn")
+	title = await wait_scene("title_screen.tscn")
 	expect(title.popup.message.text.contains("Log in"), "Guest battle entry explains the sign-in requirement")
 	title._pop_signup()
 	await process_frame
@@ -130,6 +129,33 @@ func run() -> void:
 	for name in ["UnitsButton", "SummonButton"]:
 		expect(not hub.get_node(name).target_scene.is_empty(), "Team %s destination is retained" % name)
 	await screenshot("team-hub")
+	hub.open_account_settings()
+	var renamed_username := username + "Renamed"
+	hub.username_input.text = "   "
+	await hub.save_username()
+	expect(hub.account_status.text == "Enter a username." and session.account.display_name == username,
+		"Blank username leaves the signed-in account intact")
+	hub.username_input.text = renamed_username
+	hub.account_dialog.confirmed.emit()
+	for step in range(250):
+		if not hub.account_request_pending:
+			break
+		await create_timer(0.02).timeout
+	expect(session.account.display_name == renamed_username and hub.account_status.text == "Username saved.",
+		"Settings saves the new username and updates the current account")
+	var account_after_rename: Dictionary = await session.request("/me")
+	expect(account_after_rename.ok and account_after_rename.data.display_name == renamed_username,
+		"The server persists the renamed account")
+	var old_name: Dictionary = await session.request("/sessions", HTTPClient.METHOD_POST,
+		{"name": username, "password": PASSWORD}, false)
+	expect(old_name.status == 401, "The previous username can no longer sign in")
+	var new_name: Dictionary = await session.request("/sessions", HTTPClient.METHOD_POST,
+		{"name": renamed_username, "password": PASSWORD}, false)
+	expect(new_name.ok, "The renamed account can sign in")
+	if new_name.ok:
+		await session.request("/sessions/current", HTTPClient.METHOD_DELETE, {}, true)
+		session.token = new_name.data.access_token
+	hub.account_dialog.hide()
 	click_button(hub.get_node("BattleButton"))
 	var battle: Node = await ready_battle()
 	var battle_id: String = battle.state.id
@@ -153,10 +179,16 @@ func run() -> void:
 		battle.attack_buttons[turn % 3].pressed.emit()
 		await wait_idle(battle)
 	expect(battle.state.status == "won", "Team battle reaches server-confirmed victory")
+	var victory_line := "Victory! The gate is clear."
+	var visible_log: String = battle.log_label.text
+	expect(visible_log.ends_with(victory_line), "Battle log shows the new victory text")
+	print("Visible victory log: %s" % visible_log.get_slice("\n", visible_log.get_slice_count("\n") - 1))
+	await screenshot("team-victory")
 	click_button(battle.back_button)
 	hub = await wait_scene("/hub.tscn")
 	var saved: Dictionary = await session.request("/battles/current")
 	expect(saved.ok and saved.data.id == battle_id and saved.data.status == "won", "Victory is saved after returning to the team hub")
+	expect(saved.ok and saved.data.log.back() == victory_line, "Saved victory uses the new text")
 	# Use Riley's actual menu event, not a direct scene switch.
 	var release := start_click()
 	release.pressed = false
@@ -165,37 +197,19 @@ func run() -> void:
 	expect(shop.get_node("GridContainer").get_child_count() == 5, "Shop has Riley's original five offers")
 	expect(shop.get_node("GridContainer/CurrencyButton5/HBoxContainer2/Title").text.contains("Gamepass"), "Fifth offer remains gamepass")
 	expect(shop.get_node(shop.RANK_PATH).text == "Rank\n1", "Shop rank agrees with the saved account")
-	await shop._on_currency_offer_pressed()
-	expect(legacy.paid_currency == 50 and shop.get_node("%Currency").val == 50, "Mihai's +50 local prototype persists and updates the HUD")
-	var expected_balance := 50
-	for index in range(2, 5):
-		shop.get_node("%%CurrencyButton%d" % index).pressed.emit()
-		for step in range(100):
-			await create_timer(0.02).timeout
-			if not shop.pending:
-				break
-		expected_balance += [200, 500, 999][index - 2]
-		expect(legacy.paid_currency == expected_balance and not shop.pending, "Offer %d preserves Mihai's currency amount" % index)
-	await legacy.update_currency(-1699, "paid")
-	expect(legacy.paid_currency == 50, "Prototype currency test restores its known starting balance")
-	var forbidden: Dictionary = await session.request("/currency/update", HTTPClient.METHOD_POST, {"u_id": legacy.user_id + 1, "amount": 50, "type": "paid"})
-	expect(forbidden.status == 403, "Prototype cannot change another player's currency")
-	await legacy.update_currency(-20, "paid")
-	expect(legacy.paid_currency == 30, "Team's currency subtraction remains functional")
-	await legacy.update_currency(-31, "paid")
-	expect(legacy.paid_currency == 30 and is_instance_valid(shop.message), "Insufficient currency preserves balance and reports failure")
-	shop.message.hide()
+	expect(not shop.get_node("GridContainer").visible and shop.get_node("PurchaseStatus").visible, "Shop shows purchases are unavailable without a popup")
+	expect(shop.get_node("%Currency").val == 0, "Shop displays the saved balance")
 	await screenshot("team-shop")
 	shop.get_node("HomeButton")._gui_input(release)
 	hub = await wait_scene("hub.tscn")
-	expect(hub.get_node("%Currency").val == 30, "Home navigation retains the saved balance")
+	expect(hub.get_node("%Currency").val == 0, "Home navigation retains the saved balance")
 	# Reload through the API, proving the display is not only a local counter.
 	var fetched: Dictionary = await session.refresh_account()
-	expect(fetched.ok and int(fetched.data.paid_currency) == 30, "Currency balance is saved on the server")
+	expect(fetched.ok and int(fetched.data.paid_currency) == 0, "Currency balance is saved on the server")
 	var result: Dictionary = await session.request("/sessions/current", HTTPClient.METHOD_DELETE)
 	expect(result.ok, "Authenticated logout revokes the session")
 	click_button(hub.get_node("BattleButton"))
-	title = await wait_scene("/titleScreenNew.tscn")
+	title = await wait_scene("/title_screen.tscn")
 	expect(title.popup.message.text.contains("expired"), "Expired battle session returns to team login")
 	expect(legacy.user_id == 0 and legacy.paid_currency == 0, "Account clearing removes private HUD data")
 	print("Team restoration checks: %d passed, %d failed; test account: %s" % [checks - failures, failures, email])
