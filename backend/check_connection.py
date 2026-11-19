@@ -11,15 +11,25 @@ if __name__ == "__main__":
     try:
         connection = connect()
         try:
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT 1 FROM accounts LIMIT 1")
-                cursor.fetchone()
-                cursor.execute("SELECT 1 FROM wallets LIMIT 1")
-                cursor.fetchone()
-            print("Connected: accounts and wallets are readable.")
+            cursor = connection.cursor()
+
+            cursor.execute("SELECT DATABASE(), @@hostname, USER()")
+            row = cursor.fetchone()
+            print("Database:", row[0])
+            print("Server host:", row[1])
+            print("Connected as:", row[2])
+
+            cursor.execute("SHOW TABLES")
+            tables = cursor.fetchall()
+            print("Tables found:")
+            for table in tables:
+                print("  -", table[0])
+
+            cursor.close()
         finally:
             connection.close()
-    except Exception as error:
-        # Database exceptions can contain private connection details.
-        print("Connection check failed (" + type(error).__name__ + "). Check service power, settings, certificate and access.")
-        raise SystemExit(1) from None
+    except Exception:
+        import traceback
+
+        traceback.print_exc()
+        raise SystemExit(1)

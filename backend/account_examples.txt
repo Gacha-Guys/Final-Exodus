@@ -1,0 +1,35 @@
+-- Example account creation
+
+INSERT INTO Users (name, email, password, dob)
+VALUES ('example', 'example@example.com', 'example', '2000-01-01')
+
+ -- exp and level are automatically set to 0.
+ -- id is auto increment, so the first user added has id 1, the second has id 2 etc.
+ -- There's already a test user with id 2, therefore future additions will increment from there.
+ -- All other fields must be initialized.
+ -- SQL dates are in year-month-day order.
+
+
+-- Currency is a table with this schema:
+
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| Type  | varchar(255) | NO   | PRI | NULL    |       |
+| count | int          | YES  |     | 0       |       |
+| u_id  | int          | NO   | PRI | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+
+-- After creating a User and inserting into the Users table, 2 entries will be added to the Currency table:
++------+-------+------+
+| Type | count | u_id |
++------+-------+------+
+| free |     0 |    2 |
+| paid |     0 |    2 |
++------+-------+------+
+-- When updating how much currency a certain user has, use this example as a guideline:
+
+UPDATE Currency
+SET count = count + 100
+WHERE Type = 'free' AND u_id = 2
+

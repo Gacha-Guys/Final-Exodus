@@ -1,6 +1,8 @@
-.venv/
+.venv
+.idea/
 __pycache__/
 .env
+
 
 .docker-public/
 
@@ -10,5 +12,9 @@ __pycache__/
 .DS_Store
 .env.*
 !.env.example
+/backend/certs/ca.pem
 *.local.cfg
 exports/
+
+# Godot temporary scene saves
+*.tscn*.tmp

@@ -1,9 +1,8 @@
 [gd_scene format=3 uid="uid://cqyhc8uo5aufb"]
 
-[ext_resource type="Script" uid="uid://w0y2qplc656j" path="res://ui/menubutton.gd" id="1_h7o18"]
+[ext_resource type="Script" uid="uid://w0y2qplc656j" path="res://ui/scripts/menubutton.gd" id="1_h7o18"]
 [ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="1_y5k6y"]
 [ext_resource type="Texture2D" uid="uid://daa6cktorym67" path="res://assets/button_gradient_border.svg" id="2_h7o18"]
-[ext_resource type="Texture2D" uid="uid://oyhqoa4315ru" path="res://assets/house.png" id="3_sjaw1"]
 
 [sub_resource type="FontVariation" id="FontVariation_5g2or"]
 base_font = ExtResource("1_y5k6y")
@@ -50,7 +49,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_sjaw1")
 stretch_mode = 5
 
 [node name="Label" type="Label" parent="." unique_id=208471546]

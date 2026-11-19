@@ -21,6 +21,7 @@ class Unit:
     moves: list
     level: int
     experience: int
+    rarity: int
 
 @dataclass
 class Move:
@@ -41,6 +42,8 @@ class Item:
     id: int
     name: str
     description: str
+    type: str
+    on_use: int
 
 @dataclass
 class User:
