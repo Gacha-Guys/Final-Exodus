@@ -36,7 +36,7 @@ Use a separate private application environment with `FINAL_EXODUS_STORAGE_PROFIL
 
 The application needs SELECT on its runtime tables, INSERT/UPDATE on Users, INSERT/DELETE on DemoSessions, INSERT/UPDATE on DemoBattles, INSERT/UPDATE on DemoActions, and INSERT on DemoGoogleIdentities. The replay journal's UPDATE privilege is required by MySQL's `SELECT ... FOR UPDATE` locking read; the API inserts immutable replay responses. Currency initialization runs through the preserved trigger rather than a second API write. Review actual grants narrowly; the API does not need CREATE, ALTER, DROP, GRANT or permission to modify catalog/ownership tables in the current account/battle slice. The migration administrator applies schema changes separately. The runtime requires SELECT on `FinalExodusSchemaMigrations` and refuses shared requests without its verified version marker.
 
-Shared `/currency/update` always returns 410 for authenticated callers, even if `FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE=1` is accidentally set. The +50 shop prototype runs only against the opted-in isolated local database.
+The retired `POST /currency/update` route returns 404 in every storage profile. Authenticated balance reads remain available.
 
 The trigger initializes free/paid balances exactly once on registration. The API must not add a second balance initialization path. Battle victory state persists; XP/currency payouts, owned-roster combat and gacha remain separate features.
 

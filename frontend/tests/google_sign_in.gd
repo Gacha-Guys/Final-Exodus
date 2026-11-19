@@ -49,18 +49,9 @@ func callback(google: Node) -> void:
 	expect(response[1] == 200, "Simulated browser callback accepted")
 	http.queue_free()
 
-func wait_hub() -> Node:
-	for step in range(200):
-		await create_timer(0.02).timeout
-		if is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("demo_hub.tscn") and not current_scene.pending:
-			return current_scene
-	expect(false, "Google login enters the hub")
-	quit(1)
-	return null
-
 func run() -> void:
 	session = root.get_node("GameSession")
-	title = load("res://scenes/titleScreenNew.tscn").instantiate()
+	title = load(ProjectSettings.get_setting("application/run/main_scene")).instantiate()
 	root.add_child(title)
 	current_scene = title
 	await process_frame
@@ -107,7 +98,7 @@ func run() -> void:
 	title._start_input(click)
 	await scene_changed
 	var hub: Node = current_scene
-	expect(hub.scene_file_path == "res://scenes/hub.tscn", "Start opens the team hub")
+	expect(hub.scene_file_path == "res://scenes/hub/hub.tscn", "Start opens the team hub")
 	var account_id: int = int(session.account.id)
 	expect(session.account.display_name == test_username and root.get_node("PlayerData").user_id == account_id, "Team HUD receives the signed-in account")
 	var started: Dictionary = await session.request("/battles", HTTPClient.METHOD_POST, {"request_id":session.uuid()})
@@ -126,24 +117,46 @@ func run() -> void:
 	if not is_instance_valid(hub.account_dialog):
 		quit(1)
 		return
-	hub.account_dialog.confirmed.emit()
+	hub.account_dialog.custom_action.emit(&"sign_out")
 	await scene_changed
-	expect(current_scene.scene_file_path.ends_with("/titleScreenNew.tscn") and session.token.is_empty(), "Team sign-out returns to team login")
-	change_scene_to_file("res://scenes/demo_title.tscn")
-	await scene_changed
+	expect(current_scene.scene_file_path.ends_with("/title_screen.tscn") and session.token.is_empty(), "Team sign-out returns to team login")
 	title = current_scene
 	google = await start_google()
 	await callback(google)
-	hub = await wait_hub()
-	expect(int(session.account.id) == account_id and session.battle.id == battle_id, "Returning Google user resumes the same account and battle")
+	for step in range(100):
+		if not is_instance_valid(login):
+			break
+		await create_timer(0.02).timeout
+	expect(current_scene == title and not is_instance_valid(login), "Returning Google sign-in finishes on the normal title")
+	click = InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	title._start_input(click)
+	await scene_changed
+	hub = current_scene
+	hub.enter_battle()
+	await scene_changed
+	var battle: Node = current_scene
+	for step in range(250):
+		if not battle.pending:
+			break
+		await create_timer(0.02).timeout
+	expect(int(session.account.id) == account_id and battle.state.get("id") == battle_id, "Returning Google user resumes the same account and battle from the normal hub")
 	var previous_token: String = session.token
 	var previous_account: Dictionary = session.account.duplicate()
 	var previous_battle: Dictionary = session.battle.duplicate()
-	await hub.logout()
-	await create_timer(0.1).timeout
+	change_scene_to_file("res://scenes/hub/hub.tscn")
+	await scene_changed
+	hub = current_scene
+	hub.open_account_settings()
+	await hub.sign_out()
+	for step in range(50):
+		if is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("/title_screen.tscn"):
+			break
+		await create_timer(0.02).timeout
 	expect(session.token.is_empty() and session.account.is_empty(), "Google logout clears the client")
 
-	change_scene_to_file("res://scenes/hub.tscn")
+	change_scene_to_file("res://scenes/hub/hub.tscn")
 	await scene_changed
 	hub = current_scene
 	var connected_origin: String = session.api_origin
@@ -154,12 +167,12 @@ func run() -> void:
 	hub.open_account_settings()
 	await hub.sign_out()
 	for step in range(50):
-		if is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("/titleScreenNew.tscn"):
+		if is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("/title_screen.tscn"):
 			break
 		await create_timer(0.02).timeout
 	session.api_origin = connected_origin
 	expect(session.token.is_empty() and session.account.is_empty() and session.battle.is_empty(), "Offline sign-out clears the local token, account and battle")
-	var returned_to_title := is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("/titleScreenNew.tscn")
+	var returned_to_title := is_instance_valid(current_scene) and current_scene.scene_file_path.ends_with("/title_screen.tscn")
 	expect(returned_to_title, "Offline sign-out returns to the title")
 	if returned_to_title:
 		expect(current_scene.popup.message.text.contains("could not be confirmed"), "Offline sign-out reports unconfirmed server revocation")

@@ -1,15 +1,13 @@
 extends CanvasLayer
 
 signal signup_signal
-signal logged_in
 var pending := false
-var enable_google := false
-const GOOGLE_SIGN_IN = preload("res://scripts/demo/google_sign_in.gd")
+const GOOGLE_SIGN_IN = preload("res://scenes/account/google_sign_in.gd")
 @onready var fields: VBoxContainer = $LoginScreen/Container/Panel/Margin/VBox
 @onready var message: Label = %ErrorMessage
 
 func _ready() -> void:
-	%GoogleButton.visible = enable_google
+	%GoogleButton.visible = false
 	%CloseButton.pressed.connect(queue_free)
 	%SignUpButton.pressed.connect(func() -> void:
 		signup_signal.emit()
@@ -20,8 +18,7 @@ func _ready() -> void:
 	fields.get_node("PasswordInput").text_submitted.connect(func(_text: String) -> void: submit())
 	message.text = GameSession.notice
 	GameSession.notice = ""
-	if not enable_google:
-		check_google_availability()
+	check_google_availability()
 
 func check_google_availability() -> void:
 	# The browser callback is local to the machine running the game.
@@ -63,7 +60,6 @@ func accept_session(data: Dictionary) -> void:
 	GameSession.token = data.access_token
 	var profile: Dictionary = await GameSession.refresh_account()
 	if profile.ok:
-		logged_in.emit()
 		queue_free()
 		return
 	GameSession.clear()

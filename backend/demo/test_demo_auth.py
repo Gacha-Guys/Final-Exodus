@@ -16,8 +16,8 @@ import jwt
 import pytest
 
 from test_demo_integration import isolated_test_accounts, register, signed_in, PASSWORD
-from src import demo, demo_google as google, demo_tokens as tokens
-from src.demo_store import transaction
+from src import main, google_auth as google, session_tokens as tokens
+from src.game_store import transaction
 
 
 @pytest.fixture(autouse=True)
@@ -103,7 +103,7 @@ def test_missing_signing_key_fails_closed(isolated_test_accounts, monkeypatch):
 
 
 def test_google_unconfigured_and_state_replay(monkeypatch):
-    client = TestClient(demo.app)
+    client = TestClient(main.app)
     monkeypatch.delenv('FINAL_EXODUS_GOOGLE_CLIENT_SECRET')
     assert client.post('/auth/google/start').status_code == 503
     monkeypatch.setenv('FINAL_EXODUS_GOOGLE_CLIENT_SECRET','fake-test-client-secret')
@@ -127,7 +127,7 @@ def test_google_unconfigured_and_state_replay(monkeypatch):
     ],
 )
 def test_google_callback_failure_does_not_verify_flow(monkeypatch, callback_params, failure, message):
-    client = TestClient(demo.app)
+    client = TestClient(main.app)
     key = begin(client)
 
     def reject_identity(code, flow):
@@ -146,7 +146,7 @@ def test_google_callback_failure_does_not_verify_flow(monkeypatch, callback_para
 
 
 def test_google_registration_returning_user_logout_and_no_password(isolated_test_accounts, monkeypatch):
-    client = TestClient(demo.app)
+    client = TestClient(main.app)
     who = identity(isolated_test_accounts)
     key = verified_flow(client, monkeypatch, who)
     assert client.post('/auth/google/poll',json=key).json()['status'] == 'registration_required'
@@ -179,7 +179,7 @@ def test_google_does_not_link_matching_email(isolated_test_accounts, monkeypatch
 
 
 def test_google_cancel_expiry_capacity_and_early_registration(monkeypatch):
-    client = TestClient(demo.app)
+    client = TestClient(main.app)
     key = begin(client)
     assert client.post('/auth/google/register',json=key | dict(display_name='No',dob='2000-01-01')).status_code == 400
     assert client.post('/auth/google/cancel',json=key).status_code == 204

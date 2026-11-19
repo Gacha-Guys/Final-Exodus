@@ -5,12 +5,12 @@ from unittest.mock import MagicMock
 from fastapi.testclient import TestClient
 import pytest
 
-from src import compatibility, demo, demo_accounts
+from src import account_routes, compatibility, main
 from src.main import app
 from src.rate_limit import RegistrationLimiter
 
 PASSWORD = "UsernameLogin!2026"
-HASH = demo_accounts.password_hash.hash(PASSWORD)
+HASH = account_routes.password_hash.hash(PASSWORD)
 
 
 @pytest.fixture
@@ -20,10 +20,10 @@ def cursor(monkeypatch):
     @contextmanager
     def transaction():
         yield cursor
-    for module in (demo_accounts, compatibility):
+    for module in (account_routes, compatibility):
         monkeypatch.setattr(module, "transaction", transaction)
         monkeypatch.setattr(module, "issue_session", lambda *_: {"access_token": "signed", "token_type": "bearer", "expires_in": 900})
-    monkeypatch.setattr(demo, "limiter", RegistrationLimiter(limit=1000))
+    monkeypatch.setattr(main, "limiter", RegistrationLimiter(limit=1000))
     return cursor
 
 

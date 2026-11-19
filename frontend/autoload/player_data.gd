@@ -30,6 +30,7 @@ func getCurrency(id: int) -> void:
 	if not result.ok:
 		currency_fail.emit(result.error)
 
+# Older teammate scenes still call these account methods after merging frontend changes.
 func login(name: String, password: String) -> void:
 	var result: Dictionary = await GameSession.request("/login", HTTPClient.METHOD_POST, {"name": name, "password": password}, false)
 	password = ""
@@ -55,16 +56,3 @@ func signup(email: String, name: String, password: String, dob: String = "") -> 
 		signup_succeeded.emit()
 	else:
 		signup_failed.emit(result.get("error", "Unexpected registration response."))
-
-func update_currency(amount: int, type: String) -> void:
-	if GameSession.token.is_empty():
-		currency_fail.emit("Log in to update your own currency.")
-		return
-	var result: Dictionary = await GameSession.request("/currency/update", HTTPClient.METHOD_POST, {"u_id": user_id, "amount": amount, "type": type})
-	if not result.ok:
-		currency_fail.emit(result.error)
-		return
-	if not result.data is Dictionary or result.data.get("type") != type or not GameSession.number(result.data.get("count")):
-		currency_fail.emit("Unexpected currency response.")
-		return
-	await getCurrency(user_id)

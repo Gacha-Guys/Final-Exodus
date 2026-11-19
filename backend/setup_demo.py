@@ -40,9 +40,6 @@ def main():
             with target.open("a") as stream:
                 stream.write("\nFINAL_EXODUS_JWT_SECRET=" + secrets.token_urlsafe(48) + "\n")
         target.chmod(0o600)
-        if "FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE" not in existing:
-            with target.open("a") as stream:
-                stream.write("\nFINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE=1\n")
         print("Local auth setup ready. Existing accounts and battles preserved.")
         return
     password = secrets.token_urlsafe(32)
@@ -73,7 +70,6 @@ def main():
         content = (f"FINAL_EXODUS_DB_HOST=127.0.0.1\nFINAL_EXODUS_DB_PORT={port}\n"
                    "FINAL_EXODUS_DB_USER=tyler_demo_api\n"
                    "FINAL_EXODUS_STORAGE_PROFILE=local-demo\n"
-                   "FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE=1\n"
                    f"FINAL_EXODUS_DB_PASSWORD={password}\nFINAL_EXODUS_DB={DATABASE}\n"
                    f"FINAL_EXODUS_JWT_SECRET={secrets.token_urlsafe(48)}\n")
         fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)

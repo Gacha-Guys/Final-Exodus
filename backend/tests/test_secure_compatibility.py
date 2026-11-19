@@ -5,12 +5,11 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 import pytest
 from src.main import app
-from src import compatibility as compat, demo_accounts as accounts
+from src import compatibility as compat, account_routes as accounts
 
 
 @pytest.fixture
 def cursor(monkeypatch):
-    monkeypatch.setenv("FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE", "0")
     cursor = MagicMock()
     @contextmanager
     def transaction():
@@ -38,11 +37,12 @@ def test_currency_returns_only_session_account(cursor):
     assert cursor.execute.call_args.args[1] == (7,)
 
 
-def test_caller_cannot_credit_currency(cursor):
+def test_currency_write_route_is_retired(cursor, monkeypatch):
+    monkeypatch.setenv("FINAL_EXODUS_ENABLE_CURRENCY_PROTOTYPE", "1")
     client = TestClient(app)
     body = {"u_id": 7, "amount": 500, "type": "paid"}
-    assert client.post("/currency/update", json=body).status_code == 401
-    assert client.post("/currency/update", json=body, headers={"Authorization": "Bearer valid"}).status_code == 410
+    assert client.post("/currency/update", json=body).status_code == 404
+    assert client.post("/currency/update", json=body, headers={"Authorization": "Bearer valid"}).status_code == 404
     cursor.execute.assert_not_called()
 
 
@@ -72,21 +72,6 @@ def test_signup_restores_team_contract_without_dob(monkeypatch):
     assert registration.dob is None
     assert registration.display_name == body["name"]
     assert registration.password.get_secret_value() == "short"
-
-
-@pytest.mark.parametrize("profile,host,db,flag", [
-    ("shared-users-v1", "127.0.0.1", "final_exodus_tyler_demo", "1"),
-    ("local-demo", "remote.invalid", "final_exodus_tyler_demo", "1"),
-    ("local-demo", "127.0.0.1", "shared", "1"),
-    ("local-demo", "127.0.0.1", "final_exodus_tyler_demo", "0"),
-])
-def test_currency_flag_never_enables_shared_or_other_target(cursor, monkeypatch, profile, host, db, flag):
-    for key, value in {"STORAGE_PROFILE": profile, "DB_HOST": host, "DB": db,
-                       "ENABLE_CURRENCY_PROTOTYPE": flag}.items():
-        monkeypatch.setenv("FINAL_EXODUS_" + key, value)
-    body = {"u_id": 7, "amount": 50, "type": "paid"}
-    assert TestClient(app).post("/currency/update", json=body, headers={"Authorization": "Bearer valid"}).status_code == 410
-    cursor.execute.assert_not_called()
 
 
 @pytest.mark.parametrize("route", ["/account/inventory", "/account/units", "/unit"])
