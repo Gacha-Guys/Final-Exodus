@@ -10,6 +10,7 @@ from dotenv import dotenv_values
 import pymysql
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.accounts import create_account, password_hash
+from src.database import verified_tls_settings
 from src.main import app
 from fastapi.testclient import TestClient
 from src.rate_limit import RegistrationLimiter
@@ -19,8 +20,8 @@ def database(values):
     return pymysql.connect(host=values['FINAL_EXODUS_DB_HOST'], port=int(values['FINAL_EXODUS_DB_PORT']),
         user=values['FINAL_EXODUS_DB_USER'], password=values['FINAL_EXODUS_DB_PASSWORD'],
         database=values.get('FINAL_EXODUS_DB', 'defaultdb'), charset='utf8mb4',
-        ssl_ca=values['FINAL_EXODUS_DB_SSL_CA'], ssl_verify_cert=True, ssl_verify_identity=True,
-        connect_timeout=5, read_timeout=10, write_timeout=10)
+        connect_timeout=5, read_timeout=10, write_timeout=10,
+        **verified_tls_settings(values.get('FINAL_EXODUS_DB_SSL_CA')))
 
 
 def run(settings, admin):
