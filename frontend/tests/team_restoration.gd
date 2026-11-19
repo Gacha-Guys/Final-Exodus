@@ -129,6 +129,33 @@ func run() -> void:
 	for name in ["UnitsButton", "SummonButton"]:
 		expect(not hub.get_node(name).target_scene.is_empty(), "Team %s destination is retained" % name)
 	await screenshot("team-hub")
+	hub.open_account_settings()
+	var renamed_username := username + "Renamed"
+	hub.username_input.text = "   "
+	await hub.save_username()
+	expect(hub.account_status.text == "Enter a username." and session.account.display_name == username,
+		"Blank username leaves the signed-in account intact")
+	hub.username_input.text = renamed_username
+	hub.account_dialog.confirmed.emit()
+	for step in range(250):
+		if not hub.account_request_pending:
+			break
+		await create_timer(0.02).timeout
+	expect(session.account.display_name == renamed_username and hub.account_status.text == "Username saved.",
+		"Settings saves the new username and updates the current account")
+	var account_after_rename: Dictionary = await session.request("/me")
+	expect(account_after_rename.ok and account_after_rename.data.display_name == renamed_username,
+		"The server persists the renamed account")
+	var old_name: Dictionary = await session.request("/sessions", HTTPClient.METHOD_POST,
+		{"name": username, "password": PASSWORD}, false)
+	expect(old_name.status == 401, "The previous username can no longer sign in")
+	var new_name: Dictionary = await session.request("/sessions", HTTPClient.METHOD_POST,
+		{"name": renamed_username, "password": PASSWORD}, false)
+	expect(new_name.ok, "The renamed account can sign in")
+	if new_name.ok:
+		await session.request("/sessions/current", HTTPClient.METHOD_DELETE, {}, true)
+		session.token = new_name.data.access_token
+	hub.account_dialog.hide()
 	click_button(hub.get_node("BattleButton"))
 	var battle: Node = await ready_battle()
 	var battle_id: String = battle.state.id

@@ -117,7 +117,7 @@ func run() -> void:
 	if not is_instance_valid(hub.account_dialog):
 		quit(1)
 		return
-	hub.account_dialog.confirmed.emit()
+	hub.account_dialog.custom_action.emit(&"sign_out")
 	await scene_changed
 	expect(current_scene.scene_file_path.ends_with("/title_screen.tscn") and session.token.is_empty(), "Team sign-out returns to team login")
 	title = current_scene

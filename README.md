@@ -32,7 +32,7 @@ For Google login on F5, follow the [local callback setup](docs/AUTHENTICATION.md
 - Riley’s title/account popups, Story/navigation and four gem offers plus gamepass; Jason’s hub and shared model/leveling work.
 - Mihai’s Users/Currency model and trigger, username login and duplicate-username signup protection, and preserved gacha prototype. The four gem buttons keep their 50/200/500/999 paid-currency prototypes in the guarded isolated local setup.
 - The normal hub’s **Battle** button starts or resumes the saved Gate Sentinel encounter. Tap up to three ally portraits per round. Try Rowan first and Vale about 0.4 seconds later to land a combo. The server saves each squad round and the surviving Sentinel counters once. Story is independent; this fight does not award loot or unlock story progression.
-- Authenticated profiles and protected own-account currency reads. The hub’s Settings menu signs the player out.
+- Authenticated profiles and protected own-account currency reads. The hub’s Settings dialog lets players change their username or sign out.
 - Argon2 password verifiers and revocable 15-minute JWTs. Optional Google sign-in has separate local configuration.
 
 Shared storage refuses client-requested currency grants; the local prototype does not make a real purchase. Combat uses a fixed three-character party; owned-roster selection, reward payouts, authenticated summons/pity and payments are not implemented by this integration. Existing unsupported password formats need owner-verified resets; migration preserves their rows.
