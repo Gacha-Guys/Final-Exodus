@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://ctq8kvi3jq8lg"]
+
+[ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="1_ncf2b"]
+
+[node name="Gem1" type="Control" unique_id=1046886349]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Gem" type="TextureRect" parent="." unique_id=1346602369]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 0
+size_flags_vertical = 4
+texture = ExtResource("1_ncf2b")
+expand_mode = 5

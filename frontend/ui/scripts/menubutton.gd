@@ -2,6 +2,14 @@
 class_name NavMenuButton
 extends Control
 
+const scene_dict := {
+	"Shop": preload("res://scenes/shop/shop.tscn"),
+	"Home": preload("res://scenes/hub/hub_popup.tscn"),
+	"": null,
+}
+
+signal menu_button_pressed(popup)
+
 @export var icon_texture: Texture2D:
 	set(value):
 		icon_texture = value
@@ -14,10 +22,8 @@ extends Control
 		if is_node_ready():
 			$Label.text = text
 			
-@export_file("*.tscn") var target_scene: String
 
-var _is_current_page := false
-
+		
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	$Label.text = text
@@ -26,24 +32,21 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): # if in the editor  then don't do what we're about to do
 		return
 	
-	# get the current page and see if target_scene is non-existent or if the current page doesn't exist or if the current page does equal the target page
-	var current := get_tree().current_scene
-	_is_current_page = target_scene == "" or (current and current.scene_file_path == target_scene)
-	
-	if _is_current_page: # if any of that is true, make it look selected
-		$NinePatchRect.modulate = Color(1.3, 1.3, 1.3, 1.0)
-	
 
-
-
-	
 func _gui_input(event: InputEvent) -> void:
-	if _is_current_page: # don't handle any input if we are on the page it points or there is no destination
-		return
 		
-	if event is InputEventMouseButton and target_scene:
+	if event is InputEventMouseButton:
 		if event.is_pressed():
-			$NinePatchRect.modulate = Color(1.3, 1.3, 1.3, 1.0)
+			select()
 		if event.is_released():
-			$NinePatchRect.modulate = Color(1.0, 1.0, 1.0, 1.0)
-			get_tree().change_scene_to_file(target_scene)
+			unselect()
+			if scene_dict[text]:
+				menu_button_pressed.emit(scene_dict[text])
+				
+				
+				
+func select():
+	$NinePatchRect.modulate = Color(1.3, 1.3, 1.3, 1.0)
+	
+func unselect():
+	$NinePatchRect.modulate = Color(1.0, 1.0, 1.0, 1.0)

@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://dsnvk74ku6bf1"]
+
+[ext_resource type="Texture2D" uid="uid://bftvhvxgdxd3t" path="res://assets/gem.png" id="1_1gt60"]
+
+[node name="Gem2" type="Control" unique_id=966617131]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2120901968]
+layout_mode = 1
+offset_right = 99.0
+offset_bottom = 127.0
+theme_override_constants/separation = 29
+
+[node name="GemMargin1" type="MarginContainer" parent="HBoxContainer" unique_id=33254908]
+layout_mode = 2
+theme_override_constants/margin_right = -70
+
+[node name="Gem1" type="TextureRect" parent="HBoxContainer/GemMargin1" unique_id=979868236]
+custom_minimum_size = Vector2(60, 0)
+custom_maximum_size = Vector2(60, -1)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("1_1gt60")
+expand_mode = 5
+
+[node name="Gem2" type="TextureRect" parent="HBoxContainer" unique_id=1944640283]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("1_1gt60")
+expand_mode = 5
