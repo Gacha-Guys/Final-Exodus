@@ -1,6 +1,9 @@
 @tool
 extends Control
 
+signal popup_transaction_success(type, latest_purchase: String, i_text)
+signal popup_failure
+
 var is_paid_shop
 
 var paid_pressed = preload("res://assets/blue_pressed.png")
@@ -202,9 +205,13 @@ func _purchase_gem() -> void:
 	var refresh = await GameSession.refresh_account()
 	if not refresh.ok:
 		print("gem refresh went wrong")
+		return
+	popup_transaction_success.emit("Gem", " some Gems!", null)
 
 
 func _purchase_gamepass() -> void:
+	if PlayerData.has_gamepass:
+		return
 	var result: Dictionary = await GameSession.request("/me/currency", HTTPClient.METHOD_PATCH, {"transaction_type": "gamepass", "has_gamepass": true })
 	if not result.ok:
 		print("somethign went wrong w/ gamepass")
@@ -212,16 +219,30 @@ func _purchase_gamepass() -> void:
 	var refresh = await GameSession.refresh_account()
 	if not refresh.ok:
 		print("gamepass refresh went wrong")
+		return
+	popup_transaction_success.emit("Logo", " the Gamepass!", null)
 		
 func _purchase_item() -> void:
 	var result: Dictionary = await GameSession.request("/me/currency", HTTPClient.METHOD_PATCH, {"transaction_type": "item", "count": count, "price": item_cost, "currency_type": "paid" if premium else "free", "item_id": item_id })
 	if not result.ok:
-		print("somethign went wrong w/ item")
-		print(item_cost)
-		print(premium)
-		print(item_id)
-		print(result)
+		if result.error == "Balance too low":
+			popup_failure.emit()
 		return
 	var refresh = await GameSession.refresh_account()
 	if not refresh.ok:
 		print("item refresh went wrong")
+		return
+	var item_name := _get_name(pricetag_text)
+	var msg := " %d %s" % [count, item_name] if count > 1 else " a %s" % item_name
+	popup_transaction_success.emit("Item", msg, item_texture)
+
+
+func _get_name(s) -> String:
+	var arr = s.split("\n")
+	if count > 1:
+		var split = Array(arr[0].split("")).filter(func(c): return not c.is_valid_int())
+		var result = "".join(split)
+		return result.strip_edges()
+	else:
+		return arr[0].strip_edges()
+	

@@ -49,6 +49,7 @@ theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 167
 
 [node name="PaidButton1" parent="PaidShopMargin/PaidShop" unique_id=1702718963 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 pricetag_text = "50 Gems         $1.99"
 font_size = 32
@@ -59,6 +60,7 @@ top_item_margin = 20.0
 set_count = 1
 
 [node name="PaidButton2" parent="PaidShopMargin/PaidShop" unique_id=685862597 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 pricetag_text = "200 Gems       $2.99"
 font_size = 32
@@ -69,6 +71,7 @@ top_item_margin = 15.0
 set_count = 2
 
 [node name="PaidButton3" parent="PaidShopMargin/PaidShop" unique_id=551513583 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 pricetag_text = "500 Gems       $5.99"
 font_size = 32
@@ -79,6 +82,7 @@ top_item_margin = 20.0
 set_count = 3
 
 [node name="PaidButton4" parent="PaidShopMargin/PaidShop" unique_id=1047629109 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 pricetag_text = "1000 Gems     $9.99"
 font_size = 32
@@ -89,6 +93,7 @@ top_item_margin = 20.0
 set_count = 4
 
 [node name="PaidButton5" parent="PaidShopMargin/PaidShop" unique_id=646380710 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 pricetag_text = "Gamepass
 $9.99"
@@ -112,10 +117,11 @@ theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 167
 
 [node name="FreeButton1" parent="FreeShopMargin/FreeShop" unique_id=405265416 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 button_texture = ExtResource("9_tp26b")
 pricetag_text = "Tome of Wisdom ii
-20 Chips"
+20 Coins"
 font_size = 32
 pricetag_margin = 20.0
 item_texture = ExtResource("10_8qn5i")
@@ -128,10 +134,11 @@ set_cost = 20
 texture_size = Vector2(140, 140)
 
 [node name="FreeButton2" parent="FreeShopMargin/FreeShop" unique_id=1182632190 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 button_texture = ExtResource("9_tp26b")
 pricetag_text = "Hefty coin purse
-300 chips"
+300 Coins"
 font_size = 32
 pricetag_margin = 20.0
 item_texture = ExtResource("11_131kw")
@@ -144,10 +151,11 @@ set_cost = 300
 texture_size = Vector2(140, 140)
 
 [node name="FreeButton3" parent="FreeShopMargin/FreeShop" unique_id=360502143 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 button_texture = ExtResource("9_tp26b")
 pricetag_text = "5 Attack elixers
-100 Chips"
+100 Coins"
 font_size = 32
 pricetag_margin = 20.0
 item_texture = ExtResource("6_68utx")
@@ -160,6 +168,7 @@ set_cost = 100
 texture_size = Vector2(140, 140)
 
 [node name="FreeButton4" parent="FreeShopMargin/FreeShop" unique_id=982883612 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 button_texture = ExtResource("9_tp26b")
 pricetag_text = "potion of wisdom v
@@ -177,6 +186,7 @@ is_premium = true
 texture_size = Vector2(140, 140)
 
 [node name="FreeButton5" parent="FreeShopMargin/FreeShop" unique_id=1363465040 instance=ExtResource("8_xcdpw")]
+unique_name_in_owner = true
 layout_mode = 2
 button_texture = ExtResource("9_tp26b")
 pricetag_text = "3 speed fruit
