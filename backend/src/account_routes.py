@@ -1,6 +1,7 @@
 """Users/Currency account access for the isolated demo."""
 from datetime import date
 import secrets
+from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr, field_validator
@@ -27,6 +28,15 @@ class Name(Body):
         return value.strip() if isinstance(value, str) else value
 
 
+class Currency(BaseModel):
+    transaction_type: Literal["gamepass", "currency", "item"]
+    count: int = Field(default=0, ge=0, le=1000)
+    has_gamepass: bool = False
+    price: int = Field(default=0, ge=0)
+    currency_type: Literal["free", "paid"] | None = None
+    item_id: int | None = None
+
+    
 class Registration(Name):
     email: EmailStr
     password: SecretStr = Field(min_length=1, max_length=128)
@@ -118,6 +128,26 @@ def update_name(body: Name, authorization: str | None = Depends(authorization_he
         cursor.execute("UPDATE Users SET name=%s WHERE id=%s", (body.display_name, user_id))
         return profile(cursor, user_id)
 
+
+@router.patch("/me/currency")
+def update_currency(body: Currency, authorization: str | None = Depends(authorization_header)):
+    with transaction() as cursor:
+        user_id = authenticate(cursor, authorization)
+        if body.transaction_type == "gamepass":
+            cursor.execute("UPDATE Users SET gamepass=%s WHERE id=%s", (body.has_gamepass, user_id))
+        elif body.transaction_type == "currency":
+            cursor.execute("UPDATE Currency SET `count` = `count` + %s WHERE u_id=%s AND `Type`=%s", (body.count, user_id, body.currency_type))
+            if cursor.rowcount == 0:
+                raise HTTPException(404, "Currency record not found")
+        elif body.transaction_type == "item":
+            cursor.execute("UPDATE Currency SET `count` = `count` - %s WHERE u_id=%s AND `Type`=%s AND `count` >= %s", (body.price, user_id, body.currency_type, body.price))
+            if cursor.rowcount == 0:
+                raise HTTPException(400, "Balance too low")
+            cursor.execute(
+                "INSERT INTO I_owned (u_id, i_id, `count`) VALUES (%s, %s, %s) "
+                "ON DUPLICATE KEY UPDATE `count` = `count` + VALUES(`count`)",
+                (user_id, body.item_id, body.count))
+        return profile(cursor, user_id)
 
 @router.delete("/sessions/current", status_code=204)
 def logout(authorization: str | None = Depends(authorization_header)):

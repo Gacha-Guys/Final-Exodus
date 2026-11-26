@@ -8,12 +8,18 @@ var held := false
 	set(value):
 		text = value
 		if has_node("buttonLabel"):
-			$buttonLabel.text = text
+			%buttonLabel.text = text
+	
+@export var font_size: int:
+	set(value):
+		font_size = value
+		if is_node_ready():
+			%buttonLabel.add_theme_font_size_override("font_size", value)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	$buttonLabel.text = text
-
+	%buttonLabel.text = text
+	font_size = font_size
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

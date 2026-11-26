@@ -1,0 +1,124 @@
+[gd_scene format=3 uid="uid://bj4yvjteeav75"]
+
+[ext_resource type="Texture2D" uid="uid://o1kfamne8eu7" path="res://assets/blue.png" id="1_0n4ff"]
+[ext_resource type="Script" uid="uid://l81xg4mr832t" path="res://ui/scripts/shopbutton.gd" id="2_c144j"]
+[ext_resource type="PackedScene" uid="uid://ctq8kvi3jq8lg" path="res://ui/gems/gem1.tscn" id="3_boqjr"]
+[ext_resource type="PackedScene" uid="uid://cp1e03okdpmpi" path="res://ui/logo.tscn" id="3_ra02c"]
+[ext_resource type="PackedScene" uid="uid://dsnvk74ku6bf1" path="res://ui/gems/gem2.tscn" id="4_fir4q"]
+[ext_resource type="PackedScene" uid="uid://3av4kkffqcm7" path="res://ui/gems/gem3.tscn" id="5_xf3tw"]
+[ext_resource type="PackedScene" uid="uid://84bp672xqgc4" path="res://ui/gems/gem4.tscn" id="6_7rc58"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="8_fir4q"]
+
+[node name="Control" type="Control" unique_id=1702718963]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_c144j")
+button_texture = ExtResource("1_0n4ff")
+set_paid_shop = true
+
+[node name="ShopButton" type="NinePatchRect" parent="." unique_id=1949965728]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 500.0
+offset_bottom = 150.0
+mouse_filter = 1
+texture = ExtResource("1_0n4ff")
+region_rect = Rect2(0, 0, 45, 48)
+patch_margin_left = 3
+patch_margin_top = 3
+patch_margin_bottom = 5
+
+[node name="ItemMargin" type="MarginContainer" parent="ShopButton" unique_id=1898706461]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="ItemTexture" type="TextureRect" parent="ShopButton/ItemMargin" unique_id=1504801632]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GemMargin" type="MarginContainer" parent="ShopButton" unique_id=439134893]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="Gem1" parent="ShopButton/GemMargin" unique_id=1046886349 instance=ExtResource("3_boqjr")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Gem2" parent="ShopButton/GemMargin" unique_id=966617131 instance=ExtResource("4_fir4q")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Gem3" parent="ShopButton/GemMargin" unique_id=2032157024 instance=ExtResource("5_xf3tw")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Gem4" parent="ShopButton/GemMargin" unique_id=108965874 instance=ExtResource("6_7rc58")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LogoMargin" type="MarginContainer" parent="ShopButton" unique_id=348022051]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 150
+theme_override_constants/margin_bottom = 10
+
+[node name="Logo" parent="ShopButton/LogoMargin" unique_id=1340003969 instance=ExtResource("3_ra02c")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+
+[node name="PricetagMargin" type="MarginContainer" parent="ShopButton" unique_id=1753124788]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -95.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_right = 0
+
+[node name="Pricetag" type="Label" parent="ShopButton/PricetagMargin" unique_id=497024396]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("8_fir4q")
+theme_override_font_sizes/font_size = 0
+horizontal_alignment = 1
+vertical_alignment = 1
