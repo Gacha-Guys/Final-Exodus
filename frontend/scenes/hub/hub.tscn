@@ -207,7 +207,8 @@ theme_override_constants/margin_bottom = -16
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/NinePatchRect/MarginContainer" unique_id=368052820]
 layout_mode = 2
 
-[node name="TextureProgressBar2" type="TextureProgressBar" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer" unique_id=375213263]
+[node name="Logo" type="TextureProgressBar" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer" unique_id=375213263]
+unique_name_in_owner = true
 layout_mode = 2
 value = 100.0
 fill_mode = 3
@@ -215,7 +216,7 @@ nine_patch_stretch = true
 texture_over = ExtResource("9_3q32m")
 texture_progress = ExtResource("10_8hrlh")
 
-[node name="Label" type="Label" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer/TextureProgressBar2" unique_id=12818486]
+[node name="Label" type="Label" parent="MarginContainer/NinePatchRect/MarginContainer/AspectRatioContainer/Logo" unique_id=12818486]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -229,6 +230,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Currency" parent="." unique_id=1459214309 instance=ExtResource("16_8hrlh")]
+unique_name_in_owner = true
 layout_mode = 1
 offset_left = 540.0
 offset_top = 63.0

@@ -20,7 +20,11 @@ var item_id = null
 var item_cost = 0
 var premium = false
 
-
+var transaction := {
+	"Gem": _purchase_gem,
+	"Logo": _purchase_gamepass,
+	"Item": _purchase_item,
+}
 
 @export var button_texture: Texture2D:
 	set(value):
@@ -150,19 +154,14 @@ func _update_pricetag_color() -> void:
 		%Pricetag.add_theme_color_override("font_color", Color.WHITE if is_paid_shop else Color.BLACK)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.is_pressed():
 			button_texture = paid_pressed if is_paid_shop else free_pressed
-			
 		if event.is_released():
 			button_texture = paid_normal if is_paid_shop else free_normal
-			
+			transaction[type].call()
+
 
 
 func _margin(side: String, val):
@@ -185,3 +184,44 @@ func _apply_texture_size() -> void:
 	%ItemTexture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	%ItemTexture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	%ItemTexture.custom_minimum_size = texture_size
+
+func _purchase_gem() -> void:
+	var gem_dict := {
+		1: 50,
+		2: 200,
+		3: 500,
+		4: 1000
+	}
+	var result: Dictionary = await GameSession.request("/me/currency", HTTPClient.METHOD_PATCH, {"transaction_type": "currency", "count": gem_dict[count], "currency_type": "paid"}, true)
+	if not result.ok:
+		print("somethign went wrong w/ gem")
+		print(count)
+		print(gem_dict[count])
+		print(result)
+		return
+	var refresh = await GameSession.refresh_account()
+	if not refresh.ok:
+		print("gem refresh went wrong")
+
+
+func _purchase_gamepass() -> void:
+	var result: Dictionary = await GameSession.request("/me/currency", HTTPClient.METHOD_PATCH, {"transaction_type": "gamepass", "has_gamepass": true })
+	if not result.ok:
+		print("somethign went wrong w/ gamepass")
+		return
+	var refresh = await GameSession.refresh_account()
+	if not refresh.ok:
+		print("gamepass refresh went wrong")
+		
+func _purchase_item() -> void:
+	var result: Dictionary = await GameSession.request("/me/currency", HTTPClient.METHOD_PATCH, {"transaction_type": "item", "count": count, "price": item_cost, "currency_type": "paid" if premium else "free", "item_id": item_id })
+	if not result.ok:
+		print("somethign went wrong w/ item")
+		print(item_cost)
+		print(premium)
+		print(item_id)
+		print(result)
+		return
+	var refresh = await GameSession.refresh_account()
+	if not refresh.ok:
+		print("item refresh went wrong")

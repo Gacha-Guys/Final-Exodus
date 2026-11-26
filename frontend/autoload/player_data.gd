@@ -7,10 +7,13 @@ signal signup_succeeded
 signal signup_failed(message)
 signal currency_success
 signal currency_fail(message)
+signal gamepass_success
+signal gamepass_fail(message)
 
 var user_id := 0
 var paid_currency := 0
 var free_currency := 0
+var has_gamepass := false
 
 func _ready() -> void:
 	GameSession.account_changed.connect(sync_account)
@@ -20,7 +23,9 @@ func sync_account(profile: Dictionary) -> void:
 	user_id = int(profile.get("id", 0))
 	paid_currency = int(profile.get("paid_currency", 0))
 	free_currency = int(profile.get("free_currency", 0))
+	has_gamepass  = bool(profile.get("gamepass", false))
 	currency_success.emit()
+	gamepass_success.emit()
 
 func getCurrency(id: int) -> void:
 	if GameSession.token.is_empty() or id != user_id:

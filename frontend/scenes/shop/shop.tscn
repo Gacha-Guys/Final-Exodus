@@ -124,6 +124,7 @@ top_item_margin = 5.0
 set_count = 1
 set_item_id = 2
 set_paid_shop = false
+set_cost = 20
 texture_size = Vector2(140, 140)
 
 [node name="FreeButton2" parent="FreeShopMargin/FreeShop" unique_id=1182632190 instance=ExtResource("8_xcdpw")]
