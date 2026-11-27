@@ -4,10 +4,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from .accounts import safe_field_errors
 from .account_routes import router as accounts
-from .battle_routes import router as combat
+#from .battle_routes import router as combat
+from .battle_routes_v2 import router as combat
 from .google_auth import router as google
 from .game_store import transaction
 from .compatibility import router as compatibility
+from .character import router as character
 from .rate_limit import RegistrationLimiter
 
 app = FastAPI(title="Final Exodus API")
@@ -38,6 +40,7 @@ app.include_router(accounts)
 app.include_router(combat)
 app.include_router(google)
 app.include_router(compatibility)
+app.include_router(character)
 
 
 

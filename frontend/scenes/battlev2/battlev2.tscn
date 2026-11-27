@@ -1,0 +1,136 @@
+[gd_scene format=3 uid="uid://p08hybmr4b5m"]
+
+[ext_resource type="Script" uid="uid://4bpe13gqwtch" path="res://scenes/battlev2/battlev_2.gd" id="1_gbalu"]
+[ext_resource type="Texture2D" uid="uid://c4imdrxx8e5tn" path="res://assets/attack1.png" id="2_mkin0"]
+[ext_resource type="Texture2D" uid="uid://d1qe1ep7skv0k" path="res://assets/idle1.png" id="2_v03bw"]
+[ext_resource type="Script" uid="uid://bk4jvic1q4p8l" path="res://scenes/battlev2/signals.gd" id="4_3dv2t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkin0"]
+atlas = ExtResource("2_v03bw")
+region = Rect2(0, 0, 42, 42)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3dv2t"]
+atlas = ExtResource("2_v03bw")
+region = Rect2(42, 0, 42, 42)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aqapl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_mkin0")
+}],
+"loop": 1,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkin0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3dv2t")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 2.0
+}]
+
+[node name="Battlev2" type="Control" unique_id=194111269]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gbalu")
+
+[node name="Unit1" type="AnimatedSprite2D" parent="." unique_id=1891768947]
+texture_filter = 1
+position = Vector2(174, 223)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_aqapl")
+animation = &"idle"
+script = ExtResource("4_3dv2t")
+
+[node name="Unit2" type="AnimatedSprite2D" parent="." unique_id=839083288]
+texture_filter = 1
+position = Vector2(135, 327)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_aqapl")
+animation = &"idle"
+script = ExtResource("4_3dv2t")
+
+[node name="Unit3" type="AnimatedSprite2D" parent="." unique_id=1959659040]
+texture_filter = 1
+position = Vector2(168, 426)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_aqapl")
+animation = &"idle"
+script = ExtResource("4_3dv2t")
+
+[node name="Enemy" type="AnimatedSprite2D" parent="." unique_id=1267659965]
+texture_filter = 1
+position = Vector2(560, 342)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_aqapl")
+animation = &"idle"
+script = ExtResource("4_3dv2t")
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1239591592]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -304.0
+offset_top = -608.0
+offset_right = 304.0
+grow_horizontal = 2
+grow_vertical = 0
+columns = 3
+
+[node name="basic1" type="Button" parent="GridContainer" unique_id=1013195637]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Basic 1"
+
+[node name="basic2" type="Button" parent="GridContainer" unique_id=1237115196]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Basic 2"
+
+[node name="basic3" type="Button" parent="GridContainer" unique_id=1477292884]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Basic 3"
+
+[node name="special1" type="Button" parent="GridContainer" unique_id=913945647]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Special 1"
+
+[node name="special2" type="Button" parent="GridContainer" unique_id=345005522]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Special 2"
+
+[node name="special3" type="Button" parent="GridContainer" unique_id=1166966894]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Special 3"
+
+[node name="guard1" type="Button" parent="GridContainer" unique_id=549185201]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Guard 1"
+
+[node name="guard2" type="Button" parent="GridContainer" unique_id=292721333]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Guard 2"
+
+[node name="guard3" type="Button" parent="GridContainer" unique_id=553182686]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+text = "Guard 3"

@@ -97,4 +97,4 @@ func enter_battle() -> void:
 		GameSession.notice = "Log in to start or resume a battle."
 		get_tree().change_scene_to_file("res://scenes/account/title_screen.tscn")
 		return
-	get_tree().change_scene_to_file("res://scenes/battle/team_battle.tscn")
+	get_tree().change_scene_to_file("res://scenes/battlev2/battlev2.tscn")

@@ -8,7 +8,7 @@ if __name__ == "__main__":
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     uvicorn.run("src.main:app", env_file=args.env_file, host="127.0.0.1", port=args.port,
-                proxy_headers=False, access_log=False)
+                proxy_headers=False, access_log=True)
 
 
 #Start this from the terminal to start the server

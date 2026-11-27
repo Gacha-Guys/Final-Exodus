@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://ddhiw7p27kdit"]
+
+[ext_resource type="Script" uid="uid://dy22ql34h1xwd" path="res://scenes/battlev2/status.gd" id="1_i6yyu"]
+[ext_resource type="FontFile" uid="uid://djsl8cgms8ku4" path="res://assets/Cinzel-VariableFont_wght.ttf" id="2_8y1jj"]
+
+[sub_resource type="FontVariation" id="FontVariation_hq8nb"]
+base_font = ExtResource("2_8y1jj")
+variation_opentype = {
+2003265652: 800
+}
+spacing_glyph = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_aqapl"]
+font = SubResource("FontVariation_hq8nb")
+font_size = 18
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Status" type="Control" unique_id=1460866262]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -631.0
+offset_bottom = -1245.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_i6yyu")
+status = null
+
+[node name="Label" type="Label" parent="." unique_id=2116697447]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "500!!"
+label_settings = SubResource("LabelSettings_aqapl")
+horizontal_alignment = 1
+vertical_alignment = 1
